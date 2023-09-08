@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+
+        <record id="fe_tax_form" model="ir.ui.view">
+            <field name="name">fe_tax_sv_form</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//notebook" position="inside">
+                    <page string="Factura Electronica">
+                    <group>
+                        <field name="fe_tributo_id" />
+                    </group>
+                    </page>                    
+                </xpath>
+            </field>
+        </record>
+
+        <record id="fe_partner_form" model="ir.ui.view">
+            <field name="name">fe_partner_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//notebook" position="inside">
+                    <page string="Factura Electronica">
+                        <group>
+                        <field name="fe_municipio_id" />
+                        <field name="fe_actividad_id" />
+                        <field name="fe_identificacion_id" />
+                        <field name="fe_tipo_persona_id" />
+                        <field name="fe_domicilio_id" />
+                        </group>
+                    </page>                    
+                </xpath>
+            </field>
+        </record>  
+
+        <record id="fe_payment_form" model="ir.ui.view">
+            <field name="name">fe_payment_form</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//sheet" position="inside">
+                    <group string="Factura Electronica">
+                        <field name="fe_condicion_id" />                       
+                    </group>                    
+                </xpath>
+            </field>
+        </record>  
+
+
+
+
+        <record id="fe_company_form" model="ir.ui.view">
+            <field name="name">fe_company_form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//notebook" position="inside">
+                    <page string="Factura Electronica">
+                        <group>
+                        <field name="fe_ambiente_id" />
+                        <field name="fe_modelo_facturacion_id" />
+                        <field name="fe_transmision_id" />
+                        <field name="fe_contingencia_id" />
+                        <field name="fe_establecimiento_id" />
+                        
+                        </group>
+                    </page>                          
+                </xpath>
+            </field>
+        </record>  
+
+
+        <record id="fe_doc_form" model="ir.ui.view">
+            <field name="name">fe_doc_form</field>
+            <field name="model">odoosv.fiscal.document</field>
+            <field name="inherit_id" ref="sv_accounting.odoosv_fiscal_document_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//sheet" position="inside">
+                    <group string="Factura Electronica">
+                        <group>
+                        <field name="fe_tipo_doc_id" />
+                        <field name="fe_generacion_id" />
+                        <field name="fe_doc_asociado_id" />
+                        <field name="fe_contingencia_id" />   
+                        <field name="version" />                        
+                        </group>
+                    </group>                          
+                </xpath>
+            </field>
+        </record>  
+
+        <record id="fe_company_form" model="ir.ui.view">
+            <field name="name">fe_company_form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//notebook" position="inside">
+                    <page string="Factura Electronica">
+                        <group>
+                        <field name="fe_ambiente_id" />
+                        <field name="fe_modelo_facturacion_id" />
+                        <field name="fe_transmision_id" />
+                        <field name="fe_contingencia_id" />
+                        <field name="fe_establecimiento_id" />
+                        
+                        </group>
+                    </page>                          
+                </xpath>
+            </field>
+        </record>  
+
+
+        <record id="fe_producto_form" model="ir.ui.view">
+            <field name="name">fe_producto_form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//notebook" position="inside">
+                    <page string="Factura Electronica">
+                        <group>
+                        <field name="fe_tipo_item_id" />
+                        
+                        </group>
+                    </page>                          
+                </xpath>
+            </field>
+        </record>  
+
+
+        <record id="fe_payment_form" model="ir.ui.view">
+            <field name="name">fe_payment_form</field>
+            <field name="model">account.payment.term</field>
+            <field name="inherit_id" ref="account.view_payment_term_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//sheet" position="inside">
+                    <group string="Factura Electronica">
+                        <field name="fe_condicion_id" />                       
+                    </group>                    
+                </xpath>
+            </field>
+        </record>  
+
+
+        <record id="fe_uom_form" model="ir.ui.view">
+            <field name="name">fe_uom_form</field>
+            <field name="model">uom.category</field>
+            <field name="inherit_id" ref="uom.product_uom_categ_form_view"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='uom_type']" position="after">
+                        <field name="fe_unidad_id" />                       
+                </xpath>
+            </field>
+        </record>  
+
+
+
+        <record id="fe_fact_form" model="ir.ui.view">
+            <field name="name">fe_fact_form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//notebook" position="inside">
+                        <page string="Factura Electronica">
+                        <group>
+                            <field name="entrega" />
+                            <field name="doc_entrega" />
+                            <field name="recibe" />
+                            <field name="doc_recibe" />
+                            <field name="observaciones" />
+                            <field name="placa" />
+                        </group>
+                        <label for="doc_json"/> 
+                        <field name="doc_json" />
+                        <label for="doc_firmado"/> 
+                        <field name="doc_firmado" />                        
+                        <label for="doc_respuesta"/> 
+                        <field name="doc_respuesta" />
+                        <group>
+                            <field name="uuid" />
+                            <field name="control" />
+                            <field name="sello" />
+                        </group>
+                    </page>                             
+                </xpath>
+            </field>
+        </record>  
+
+
+<record id="fe_ambeinte_form" model="ir.ui.view">
+            <field name="name">fe_ambeinte_form</field>
+            <field name="model">sv_fe.ambiente</field>
+            <field name="arch" type="xml">
+      <form string="Ambiente">
+  <sheet>
+    <group>
+      <field name="name"/>
+      <field name="codigo"/>
+      <field name="url"/>
+      <field name="token"/>
+      <field name="token_vencimiento"/>
+      <field name="user"/>
+      <field name="password"/>
+      <field name="firmador"/>
+      <field name="llave_privada"/>
+    </group>
+  </sheet>
+</form>
+ </field>
+        </record>  
+        
+    </data>
+</odoo>

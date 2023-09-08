@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_invoice_line_form_inherit" model="ir.ui.view">
+        <field name="name">view.invoice.line.form.inherit</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='account_id']" position="after">
+                <field name="sale_order_line_id" invisible="0" force_save="1"/>
+                <field name="sale_order_id" readonly="1" force_save="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="invoice_form_inherit" model="ir.ui.view">
+        <field name="name">account.invoice.form.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+                <field name="sale_order_line_id" invisible="1" force_save="1"/>
+                <field name="sale_order_id" force_save="1"/>
+            </xpath>
+            <xpath expr="//field[@name='ref']" position="after">
+            	<field name="multiple_sale_orders" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="sale_order_id" attrs="{'invisible': [('multiple_sale_orders','=',False)], 'readonly': [('state', '!=', 'draft')]}"  options="{'no_create': True}" domain="[('invoice_status', 'in', ('no','to invoice')), ('partner_id', '=', partner_id)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

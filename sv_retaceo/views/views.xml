@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="landedcosto_sv_form" model="ir.ui.view">
+            <field name="name">landedcosto_sv_form</field>
+            <field name="model">stock.landed.cost</field>
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='picking_ids']" position="after">
+                    <field name="referencia"/> 
+                    <field name="declaracion"/> 
+                    <field name="comentario"/> 
+                </xpath>
+            </field>
+        </record>
+
+
+        <report
+        id="template_Retaceo_report"
+        string="Reporte de Retaceo"
+        model="stock.landed.cost"
+        report_type="qweb-pdf"
+        file="sv_retaceo.template_retaceo_report"
+        name="sv_retaceo.template_retaceo_report"
+        menu="True"/>
+        
+
+
+        <template id="template_retaceo_report">
+                <t t-call="web.html_container">
+                    <t t-call="web.internal_layout">
+                    <t t-foreach="docs" t-as="o">
+                         <div class="page" style="font-size:10px;">
+                            <p>Resumen de retaceo</p>
+                            <div style="width:100%;border-bottom:thin solid black">
+                                <h3><span class="m-0" t-field="o.name"/></h3>
+                            </div>
+                            <table>
+                                <tr>
+                                    <td><strong>Referencia:</strong><span class="m-0" t-field="o.referencia"/></td>
+                                </tr>
+                                <tr>
+                                    <td> <strong>Fecha:</strong><span class="m-0" t-field="o.date"/></td>
+                                </tr>
+                                <tr>
+                                    <td> <strong>DUCA:</strong><span class="m-0" t-field="o.declaracion"/></td>
+                                </tr>
+                                <tr>
+                                    <td> <strong>Descripcion:</strong><span class="m-0" t-field="o.comentario"/></td>
+                                </tr>
+                            </table>
+
+                            
+                            
+                            
+                            <t t-set="ultimo" t-value="0"/>
+                            <t t-set="ultimo_code" t-value="''"/>
+                            <t t-set="ultimo_barcode" t-value="''"/>
+                            <t t-set="ultimo_name" t-value="''"/>
+                            <t t-set="cantidad" t-value="0.0"/>
+                            <t t-set="fob" t-value="0.0"/>
+                            <t t-set="adicion" t-value="0.0"/>
+                            <t t-set="total_items" t-value="0.0"/>
+                            <t t-set="total_fob" t-value="0.0"/>
+                            <t t-set="total_gastos" t-value="0.0"/>
+                            
+                            <table class="table table-sm o_main_table" name="isnumos">
+                               <thead>
+                                    <tr style="background:gray">
+                                      <td rowspan="2">Codigo</td>
+                                      <td rowspan="2">Codigo Proveedor</td>
+                                      <td rowspan="2">Producto</td>
+                                      <td rowspan="2">Cantidad</td>
+                                      <td rowspan="1" colspan="2">Costos FOB</td>
+                                      <td rowspan="2">Gastos</td>
+                                      <td rowspan="1" colspan="2">Costos CIF</td>
+                                    </tr>
+                                    <tr style="background:gray">
+                                      <td >Costo Unitario</td>
+                                      <td >Total</td>
+                                      <td >Costo Unitario</td>
+                                      <td >Total</td>
+                                    </tr>
+                                </thead>
+                            
+                            <t t-foreach="o.valuation_adjustment_lines.sorted(key=lambda i: i.product_id.id)" t-as="i">
+                              <t t-if="ultimo==i.product_id.id">
+                                <t t-set="cantidad" t-value="i.quantity"/>
+                                <t t-set="fob" t-value="i.former_cost/i.quantity"/>
+                                <t t-set="adicion" t-value="adicion+i.additional_landed_cost"/>
+                              </t>
+                              <t t-if="ultimo!=i.product_id.id">
+                                <t t-if="ultimo>0">
+                                  <tr style="">
+                                      <td ><span t-esc="ultimo_code"></span></td>
+                                      <td ><span t-esc="ultimo_barcode"></span></td>
+                                      <td ><span t-esc="ultimo_name"></span></td>
+                                      <td ><span t-esc="cantidad"></span></td>
+                                      <td ><span t-esc="str('%.2f'%fob)"></span></td>
+                                      <td ><span t-esc="str('%.2f'%(fob*cantidad))"></span></td>
+                                      <td ><span t-esc="str('%.2f'%adicion)"></span></td>
+                                      <td ><span t-esc="str('%.2f'%(fob+(adicion/cantidad)))"></span></td>
+                                      <td ><span t-esc="str('%.2f'%((fob+(adicion/cantidad))*cantidad))"></span></td>
+                                    </tr>
+                                </t>
+                                <t t-set="total_items" t-value="total_items+i.quantity"/>
+                                <t t-set="total_fob" t-value="total_fob+(i.former_cost)"/>
+                                <t t-set="ultimo" t-value="i.product_id.id"/>
+                                <t t-set="ultimo_code" t-value="i.product_id.default_code"/>
+                                <t t-set="ultimo_barcode" t-value="i.product_id.barcode"/>
+                                <t t-set="ultimo_name" t-value="i.product_id.display_name"/>
+                                <t t-set="cantidad" t-value="i.quantity"/>
+                                <t t-set="fob" t-value="i.former_cost/i.quantity"/>
+                                <t t-set="adicion" t-value="i.additional_landed_cost"/>
+                              </t>
+                              <t t-set="total_gastos" t-value="total_gastos+i.additional_landed_cost"/>
+                            </t>
+                            <t t-if="ultimo>0">
+                                  <tr style="">
+                                      <td ><span t-esc="ultimo_code"></span></td>
+                                      <td ><span t-esc="ultimo_barcode"></span></td>
+                                      <td ><span t-esc="ultimo_name"></span></td>
+                                      <td ><span t-esc="cantidad"></span></td>
+                                      <td ><span t-esc="str('%.2f'%fob)"></span></td>
+                                      <td ><span t-esc="str('%.2f'%(fob*cantidad))"></span></td>
+                                      <td ><span t-esc="str('%.2f'%adicion)"></span></td>
+                                      <td ><span t-esc="str('%.2f'%(fob+(adicion/cantidad)))"></span></td>
+                                      <td ><span t-esc="str('%.2f'%((fob+(adicion/cantidad))*cantidad))"></span></td>
+                                    </tr>
+                            </t>
+                            <tr style="">
+                                      <td colspan="3"><span ></span></td>
+                                      <td ><span t-esc="total_items"></span></td>
+                                      <td ><span ></span></td>
+                                      <td ><span t-esc="str('%.2f'%total_fob)"></span></td>
+                                      <td ><span t-esc="str('%.2f'%total_gastos)"></span></td>
+                                      <td ><span ></span></td>
+                                      <td ><span t-esc="str('%.2f'%(total_fob+total_gastos))"></span></td>
+                                    </tr>
+                            </table>
+                              
+                              
+                            
+                           
+                         
+                            
+                            
+                    </div>    
+                    </t>
+                     </t>
+                </t>
+        </template>
+       
+        
+    </data>
+</odoo>

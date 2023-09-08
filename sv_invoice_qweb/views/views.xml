@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<report id="invoice_preimpreso_report" string="Factura Pre Impresa" model="account.move" report_type="qweb-pdf" file="sv_invoice_qweb.preimpreso" name="sv_invoice_qweb.preimpreso" menu="True"/>
+		<template id="preimpreso">
+			<t t-call="web.html_container">
+				<t t-foreach="docs" t-as="doc">
+					<t t-if="doc.tipo_documento_id.formato=='CCF'" t-call="sv_invoice_qweb.ccf_document" t-lang="doc.partner_id.lang"/>
+					<t t-if="doc.tipo_documento_id.formato=='CCFRESUMEN'" t-call="sv_invoice_qweb.ccfresumen_document" t-lang="doc.partner_id.lang"/>
+					<t t-if="doc.tipo_documento_id.formato=='FACTURA'" t-call="sv_invoice_qweb.factura_document" t-lang="doc.partner_id.lang"/>
+				</t>
+			</t>
+		</template>
+		
+        
+        
+        <template id="ccf_document">
+			<t t-name="sv_invoice_qweb.ccf_document">
+				<t t-call="web.basic_layout">
+					<t t-foreach="docs" t-as="doc">
+						<div class="page" name="page">
+							<div style="position:absolute;top:0px;left:0px;font-size: 12px;">
+								<div style="position:absolute;left:-0px;top:40px;width:810px;height:480px;border:thin solid white">
+									<div style="position:absolute; top:-80px;left:120px;width:480px;height:620px;color:black;border:thin solid white;                              -webkit-transform: rotate(90deg);                              -moz-transform: rotate(90deg);                              -o-transform: rotate(90deg);                              -ms-transform: rotate(90deg);                              transform: rotate(90deg);">
+										<div class="" style="position:absolute;top:12px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Fecha:</b>
+											</span>
+											<span t-field="doc.invoice_date"/>
+											<span>
+												<b>        #Doc:</b>
+											</span>
+											<span t-field="doc.doc_numero"/>
+										</div>
+										<div class="" style="position:absolute;top:24px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Cliente:</b>
+											</span>
+											<span t-field="doc.partner_id.name"/>
+										</div>
+										<div class="" style="position:absolute;top:36px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Dirección:</b>
+											</span>
+											<span t-field="doc.partner_id.street"/>
+											<span>,</span>
+											<span t-field="doc.partner_id.city"/>
+										</div>
+										<div class="" style="position:absolute;top:48px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>NIT:</b>
+											</span>
+											<span t-field="doc.partner_id.nit"/>
+											<span>
+												<b>    NRC:</b>
+											</span>
+											<span t-field="doc.partner_id.nrc"/>
+										</div>
+										<div class="" style="position:absolute;top:60px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Giro:</b>
+											</span>
+											<span t-field="doc.partner_id.giro"/>
+										</div>
+										<!--div class="" style="position:absolute;top:72px;left:10px;width:440px;font-size:11px"><span><b>Paciente:</b></span><span t-field="doc.x_paciente"/></div-->
+										<div style="position:absolute; top:100px;left:5px;">
+											<table class="table o_report_block_table small table-borderless" style="border-bottom:none;width:450px;margin-top:5px;">
+												<thead class="small">
+													<tr>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr t-foreach="doc.invoice_line_ids" t-as="table_line">
+														<td style="width:9%;text-align:right">
+															<span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px;">
+																<t t-esc="'{0:,.0f}'.format(int(table_line.quantity))" />
+															</span>
+														</td>
+														<td style="width:55%">
+															<span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px">
+																<span t-if="table_line.display_name!='Down Payment'" t-field="table_line.display_name" />
+																<span t-if="table_line.display_name=='Down Payment'">Anticipo de compra</span>
+																<span t-if="table_line.discount > 0">DESCUENTO DEL </span>
+																<span t-field="table_line.discount" t-if="table_line.discount > 0"/>
+																<span t-if="table_line.discount > 0">% </span>
+															</span>
+														</td>
+														<td style="width:9%">
+															<t t-set="precio" t-value="table_line.price_subtotal/table_line.quantity"/>
+															<span t-esc="'{0:.2f}'.format(precio)" style="font-size: 10px"/>
+														</td>
+														<td style="width:9%"></td>
+														<td style="width:9%">
+															<span t-field="table_line.price_total" t-if="table_line.price_subtotal == table_line.price_total" style=""/>
+														</td>
+														<td style="width:9%">
+															<span t-field="table_line.price_subtotal" style="font-size: 10px"></span>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										
+										<span style="position:absolute;top:540px;left:10px;width:360px;color:black;font-size: 10px;">
+											<span t-field="doc.amount_letras" /></span>
+										<div class="small" style="position:absolute;top:545px;left:310px;line-height:1.0;font-size: 10px;">
+											<table style="width:140px;" cellspacing="0" cellpadding="0">
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>GRAVADO:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-field="doc.gravado" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>IVA:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-if="doc.iva>0.0">$</span>
+														<span t-if="doc.iva==0.0" t-field="doc.amount_tax" />
+														<span t-if="doc.iva>0.0" t-field="doc.iva" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>(-)IVA RETENIDO:   </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">$
+														<span t-field="doc.retenido" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>SUB TOTAL:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-esc="doc.gravado+doc.iva+doc.retenido" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>VENTA NO SUJETA:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">$
+														<span t-field="doc.nosujeto" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>VENTA EXENTA:     </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">$
+														<span t-field="doc.excento" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>VENTA TOTAL:      </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-field="doc.amount_total" />
+													</td>
+												</tr>
+											</table>
+										</div>
+									</div>
+								</div>
+								<div style="position:absolute;left:0px;top:590px;width:810px;height:480px;border:thin solid white">
+									<div style="position:absolute; top:-80px;left:120px;width:480px;height:620px;color:black;border:thin solid white;                              -webkit-transform: rotate(90deg);                              -moz-transform: rotate(90deg);                              -o-transform: rotate(90deg);                              -ms-transform: rotate(90deg);                              transform: rotate(90deg);">
+										<div class="" style="position:absolute;top:12px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Fecha:</b>
+											</span>
+											<span t-field="doc.invoice_date"/>
+											<span>
+												<b>        #Doc:</b>
+											</span>
+											<span t-field="doc.doc_numero"/>
+										</div>
+										<div class="" style="position:absolute;top:24px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Cliente:</b>
+											</span>
+											<span t-field="doc.partner_id.name"/>
+										</div>
+										<div class="" style="position:absolute;top:36px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Dirección:</b>
+											</span>
+											<span t-field="doc.partner_id.street"/>
+											<span>,</span>
+											<span t-field="doc.partner_id.city"/>
+										</div>
+										<div class="" style="position:absolute;top:48px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>NIT:</b>
+											</span>
+											<span t-field="doc.partner_id.nit"/>
+											<span>
+												<b>    NRC:</b>
+											</span>
+											<span t-field="doc.partner_id.nrc"/>
+										</div>
+										<div class="" style="position:absolute;top:60px;left:10px;width:440px;font-size:11px">
+											<span>
+												<b>Giro:</b>
+											</span>
+											<span t-field="doc.partner_id.giro"/>
+										</div>
+										
+										<div style="position:absolute; top:100px;left:5px;">
+											<table class="table o_report_block_table small table-borderless" style="border-bottom:none;width:450px;margin-top:5px;">
+												<thead class="small">
+													<tr>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr t-foreach="doc.invoice_line_ids" t-as="table_line">
+														<td style="width:9%;text-align:right">
+															<span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px;">
+																<t t-esc="'{0:,.0f}'.format(int(table_line.quantity))" />
+															</span>
+														</td>
+														<td style="width:55%">
+															<span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px">
+																<span t-if="table_line.display_name!='Down Payment'" t-field="table_line.display_name" />
+																<span t-if="table_line.display_name=='Down Payment'">Anticipo de compra</span>
+																<span t-if="table_line.discount > 0">DESCUENTO DEL </span>
+																<span t-field="table_line.discount" t-if="table_line.discount > 0"/>
+																<span t-if="table_line.discount > 0">% </span>
+															</span>
+														</td>
+														<td style="width:9%">
+															<t t-set="precio" t-value="table_line.price_subtotal/table_line.quantity"/>
+															<span t-esc="'{0:.2f}'.format(precio)" style="font-size: 10px"/>
+														</td>
+														<td style="width:9%"></td>
+														<td style="width:9%">
+															<span t-field="table_line.price_total" t-if="table_line.price_subtotal == table_line.price_total" style=""/>
+														</td>
+														<td style="width:9%">
+															<span t-field="table_line.price_subtotal" style="font-size: 10px"></span>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										
+										<span style="position:absolute;top:540px;left:10px;width:360px;color:black;font-size: 10px;">
+											<span t-field="doc.amount_letras" /></span>
+										<div class="small" style="position:absolute;top:545px;left:310px;line-height:1.0;font-size: 10px;">
+											<table style="width:140px;" cellspacing="0" cellpadding="0">
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>GRAVADO:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-field="doc.gravado" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>IVA:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-if="doc.iva>0.0">$</span>
+														<span t-if="doc.iva==0.0" t-field="doc.amount_tax" />
+														<span t-if="doc.iva>0.0" t-field="doc.iva" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>(-)IVA RETENIDO:   </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">$
+														<span t-field="doc.retenido" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>SUB TOTAL:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-esc="doc.gravado+doc.iva+doc.retenido" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>VENTA NO SUJETA:  </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">$
+														<span t-field="doc.nosujeto" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>VENTA EXENTA:     </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">$
+														<span t-field="doc.excento" />
+													</td>
+												</tr>
+												<tr>
+													<td style="padding-top:5px;">
+														<span>
+															<b>VENTA TOTAL:      </b>
+														</span>
+													</td>
+													<td style="text-align:right;padding-top:0px;">
+														<span t-field="doc.amount_total" />
+													</td>
+												</tr>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</t>
+				</t>
+            </t>
+			</template>
+			<!--template id="firmas_template" name="firmas_template" inherit_id="account_reports.footnotes_template"><xpath expr="." position="inside"><div class="row" style="height:130px;"></div><div class="row"><table style="width:100%;"><tr><td class="text-center" style="border-top:thin solid black; width:30%;"><span>CONTADOR</span></td><td style="width:5%"></td><td class="text-center" style="border-top:thin solid black; width:30%; "><span>AUDITOR</span></td><td style="width:5%"></td><td class="text-center" style="border-top:thin solid black; width:30%; "><span>REPRESENTANTE LEGAL</span></td></tr></table></div></xpath></template -->
+		
+		
+		
+		
+		
+		
+		
+		
+	<template id="sv_invoice_qweb.ccfresumen_document" name="sv_invoice_qweb.ccfresumen_document">
+			<t t-name="sv_invoice_qweb.ccfresumen_document">
+    
+    
+     <t t-call="web.basic_layout">
+      <t t-foreach="docs" t-as="doc">
+        <div class="page" name="page">
+          
+          <t t-set="lineas" t-value="''" />
+              <t t-foreach="doc.invoice_line_ids" t-as="item">
+                <t t-if="lineas.find(','+str(item.product_id.id))&lt;0">
+                  <t t-set="lineas" t-value="lineas+','+str(item.product_id.id)" />
+                </t>  
+              </t>
+              <t t-set="lineas" t-value="lineas[1:]" />
+
+          
+          
+          
+          
+          <div style="position:absolute;top:0px;left:0px;font-size: 12px;">
+            
+            
+            
+            
+            
+            
+            
+            <div style="position:absolute;left:-0px;top:40px;width:810px;height:480px;border:thin solid white">
+              
+              
+              
+              <div style="position:absolute; top:-80px;left:120px;width:480px;height:620px;color:black;border:thin solid white;
+                -webkit-transform: rotate(90deg);
+                -moz-transform: rotate(90deg);
+                -o-transform: rotate(90deg);
+                -ms-transform: rotate(90deg);
+                transform: rotate(90deg);">
+                 <div class="" style="position:absolute;top:12px;left:10px;width:440px;font-size:11px"><span><b>Fecha:</b></span><span t-field="doc.invoice_date"/><span><b>        #Doc:</b></span><span t-field="doc.doc_numero"/></div>
+                <div class="" style="position:absolute;top:24px;left:10px;width:440px;font-size:11px"><span><b>Cliente:</b></span><span t-field="doc.partner_id.name"/></div>
+                <div class="" style="position:absolute;top:36px;left:10px;width:440px;font-size:11px"><span><b>Dirección:</b></span><span t-field="doc.partner_id.street"/><span>,</span><span t-field="doc.partner_id.city"/></div>
+                <div class="" style="position:absolute;top:48px;left:10px;width:440px;font-size:11px"><span><b>NIT:</b></span><span t-field="doc.partner_id.nit"/><span><b>    NRC:</b></span><span t-field="doc.partner_id.nrc"/></div>
+                <div class="" style="position:absolute;top:60px;left:10px;width:440px;font-size:11px"><span><b>Giro:</b></span><span t-field="doc.partner_id.giro"/></div>
+                
+                
+                <div style="position:absolute; top:100px;left:5px;">
+                  <table class="table o_report_block_table small table-borderless" style="border-bottom:none;width:450px;margin-top:5px;">
+                      <thead class="small">
+                          <tr>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        <t t-foreach="lineas.split(',')" t-as="producto">
+                              <t t-set="cantidad" t-value="0"/>
+                              <t t-set="nombre" t-value="''"/>
+                              <t t-set="precio_subtotal" t-value="0"/>
+                              <t t-set="precio_total" t-value="0"/>
+                              <t t-foreach="doc.invoice_line_ids" t-as="table_line">
+                                <t t-if="producto==str(table_line.product_id.id)">
+                                  <t t-set="cantidad" t-value="cantidad+table_line.quantity"/>
+                                  <t t-set="nombre" t-value="table_line.display_name"/>
+                                  <t t-set="precio_subtotal" t-value="precio_subtotal+table_line.price_subtotal"/>
+                                  <t t-set="precio_total" t-value="precio_total+table_line.price_total"/>
+                                </t>
+                              </t>
+                              <tr style="height: 20px;">
+                                
+                                <td style="width:9%;text-align:right">
+                                  <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px;"><t t-esc="'{0:,.0f}'.format(int(cantidad))" /></span>
+                                </td>
+                                <td style="width:55%">
+                                    <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px">
+                                      <span t-esc="nombre.strip()" />
+                                    </span>    
+                                </td>
+                                <td style="width:9%">
+                                    <t t-set="precio" t-value="precio_subtotal/cantidad"/>
+                                    <span t-esc="'{0:.2f}'.format(precio)"/>
+                                </td>
+                                <td style="width:9%">
+                                </td>
+                                <td style="width:9%">
+                                    <span t-esc="'{0:.2f}'.format(precio_total)" t-if="precio_subtotal == precio_total" style=""/>
+                                </td>
+                                 <td style="width:9%">
+                                    <span t-esc="'{0:.2f}'.format(precio_subtotal)" style=""></span>
+                                </td>
+                              </tr>
+
+                      </t>
+                      </tbody>
+                  </table>
+                </div>
+                
+                
+                <span style="position:absolute;top:540px;left:10px;width:360px;color:black;font-size: 10px;">
+                  <span t-field="doc.amount_letras" />
+                </span>
+                <div  class="small" style="position:absolute;top:545px;left:310px;line-height:1.0;font-size: 10px;">
+                  <table style="width:140px;" cellspacing="0" cellpadding="0" >
+                    <tr><td style="padding-top:5px;"><span><b>GRAVADO:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-field="doc.gravado" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>IVA:  </b></span></td> <td style="text-align:right;padding-top:0px;"> <span t-if="doc.iva>0.0">$</span><span t-if="doc.iva==0.0" t-field="doc.amount_tax" /><span t-if="doc.iva>0.0" t-field="doc.iva" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>(-)IVA RETENIDO:   </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>SUB TOTAL:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-esc="doc.gravado+doc.iva+doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA NO SUJETA:  </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.nosujeto" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA EXENTA:     </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.excento" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA TOTAL:      </b></span></td><td style="text-align:right;padding-top:0px;"><span t-field="doc.amount_total" /></td></tr>
+                  </table>
+                </div>
+                
+                
+              </div>
+              
+              
+              
+              
+            </div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <div style="position:absolute;left:0px;top:590px;width:810px;height:480px;border:thin solid white">
+              
+              
+              
+              
+            <div style="position:absolute; top:-80px;left:120px;width:480px;height:620px;color:black;border:thin solid white;
+                -webkit-transform: rotate(90deg);
+                -moz-transform: rotate(90deg);
+                -o-transform: rotate(90deg);
+                -ms-transform: rotate(90deg);
+                transform: rotate(90deg);">
+                <div class="" style="position:absolute;top:12px;left:10px;width:440px;font-size:11px"><span><b>Fecha:</b></span><span t-field="doc.invoice_date"/><span><b>        #Doc:</b></span><span t-field="doc.doc_numero"/></div>
+                <div class="" style="position:absolute;top:24px;left:10px;width:440px;font-size:11px"><span><b>Cliente:</b></span><span t-field="doc.partner_id.name"/></div>
+                <div class="" style="position:absolute;top:36px;left:10px;width:440px;font-size:11px"><span><b>Dirección:</b></span><span t-field="doc.partner_id.street"/><span>,</span><span t-field="doc.partner_id.city"/></div>
+                <div class="" style="position:absolute;top:48px;left:10px;width:440px;font-size:11px"><span><b>NIT:</b></span><span t-field="doc.partner_id.nit"/><span><b>    NRC:</b></span><span t-field="doc.partner_id.nrc"/></div>
+                <div class="" style="position:absolute;top:60px;left:10px;width:440px;font-size:11px"><span><b>Giro:</b></span><span t-field="doc.partner_id.giro"/></div>
+                
+                
+                <div style="position:absolute; top:100px;left:5px;">
+                  <table class="table o_report_block_table small table-borderless" style="border-bottom:none;width:450px;margin-top:5px;">
+                      <thead class="small">
+                          <tr>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <t t-foreach="lineas.split(',')" t-as="producto">
+                              <t t-set="cantidad" t-value="0"/>
+                              <t t-set="nombre" t-value="''"/>
+                              <t t-set="precio_subtotal" t-value="0"/>
+                              <t t-set="precio_total" t-value="0"/>
+                              <t t-foreach="doc.invoice_line_ids" t-as="table_line">
+                                <t t-if="producto==str(table_line.product_id.id)">
+                                  <t t-set="cantidad" t-value="cantidad+table_line.quantity"/>
+                                  <t t-set="nombre" t-value="table_line.display_name"/>
+                                  <t t-set="precio_subtotal" t-value="precio_subtotal+table_line.price_subtotal"/>
+                                  <t t-set="precio_total" t-value="precio_total+table_line.price_total"/>
+                                </t>
+                              </t>
+                              <tr style="height: 20px;">
+                                
+                                <td style="width:9%;text-align:right">
+                                  <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px;"><t t-esc="'{0:,.0f}'.format(int(cantidad))" /></span>
+                                </td>
+                                <td style="width:55%">
+                                    <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px">
+                                      <span t-esc="nombre.strip()" />
+                                    </span>    
+                                </td>
+                                <td style="width:9%">
+                                    <t t-set="precio" t-value="precio_subtotal/cantidad"/>
+                                    <span t-esc="'{0:.2f}'.format(precio)"/>
+                                </td>
+                                <td style="width:9%">
+                                </td>
+                                <td style="width:9%">
+                                    <span t-esc="'{0:.2f}'.format(precio_total)" t-if="precio_subtotal == precio_total" style=""/>
+                                </td>
+                                 <td style="width:9%">
+                                    <span t-esc="'{0:.2f}'.format(precio_subtotal)" style=""></span>
+                                </td>
+                              </tr>
+
+                      </t>
+                      </tbody>
+                  </table>
+                </div>
+                
+               
+                <span style="position:absolute;top:540px;left:10px;width:360px;color:black;font-size: 10px;">
+                  <span t-field="doc.amount_letras" />
+                </span>
+                <div  class="small" style="position:absolute;top:545px;left:310px;line-height:1.0;font-size: 10px;">
+                   <table style="width:140px;" cellspacing="0" cellpadding="0" >
+                    <tr><td style="padding-top:5px;"><span><b>GRAVADO:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-field="doc.gravado" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>IVA:  </b></span></td> <td style="text-align:right;padding-top:0px;"> <span t-if="doc.iva>0.0">$</span><span t-if="doc.iva==0.0" t-field="doc.amount_tax" /><span t-if="doc.iva>0.0" t-field="doc.iva" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>(-)IVA RETENIDO:   </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>SUB TOTAL:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-esc="doc.gravado+doc.iva+doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA NO SUJETA:  </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.nosujeto" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA EXENTA:     </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.excento" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA TOTAL:      </b></span></td><td style="text-align:right;padding-top:0px;"><span t-field="doc.amount_total" /></td></tr>
+                  </table>
+                </div>
+                
+                
+              </div>
+              
+              
+              
+              
+              
+              
+            </div>
+            
+            
+            
+            
+            
+            
+            
+                
+                
+                
+ 
+                
+                
+                
+            
+            </div>
+           </div>
+        </t>
+    </t>
+    
+    
+    
+</t>
+
+		</template>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<template id="sv_invoice_qweb.factura_document" name="sv_invoice_qweb.factura_document">
+<t t-name="sv_invoice_qweb.factura_document">
+    <t t-call="web.basic_layout">
+      <t t-foreach="docs" t-as="doc">
+        <div class="page" name="page">
+            
+          <div style="position:absolute;top:0px;left:0px;font-size: 12px;">
+            
+            
+            <div style="position:absolute;left:-0px;top:40px;width:810px;height:480px;border:thin solid white">
+              
+              
+              
+              <div style="position:absolute; top:-70px;left:120px;width:480px;height:620px;color:black;border:thin solid white;
+                -webkit-transform: rotate(90deg);
+                -moz-transform: rotate(90deg);
+                -o-transform: rotate(90deg);
+                -ms-transform: rotate(90deg);
+                transform: rotate(90deg);">
+                <div class="" style="position:absolute;top:0px;left:10px;width:400px;font-size:12px"><span><b>Fecha:</b></span><span t-field="doc.invoice_date"/><span><b>        #Doc:</b></span><span t-field="doc.doc_numero"/></div>
+                <div class="" style="position:absolute;top:12px;left:10px;width:400px;font-size:12px"><span><b>Cliente:</b></span><span t-field="doc.partner_id.name"/></div>
+                <div class="" style="position:absolute;top:24px;left:10px;width:400px;font-size:12px"><span><b>Dirección:</b></span><span t-field="doc.partner_id.street"/><span>,</span><span t-field="doc.partner_id.city"/></div>
+                <div class="" style="position:absolute;top:48px;left:10px;width:400px;font-size:12px"><span><b>NIT:</b></span><span t-field="doc.partner_id.nit"/><span><b>    DUI:</b></span><span t-field="doc.partner_id.dui"/></div>
+                
+                <div style="position:absolute; top:80px;left:5px;">
+                  <table class="table o_report_block_table small table-borderless" style="border-bottom:none;width:470px;margin-top:5px;">
+                      <thead class="small">
+                          <tr>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr t-foreach="doc.invoice_line_ids" t-as="table_line">
+                              <td style="width:9%;text-align:right">
+                                  <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px;"><t t-esc="'{0:,.0f}'.format(int(table_line.quantity))" /></span>
+                              </td>
+                              <td style="width:55%">
+                                  <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px">
+                                       <span t-if="table_line.display_name!='Down Payment'" t-field="table_line.display_name" />
+                                       <span t-if="table_line.display_name=='Down Payment'" >Anticipo de compra</span>
+                                       <span t-if="table_line.discount > 0">DESCUENTO DEL </span>
+                                       <span t-field="table_line.discount" t-if="table_line.discount > 0"/>
+                                       <span t-if="table_line.discount > 0">% </span>
+                                  </span>    
+                              </td>
+                              <td style="width:9%">
+                                  <span t-field="table_line.price_unit" style="font-size: 10px"/>
+                              </td>
+                              <td style="width:9%">
+                              </td>
+                              <td style="width:9%">
+  
+                              </td>
+                               <td style="width:9%">
+                                  <span t-field="table_line.price_total" style="font-size: 10px"></span>
+                              </td>
+  
+                          </tr>
+                      </tbody>
+                  </table>
+                </div>
+                
+                
+                <span style="position:absolute;top:515px;left:10px;width:360px;color:black;font-size: 10px;">
+                  <span t-field="doc.amount_letras" />
+                </span>
+                <div  class="small" style="position:absolute;top:530px;left:310px;line-height:1.0;font-size: 10px;">
+                  <table style="width:140px;" cellspacing="0" cellpadding="0" >
+                    <tr><td style="padding-top:5px;"><span><b>SUMAS:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-esc="doc.gravado+doc.iva" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>(-)IVA RETENIDO:   </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>SUB TOTAL:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-esc="doc.gravado+doc.iva+doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA NO SUJETA:  </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.nosujeto" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA EXENTA:     </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.excento" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA TOTAL:      </b></span></td><td style="text-align:right;padding-top:0px;"><span t-field="doc.amount_total" /></td></tr>
+                  </table>
+                </div>
+                
+                
+              </div>
+              
+              
+              
+              
+            </div>
+            
+            <div style="position:absolute;left:0px;top:610px;width:810px;height:480px;border:thin solid white">
+              
+              
+              
+              
+              <div style="position:absolute; top:-70px;left:120px;width:480px;height:620px;color:black;border:thin solid white;
+                -webkit-transform: rotate(90deg);
+                -moz-transform: rotate(90deg);
+                -o-transform: rotate(90deg);
+                -ms-transform: rotate(90deg);
+                transform: rotate(90deg);">
+                <div class="" style="position:absolute;top:0px;left:10px;width:400px;font-size:12px"><span><b>Fecha:</b></span><span t-field="doc.invoice_date"/><span><b>        #Doc:</b></span><span t-field="doc.doc_numero"/></div>
+                <div class="" style="position:absolute;top:12px;left:10px;width:400px;font-size:12px"><span><b>Cliente:</b></span><span t-field="doc.partner_id.name"/></div>
+                <div class="" style="position:absolute;top:24px;left:10px;width:400px;font-size:12px"><span><b>Dirección:</b></span><span t-field="doc.partner_id.street"/><span>,</span><span t-field="doc.partner_id.city"/></div>
+                <div class="" style="position:absolute;top:48px;left:10px;width:400px;font-size:12px"><span><b>NIT:</b></span><span t-field="doc.partner_id.nit"/><span><b>    DUI:</b></span><span t-field="doc.partner_id.dui"/></div>
+                
+                
+                <div style="position:absolute; top:80px;left:5px;">
+                  <table class="table o_report_block_table small table-borderless" style="border-bottom:none;width:470px;margin-top:5px;">
+                      <thead class="small">
+                          <tr>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr t-foreach="doc.invoice_line_ids" t-as="table_line">
+                              <td style="width:9%;text-align:right">
+                                  <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px;"><t t-esc="'{0:,.0f}'.format(int(table_line.quantity))" /></span>
+                              </td>
+                              <td style="width:55%">
+                                  <span t-options-widget="&quot;&quot;" style="display:inline-block;font-size: 10px">
+                                       <span t-if="table_line.display_name!='Down Payment'" t-field="table_line.display_name" />
+                                       <span t-if="table_line.display_name=='Down Payment'" >Anticipo de compra</span>
+                                       <span t-if="table_line.discount > 0">DESCUENTO DEL </span>
+                                       <span t-field="table_line.discount" t-if="table_line.discount > 0"/>
+                                       <span t-if="table_line.discount > 0">% </span>
+                                  </span>    
+                              </td>
+                              <td style="width:9%">
+                                  <span t-field="table_line.price_unit" style="font-size: 10px"/>
+                              </td>
+                              <td style="width:9%">
+                              </td>
+                              <td style="width:9%">
+  
+                              </td>
+                               <td style="width:9%">
+                                  <span t-field="table_line.price_total" style="font-size: 10px"></span>
+                              </td>
+  
+                          </tr>
+                      </tbody>
+                  </table>
+                </div>
+                
+                
+                <span style="position:absolute;top:515px;left:10px;width:360px;color:black;font-size: 10px;">
+                  <span t-field="doc.amount_letras" />
+                </span>
+                <div  class="small" style="position:absolute;top:530px;left:310px;line-height:1.0;font-size: 10px;">
+                  <table style="width:140px;" cellspacing="0" cellpadding="0" >
+                    <tr><td style="padding-top:5px;"><span><b>SUMAS:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-esc="doc.gravado+doc.iva" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>(-)IVA RETENIDO:   </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>SUB TOTAL:  </b></span></td><td style="text-align:right;padding-top:0px;"><span t-esc="doc.gravado+doc.iva+doc.retenido" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA NO SUJETA:  </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.nosujeto" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA EXENTA:     </b></span></td><td style="text-align:right;padding-top:0px;">$<span t-field="doc.excento" /></td></tr>
+                    <tr><td style="padding-top:5px;"><span><b>VENTA TOTAL:      </b></span></td><td style="text-align:right;padding-top:0px;"><span t-field="doc.amount_total" /></td></tr>
+                  </table>
+                </div>
+                
+                
+              </div>
+              
+              
+              
+              
+              
+              
+            </div>
+            
+            
+            
+            
+            
+            
+            
+                
+                
+                
+ 
+                
+                
+                
+            
+            </div>
+            
+           
+           </div>
+                
+
+            
+        </t>
+    </t>
+</t>
+
+</template>
+
+
+		
+		
+		
+		
+		
+		
+		
+		</data>
+	</odoo>

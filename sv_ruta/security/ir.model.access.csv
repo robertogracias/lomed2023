@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sv_ruta,sv_ruta,model_odoosv_ruta,base.group_user,1,0,0,0
+sv_ruta_1,sv_ruta_1,model_odoosv_ruta,sales_team.group_sale_manager,1,1,1,1

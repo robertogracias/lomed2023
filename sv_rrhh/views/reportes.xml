@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- REPORTES RRHH CSV-->
+        <record id="report_afp_qweb-text" model="ir.actions.report">
+            <field name="name">Archivo de texto AFP</field>
+            <field name="model">odoosv.planilla_mensual</field>
+            <field name="report_type">qweb-text</field>
+            <field name="report_name">sv_rrhh.report_planilla_afp_id</field>
+            <field name="attachment">(object.name+'.csv')</field>
+            <field name="help">Generar archivo de texto para AFP</field>
+        </record>
+        <record id="report_isss_qweb-text" model="ir.actions.report">
+            <field name="name">Archivo de texto ISSS</field>
+            <field name="model">odoosv.planilla_mensual</field>
+            <field name="report_type">qweb-text</field>
+            <field name="report_name">sv_rrhh.report_planilla_isss_id</field>
+            <field name="attachment">(object.name+'.csv')</field>
+            <field name="help">Generar archivo de texto para ISSS</field>
+        </record>
+        <record id="report_banco_qweb-text" model="ir.actions.report">
+            <field name="name">report_banco_qweb-text</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="report_type">qweb-text</field>
+            <field name="report_name">sv_rrhh.report_banco_agricola_id</field>
+            <field name="attachment">(object.name+'.csv')</field>
+            <field name="help">Generar archivo de texto para Banco</field>
+        </record>
+        
+        <!-- -->
+        <template id="report_planilla_afp_id" name="sv_rrhh.report_planilla_afp">
+            <t t-name="sv_rrhh.report_planilla_afp"><t t-name="archivo afp"><t t-set="salto" t-value="'\r\n'"/><t t-esc="'Nup,InstitucionPrevisional,PrimerNombre,SegundoNombre,PrimerApellido,SegundoApellido,ApellidoCasada,ConocidoPor,TipoDocumento,NumeroDocumento,Nit,NumeroIsss,NumeroInpep,Genero,Nacionalidad,SalarioNominal,PuestoTrabajo,FechaNacimiento,EstadoCivil,Direccion,Departamento,Municipio,NumeroTelefonico,CorreoElectronico,TipoEmpleado,FechaIngreso,FechaRetiro,PlanillaCodigosObservacion,PlanillaIngresoBaseCotizacion,PlanillaHorasJornadaLaboral,PlanillaDiasCotizados,PlanillaCotizacionVoluntariaAfiliado,PlanillaCotizacionVoluntariaEmpleador'"/>
+                <t t-foreach="docs" t-as="o"><t t-foreach="o.empleado_ids" t-as="pr"><t t-if="pr.employee_id.pensionado==False"><t t-esc="pr.employee_id.nup"/>,<t t-if="pr.employee_id.afp.strip()=='CONFIA'" t-esc="'COF'"/><t t-if="pr.employee_id.afp.strip()=='CRECER'" t-esc="'MAX'"/>,<t t-esc="pr.employee_id.nombre.split(' ')[0].replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u')"/>,<t t-if="len(pr.employee_id.nombre.split(' '))>1" t-esc="pr.employee_id.nombre.split(' ')[1].replace('_',' ').replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u')"/>,<t t-esc="pr.employee_id.apellido.replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u')"/>,<t t-if="pr.employee_id.apellido2" t-esc="pr.employee_id.apellido2.replace('_',' ').replace('á','a').replace('é','e').replace('í','i').replace('ó','o').replace('ú','u')"/>,<t t-esc="pr.employee_id.apellido_casada"/>,,<t t-esc="'DUI'"/>,<t t-esc="pr.employee_id.dui.replace('-','')"/>,<t t-if="pr.employee_id.nit" t-esc="pr.employee_id.nit.replace('-','')"/>,<t t-esc="pr.employee_id.isss"/>,,<t t-if="pr.employee_id.gender=='male'" t-esc="'M'"/><t t-if="pr.employee_id.gender=='female'" t-esc="'F'"/>,<t t-esc="'222'"/>,<t t-esc="str('%.2f' % (pr.salario+pr.monto_vacacion+pr.pago_adicional))"/>,<t t-esc="pr.employee_id.job_title"/>,<t t-esc="pr.employee_id.birthday.strftime('%d/%m/%Y').replace(' ', '')"/>,<t t-if="pr.employee_id.marital=='single'" t-esc="'S'"/><t t-if="pr.employee_id.marital=='married'" t-esc="'C'"/><t t-if="pr.employee_id.marital=='cohabitant'" t-esc="'U'"/>,,<t t-esc="'05'"/>,,<t t-esc="pr.employee_id.mobile_phone"/>,<t t-esc="pr.employee_id.work_email"/>,<t t-esc="'P'"/>,<t t-esc="pr.employee_id.first_contract_date.strftime('%d/%m/%Y').replace(' ', '')"/>,, <t t-esc="pr.codigo_afp"/>,<t t-esc="str('%.2f' % (pr.salario+pr.monto_vacacion+pr.pago_adicional))"/>, <t t-esc="str('%.0f' % pr.horas)"/>,<t t-esc="str('%.0f' % (pr.dias_trabajados+pr.dias_vacacion))"/>,<t t-esc="'0'"/>,<t t-esc="'0'"/> <t t-raw="salto"/></t></t></t></t></t>
+        </template>
+
+        <template id="report_planilla_isss_id" name="sv_rrhh.report_planilla_isss">
+            <t t-name="sv_rrhh.report_planilla_isss">
+                <t t-name="archivo isss"><t t-set="salto" t-value="'\r\n'"/><t t-foreach="docs" t-as="o"><t t-foreach="o.empleado_ids" t-as="pr"><t t-esc="pr.employee_id.company_id.numeropatronal" /><t t-esc="o.fecha.strftime('%Y %m %d').replace(' ', '')[:-2]"/><t>001</t><t t-esc="pr.employee_id.isss"/><t t-esc="pr.employee_id.name.ljust(40,' ')"/><t t-esc="str('%.2f' % pr.salario).replace('.', '').zfill(9)"/><t t-esc="str('%.2f' % pr.pago_adicional).replace('.', '').zfill(9)"/><t t-esc="str('%.2f' % pr.monto_vacacion).replace('.', '').zfill(9)"/><t t-esc="pr.dias_trabajados"/><t t-esc="str(8).zfill(2)"/><t t-esc="str(pr.dias_vacacion).zfill(2)"/><t t-esc="str(pr.comentario).zfill(2)"/><t t-raw="salto"/><t t-raw="tabulador"/></t></t></t>
+                </t>
+        </template>
+
+        <template id="report_banco_agricola_id" name="sv_rrhh.pago_planilla_agricola">
+            <t t-name="sv_rrhh.pago_planilla_agricola"><t t-set="total" t-value="0"/><t t-set="inicio" t-value="4"/><t t-set="salto" t-value="'\r\n'"/><t t-set="tabulador" t-value="'\t'"/><t t-foreach="docs" t-as="o"><t t-foreach="o.slip_ids" t-as="p"><t t-if="total!=0" t-raw="salto"/><t t-set="total" t-value="total+1"/><t t-raw="inicio"/><t t-raw="tabulador"/><t t-if="p.employee_id.x_cuenta" t-esc="p.employee_id.x_cuenta.replace('-',' ')" /><t t-raw="tabulador"/><t t-foreach="p.line_ids" t-as="l"><t t-if="l.code=='neto'"><t t-esc="'%.2f'%l.amount"/></t></t><t t-raw="tabulador"/><t t-esc="o.x_archivo"/><t t-raw="tabulador"/><t t-esc="p.employee_id.name"/></t></t></t>
+        </template>
+
+        <!-- CAMPOS EXTRA-->
+
+        <record id="view_svrrh_res_company_form_inherited" model="ir.ui.view">
+            <field name="name">view.model.form inherited svrrh rescompany</field>
+            <field name="model">res.company</field>
+            <!-- Please veryfiy, that the following inherited view really sticks to the naming convention. -->
+            <field name="inherit_id" ref="base.view_company_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='company_registry']" position="after">
+                    <field name="numeropatronal"></field>
+                </xpath>
+                 
+            </field>
+        </record>
+        
+    </data>
+</odoo>

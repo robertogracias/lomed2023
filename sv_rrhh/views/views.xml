@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+       
+        <record id="empleado_form" model="ir.ui.view">
+            <field name="name">empleado_form</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='personal_information']" position="replace">
+                    <page name="personal_information" string="Private Information" groups="hr.group_hr_user">
+                        <group>
+                            <group string="Datos Personales">
+                                <field name="codigo"/>
+                                <field name="nombre"/>
+                                <field name="apellido"/>
+                                <field name="apellido2"/>
+                                <field name="apellido_casada"/>
+                                <field name="profesion"/>
+                                <field name="afp"/>
+                                <field name="cuenta"/>
+                                <field name="bank_account_id" context="{'default_partner_id': address_home_id}"/>
+                            </group>
+
+                            <group string="Datos de indentificaión">
+                                <field name="dui"/>
+                                <field name="dui_lugar"/>
+                                <field name="dui_fecha"/>
+                                <field name="nit"/>
+                                <field name="nup"/>
+                                <field name="isss"/>
+                            </group>
+
+                            <group string="Private Contact">
+                                <field name="address_home_id" />
+                                <field name="direccion"/>
+                                <field name="domicilio"/>
+                                <field name="private_email" string="Email"/>
+                                <field name="phone" class="o_force_ltr" groups="hr.group_hr_user" string="Phone" readonly="True"/>
+                                <label for="km_home_work"/>
+                                <div class="o_row" name="div_km_home_work">
+                                    <field name="km_home_work" groups="hr.group_hr_user"/>
+                                    <span>Km</span>
+                                </div>
+
+                            </group>
+                            <group string="Citizenship">
+                                <field name="country_id" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                <field name="identification_id" groups="hr.group_hr_user"/>
+                                <field name="passport_id" groups="hr.group_hr_user"/>
+                                <field name="gender"/>
+                                <field name="birthday"/>
+                                <field name="edad"/>
+                                <field name="place_of_birth" groups="hr.group_hr_user"/>
+                                <field name="country_of_birth" groups="hr.group_hr_user"/>
+                            </group>
+                            <group string="Marital Status">
+                                <field name="marital"/>
+                                <field name="spouse_complete_name" attrs="{'invisible': [('marital', 'not in', ['married', 'cohabitant'])]}" groups="hr.group_hr_user"/>
+                                <field name="spouse_birthdate" attrs="{'invisible': [('marital', 'not in', ['married', 'cohabitant'])]}" groups="hr.group_hr_user"/>
+                            </group>
+                            <group string="Dependant">
+                                <field name="children"/>
+                            </group>
+                            <group string="Emergency">
+                                <field name="emergency_contact"/>
+                                <field name="emergency_phone" class="o_force_ltr"/>
+                            </group>
+                        
+                            <group string="Education">
+                                <field name="certificate"/>
+                                <field name="study_field"/>
+                                <field name="study_school"/>
+                            </group>
+
+
+                        </group>
+                    </page>
+                     <page string="Beneficiarios">
+                              <field name="beneficiario_ids">
+                                <tree editable="botton">
+                                  <field name="name"/>
+                                  <field name="parentezco"/>
+                                  <field name="fecha_nacimiento"/>
+                                  <field name="porcentaje"/>
+                                </tree>
+                              </field>
+                              
+                            </page>
+                            <page string="Prestamos">
+                              <field name="prestamo_ids">
+                                <tree editable="botton">
+                                  <field name="financiera_id"/>
+                                  <field name="name"/>
+                                  <field name="monto"/>
+                                  <field name="fecha_inicio"/>
+                                  <field name="fecha_fin"/>
+                                  <field name="cuota_quincena1"/>
+                                  <field name="cuota_quincena2"/>
+                                </tree>
+                              </field>
+                            </page>
+                </xpath>
+                <xpath expr="//group[@name='active_group']" position="inside">
+                    <field name="fecha_inicio"/>
+                    <field name="fecha_retiro"/>
+                </xpath>
+            </field>
+        </record>
+        
+
+        <record id="contrato_form" model="ir.ui.view">
+            <field name="name">contrato_form</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='salary_info']" position="inside">
+                    <group name="rh_sv">
+                        <field name="aplica_horas_extra" />
+                        <field name="mapeo_id" /> 
+                    </group>     
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="planilla_form" model="ir.ui.view">
+            <field name="name">planilla_form</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='worked_days_input']" position="before">
+                    <page string="Horas Extras">
+                        <group>
+                            <field name="horas_extra" />
+                            <field name="horas_extra_nocturna" />
+                            <field name="dias_vacaciones" />
+                            <field name="horas_asueto" />
+                            <field name="dias_incapacidad" />
+                            <field name="otros_ingresos" />    
+                            <field name="otros_descuentos" />    
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        
+
+        <record id="planilla_run_form" model="ir.ui.view">
+            <field name="name">planilla_run_form</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//sheet" position="inside">
+                   <group>
+                        <field name="estructura_id" />
+                        <field name="fecha_calculo" />
+                        <field name="fecha_considerar" />
+                        <field name="quincena" />
+                        <field name="comentario" />
+                   </group>
+                    <!--div style="display:none" id="reportplanilla">
+                        <field name="reporte_planilla" invisible="0" />
+                    </div>
+                    <div style="display:none" id="reportplanillapatronal">
+                        <field name="reporte_planilla_patronal" invisible="0" />
+                    </div>
+                    <div style="display:none" id="reportplanillarecibos">
+                        <field name="reporte_recibos" invisible="0" />
+                    </div-->
+                </xpath>
+                 <xpath expr="//button[@name='action_draft']" position="after">
+                    <button name="calcular" type="object" string="Calcular" />
+                 </xpath>
+                 <xpath expr="//div[@name='button_box']" position="inside">
+                    <!--button name="imprimir" class="oe_stat_button" icon="fa-bars" type="object" 
+                    onclick="var url=document.getElementById('reportplanilla').children[0].innerHTML;
+                             url=url.split('amp;').join('');
+                             var windows=window.open(url);"                                      
+                    attrs="{'invisible': [('state', 'in', ('draft','cancel'))]}" string="Planilla">
+                    </button>
+                    <button name="imprimir" class="oe_stat_button" icon="fa-bars" type="object" 
+                    onclick="var url=document.getElementById('reportplanillapatronal').children[0].innerHTML;
+                             url=url.split('amp;').join('');
+                             var windows=window.open(url);"                                      
+                    attrs="{'invisible': [('state', 'in', ('draft','cancel'))]}" string="Planilla Patronal">
+                    </button>
+                    <button name="imprimir" class="oe_stat_button" icon="fa-bars" type="object" 
+                    onclick="var url=document.getElementById('reportplanillarecibos').children[0].innerHTML;
+                             url=url.split('amp;').join('');
+                             var windows=window.open(url);"                                      
+                    attrs="{'invisible': [('state', 'in', ('draft','cancel'))]}" string="Recibos">
+                    </button-->
+                </xpath>
+                
+            </field>
+        </record>
+       
+        <record id="svrrhh_work_entry_inherit_form" model="ir.ui.view">
+            <field name="name">svrrhh_work_entry_inherit_form</field>
+            <field name="model">hr.work.entry.type</field>
+            <field name="inherit_id" ref="hr_work_entry.hr_work_entry_type_view_form"/>
+            <field name="arch" type="xml">
+
+                 <xpath expr="//group[@name='other']" position="inside">
+                    <group name="sv_rrhh_incluir_salario">
+                        <field name="incluir_en_salario"></field>
+                    </group>
+                </xpath>
+                
+            </field>
+        </record>
+    </data>
+</odoo>

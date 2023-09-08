@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="partner_ruta_sv_form" model="ir.ui.view">
+            <field name="name">partner_ruta_sv_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//group[@name='sale']" position="inside">
+                    <field name="ruta_id"/>
+                    <field name="prioridad" widget="priority"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="saleorder_ruta_sv_form" model="ir.ui.view">
+            <field name="name">saleorder_ruta_sv_form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="ruta_id" />
+                </xpath>
+                
+                
+            </field>
+        </record>
+
+        <record id="partner_ruta_sv_search" model="ir.ui.view">
+            <field name="name">partner_ruta_sv_search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="ruta_id"/>
+                </xpath>
+                <xpath expr="//group[@name='group_by']" position="inside">
+                    <filter name="group_ruta" string="Ruta" context="{'group_by': 'ruta_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="accountmove_ruta_sv_search" model="ir.ui.view">
+            <field name="name">accountmove_ruta_sv_search</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="ruta_id"/>
+                </xpath>    
+                <xpath expr="//group" position="inside">
+                    <filter name="group_ruta" string="Ruta" context="{'group_by': 'ruta_id'}"/>
+                </xpath>            
+            </field>
+        </record>
+
+        <record id="saleorder_ruta_sv_search" model="ir.ui.view">
+            <field name="name">saleorder_ruta_sv_search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="ruta_id"/>
+                </xpath>    
+                <xpath expr="//group" position="inside">
+                    <filter name="group_ruta" string="Ruta" context="{'group_by': 'ruta_id'}"/>
+                </xpath>            
+            </field>
+        </record>
+        
+    </data>
+</odoo>

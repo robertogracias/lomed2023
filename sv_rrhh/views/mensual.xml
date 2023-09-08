@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <data noupdate="1">
+    
+  
+
+        <!--action del objetivo-->
+        <record model="ir.actions.act_window" id="odoosv_planilla_mensual_action">
+            <field name="name">Planilla Mensual</field>
+            <field name="res_model">odoosv.planilla_mensual</field>
+            <!--field name="view_type">form</field-->
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Planillas Mensuales</p>
+            </field>
+        </record>
+
+        <!--menu del objetivo-->
+        <menuitem id="odoosv_planilla_mensual_menu" parent="hr_work_entry_contract_enterprise.menu_hr_payroll_root" name="Planillas Mensuales" action="odoosv_planilla_mensual_action" sequence="9"/>
+        
+
+
+
+     <record model="ir.actions.server" id="calcular_planilla_mensual_action">
+        <field name="name">Calcular</field>
+        <field name="model_id"  ref="sv_rrhh.model_odoosv_planilla_mensual"></field>
+        <field name="binding_model_id"  ref="sv_rrhh.model_odoosv_planilla_mensual"></field>
+        <field name="binding_type">action</field>
+        <!--field name="view_type">form</field-->
+        <field name="state">code</field>
+        <field name="code">
+for r in records:
+    env['odoosv.planilla_mensual.empleado'].search([('planilla_mensual_id', '=', r.id)]).unlink()
+    for pr in r.planillas:
+        planillas = env['hr.payslip'].search([('payslip_run_id', '=',pr.id)])
+        for p in planillas:
+            empleado = p.employee_id
+            contrato = p.contract_id
+            planilla_empleado = env['odoosv.planilla_mensual.empleado'].search([('planilla_mensual_id','=', r.id), ('employee_id', '=', empleado.id)])
+            if not planilla_empleado:
+                planilla_empleado = env['odoosv.planilla_mensual.empleado'].create({
+                    'planilla_mensual_id': r.id,
+                    'employee_id': empleado.id,
+                    'codigo_afp': '00',
+                    })
+            if p.employee_id.pensionado == True:
+                planilla_empleado.write({'comentario': '03'})
+                for i in p.line_ids:
+                    if i.salary_rule_id.category_id.code == 'isr':
+                        renta = renta + i.amount
+                        planilla_empleado.write({'isr': planilla_empleado.isr + i.amount})
+                continue
+            sueldo = 0.0
+            ingresos = 0.0
+            h = 0.0
+            a = 0.0
+            v = 0.0
+            rv = 0.0
+            vacaciones = 0.0
+            numero = 0.0
+            vac = 0.0
+            hor = 0.0
+            isss = 0.0
+            isssp = 0.0
+            afp = 0.0
+            afpp = 0.0
+            renta = 0.0
+            planilla_empleado.write({'comentario': '00'})
+            for i in p.line_ids:
+                if i.salary_rule_id.category_id.code == 'sueldo':
+                    sueldo = sueldo + i.amount
+                    planilla_empleado.write({'salario': planilla_empleado.salario + i.amount})
+                if i.salary_rule_id.category_id.code == 'oi' \
+                    and i.salary_rule_id.code != 'VIA' \
+                    and i.salary_rule_id.code != 'AES' \
+                    and i.salary_rule_id.code != 'VAC' \
+                    and i.salary_rule_id.code != 'VAC3':
+                    ingresos = ingresos + i.amount
+                    planilla_empleado.write({'pago_adicional': planilla_empleado.pago_adicional + i.amount})
+                if i.salary_rule_id.category_id.code == 'viaticos' \
+                    or i.salary_rule_id.code == 'VIA':
+                    v = v + i.amount
+                    # planilla_empleado.write({'viaticos':planilla_empleado.viaticos+v})
+                if i.salary_rule_id.category_id.code == 'isssl':
+                    isss = isss + i.amount
+                    planilla_empleado.write({'isss_laboral': planilla_empleado.isss_laboral + i.amount})
+                if i.salary_rule_id.category_id.code == 'isssp':
+                    isssp = isssp + i.amount
+                    planilla_empleado.write({'isss_patronal': planilla_empleado.isss_patronal + i.amount})
+                if i.salary_rule_id.category_id.code == 'afpl':
+                    afp = afp + i.amount
+                    planilla_empleado.write({'afp_laboral': planilla_empleado.afp_laboral + i.amount})
+                if i.salary_rule_id.category_id.code == 'afpp':
+                    afpp = afpp + i.amount
+                    planilla_empleado.write({'afp_patronal': planilla_empleado.afp_patronal + i.amount})
+                if i.salary_rule_id.category_id.code == 'isr':
+                    renta = renta + i.amount
+                    planilla_empleado.write({'isr': planilla_empleado.isr + i.amount})
+                if i.salary_rule_id.code == 'VAC' \
+                    or i.salary_rule_id.code == 'VAC3':
+                    planilla_empleado.write({'monto_vacacion': planilla_empleado.monto_vacacion + i.amount})
+            for h in p.worked_days_line_ids:
+                if h.work_entry_type_id.incluir_en_salario:
+                    numero = numero + h.number_of_days
+            planilla_empleado.write({'dias_trabajados': planilla_empleado.dias_trabajados + numero})
+        
+                            # if p.vacacion != 0:
+                            #    vac=vac+p.vacacion
+                            #    planilla_empleado.write({'dias_vacacion':planilla_empleado.dias_vacacion+vac})
+                            # if r.horas != 0:
+                            #    hor=r.horas
+                            #    planilla_empleado.write({'horas':hor})
+        
+            if planilla_empleado.pago_adicional != 0.0:
+                planilla_empleado.write({'comentario': '01'})
+        </field>        
+    </record>
+
+  <record model="ir.ui.view" id="odoosv_planilla_mensuaal_form">
+            <field name="name">odoosv_planilla_mensuaal_form</field>
+            <field name="model">odoosv.planilla_mensual</field>
+            <field name="arch" type="xml">
+                <form string="Planilla Mensual">
+                    <header>
+                        <button name="%(calcular_planilla_mensual_action)d" class="oe_highlight" icon="fa-bars" type="action" string="Procesar Planilla"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                        
+                        </div>
+                        <group>
+                        <field name="name"/>
+                        <field name="fecha"/>
+                        <field name="horas"/>
+                        <field name="planillas"/>
+                        </group>
+                        <field name="empleado_ids" readonly="0">
+                        <tree>
+                            <field name="employee_id"/>
+                            <field name="salario"/>
+                            <!--field name="viaticos"/>
+                            <field name="renta_viatico"/-->
+                            <field name="pago_adicional"/>
+                            <field name="monto_vacacion"/>
+                            <field name="dias_trabajados"/>
+                            <!--field name="horas"/-->
+                            <field name="codigo_afp"/>
+                            <field name="dias_vacacion"/>
+                            <field name="comentario" readonly="0"/>
+                        </tree>
+                        </field>
+                    </sheet>
+                    
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+
+
+</data>
+
+
+   
+</odoo>

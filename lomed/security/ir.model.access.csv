@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+lomed_mrp_picking,lomed_mrp_picking,model_lomed_mrp_picking,base.group_user,1,1,1,1
+lomed_mrp_salida,lomed_mrp_salida,model_lomed_mrp_salida,base.group_user,1,1,1,1

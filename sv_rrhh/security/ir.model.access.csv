@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+odoosv_beneficiario,odoosv_beneficiario,model_odoosv_empleado_beneficiario,hr.group_hr_user,1,1,1,1
+odoosv_financiera,odoosv_financiera,model_odoosv_hr_financiera,hr.group_hr_user,1,1,1,1
+odoosv_prestamo,odoosv_prestamo,model_odoosv_empleado_prestamo,hr.group_hr_user,1,1,1,1
+odoosv_mapeo,odoosv_mapeo,model_odoosv_hr_mapeo,hr.group_hr_user,1,1,1,1
+odoosv_mape_line,odoosv_mapeo_line,model_odoosv_hr_mapeo_line,hr.group_hr_user,1,1,1,1
+odoosv_planilla_mensual,odoosv_planilla_mensual,model_odoosv_planilla_mensual,hr.group_hr_user,1,1,1,1
+odoosv_planilla_mensual_empleado,odoosv_planilla_mensual_empleado,model_odoosv_planilla_mensual_empleado,hr.group_hr_user,1,1,1,1

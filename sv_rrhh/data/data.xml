@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+    <!-- Grupos de Reglas -->
+    <record id="sv_panilla_group_sueldo" model="hr.salary.rule.category">
+        <field name="name">Sueldo</field>
+        <field name="code">sueldo</field>
+    </record>
+    <record id="sv_panilla_group_isssl" model="hr.salary.rule.category">
+        <field name="name">ISSS Laboral</field>
+        <field name="code">isssl</field>
+    </record>
+    <record id="sv_panilla_group_isssp" model="hr.salary.rule.category">
+        <field name="name">ISSS Patronal</field>
+        <field name="code">isssp</field>
+    </record>
+    <record id="sv_panilla_group_insaforp" model="hr.salary.rule.category">
+        <field name="name">INSAFORP</field>
+        <field name="code">insaforp</field>
+    </record>
+    <record id="sv_panilla_group_afpl" model="hr.salary.rule.category">
+        <field name="name">AFP Laboral</field>
+        <field name="code">afpl</field>
+    </record>
+    <record id="sv_panilla_group_afpp" model="hr.salary.rule.category">
+        <field name="name">AFP Patronal</field>
+        <field name="code">afpp</field>
+    </record>
+    <record id="sv_panilla_group_banco" model="hr.salary.rule.category">
+        <field name="name">Bancos</field>
+        <field name="code">bancos</field>
+    </record>
+    <record id="sv_panilla_group_entidad" model="hr.salary.rule.category">
+        <field name="name">Entidad Financiera</field>
+        <field name="code">entidad</field>
+    </record>
+    <record id="sv_panilla_group_isr" model="hr.salary.rule.category">
+        <field name="name">ISR</field>
+        <field name="code">isr</field>
+    </record>
+    <record id="sv_panilla_group_isrsujeto" model="hr.salary.rule.category">
+        <field name="name">ISR Sujeto</field>
+        <field name="code">isrsujeto</field>
+    </record>
+    <record id="sv_panilla_group_neto" model="hr.salary.rule.category">
+        <field name="name">Neto</field>
+        <field name="code">neto</field>
+        <field name="note">Calculo</field>
+    </record>
+    <record id="sv_panilla_group_oi" model="hr.salary.rule.category">
+        <field name="name">Otros ingresos</field>
+        <field name="code">oi</field>
+    </record>
+    <record id="sv_panilla_group_od" model="hr.salary.rule.category">
+        <field name="name">Otros descuentos</field>
+        <field name="code">od</field>
+    </record>
+    
+
+    <!-- Estructuras salariales -->
+    <record id="sv_panilla_quincenal" model="hr.payroll.structure">
+        <field name="name">Sueldo Quincenal</field>
+        <field name="type_id">1</field>
+    </record>
+
+    <!-- Reglas salariales-->
+    <record id="sv_panilla_rule_sueldoquincenal" model="hr.salary.rule">
+        <field name="name">Sueldo Quincenal</field>
+        <field name="code">r_sb</field>
+        <field name="active">True</field>
+        <field name="sequence">1</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_sueldo"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+result = contract.wage/2
+dias=0
+if payslip.worked_days_line_ids:
+    for d in payslip.worked_days_line_ids:
+        if d.work_entry_type_id.incluir_en_salario == True:
+            dias=dias+d.number_of_days
+if dias&gt;0:
+    if dias&lt;15:
+        result=round((contract.wage/2)*(dias/15),4)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_horasextra" model="hr.salary.rule">
+        <field name="name">Horas Extra</field>
+        <field name="code">r_he</field>
+        <field name="active">True</field>
+        <field name="sequence">101</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = (payslip.horas_extra)>0 and contract.aplica_horas_extra</field>
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_oi"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+costoHora=((contract.wage/2)/15)/8
+monto=costoHora*2
+result=round((monto)*(payslip.horas_extra),2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_horasextranocturna" model="hr.salary.rule">
+        <field name="name">Horas Extra Nocturna</field>
+        <field name="code">r_hen</field>
+        <field name="active">True</field>
+        <field name="sequence">102</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = (payslip.horas_extra_nocturna)>0 and contract.aplica_horas_extra</field>
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_oi"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+costo=((contract.wage/2)/15)/8
+result=round(((costo*0.25)*(payslip.horas_extra_nocturna)),2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_horasasueto" model="hr.salary.rule">
+        <field name="name">Horas Asueto</field>
+        <field name="code">r_hasueto</field>
+        <field name="active">True</field>
+        <field name="sequence">103</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_oi"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+dias=((contract.wage/2)/15)
+horas=(dias/8)
+result = round(((horas)*(payslip.horas_asueto)),2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_otrosingresos" model="hr.salary.rule">
+        <field name="name">Otros Ingresos</field>
+        <field name="code">r_otrosi</field>
+        <field name="active">True</field>
+        <field name="sequence">104</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_oi"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+total=0.0
+if payslip.input_line_ids:
+    for l in payslip.input_line_ids:
+        if l.amount&gt;0:
+            total=total+l.amount
+result=round(total,2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_isssl" model="hr.salary.rule">
+        <field name="name">ISSS Laboral</field>
+        <field name="code">r_isssl</field>
+        <field name="active">True</field>
+        <field name="sequence">200</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_isssl"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+SB1=categories.sueldo+categories.oi
+if SB1 &gt; 500:
+    result = round(500 * (-0.030),2)
+else:
+    result = round(SB1 * (-0.030),2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_isssp" model="hr.salary.rule">
+        <field name="name">ISSS Patronal</field>
+        <field name="code">r_isssp</field>
+        <field name="active">True</field>
+        <field name="sequence">201</field>
+        <field name="appears_on_payslip">False</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_isssp"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+SB1=categories.sueldo+categories.oi
+if SB1 &gt; 500:
+    result = round(500 * 0.075,2)
+else:
+    result = round(SB1 * 0.075,2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_insaforp" model="hr.salary.rule">
+        <field name="name">INSAFORP</field>
+        <field name="code">r_insaforp</field>
+        <field name="active">True</field>
+        <field name="sequence">202</field>
+        <field name="appears_on_payslip">False</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_insaforp"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+SB1=categories.sueldo+categories.oi
+if SB1 > 500:
+    result = 500 * 0.01
+else:
+    result = SB1 * 0.01
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_afpl" model="hr.salary.rule">
+        <field name="name">AFP Laboral</field>
+        <field name="code">r_afpl</field>
+        <field name="active">True</field>
+        <field name="sequence">203</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_afpl"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+SB1=categories.sueldo+categories.oi
+if (SB1&lt;=3250.00):
+    result = round(SB1*(-0.0725),2)
+else:
+    result= round(3250.00*(-0.0725),2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_afpp" model="hr.salary.rule">
+        <field name="name">AFP Patronal</field>
+        <field name="code">r_afpp</field>
+        <field name="active">True</field>
+        <field name="sequence">204</field>
+        <field name="appears_on_payslip">False</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_afpp"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+SB1=categories.sueldo+categories.oi
+tasa=0.0775
+anio=0
+if employee.birthday:
+    delta=payslip.date_from-employee.birthday
+    anio=delta.days/365
+    if ((anio&gt;55) and (employee.gender=='female')):
+        tasa=0.0735
+    if ((anio&gt;60) and (employee.gender=='male')):
+        tasa=0.0735
+if (SB1&lt;=3250.00):
+    result = round(SB1*tasa,2)
+else:
+    result = round(3250.00*tasa,2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_isr" model="hr.salary.rule">
+        <field name="name">ISR</field>
+        <field name="code">r_isr</field>
+        <field name="active">True</field>
+        <field name="sequence">205</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_isr"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+SB1=categories.sueldo+categories.oi+categories.isssl+categories.afpl
+if (SB1 &lt;= (236.00)):
+    result = 0
+if ((SB1 &gt;= 236.01) and (SB1&lt;=447.62)):
+    result = round(((SB1 - 236.00)*0.1)+8.83,2)
+if ((SB1 &gt;= 447.63) and (SB1&lt;=1019.05)):
+    result = round(((SB1 - 447.63)*0.2)+30.00,2)
+if ((SB1 &gt;= 1019.06)):
+    result = round(((SB1 - 1019.06)*0.3)+144.28,2)
+result = round(result*-1,2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_isrsujeto" model="hr.salary.rule">
+        <field name="name">ISR Sujeto</field>
+        <field name="code">r_isrsujeto</field>
+        <field name="active">True</field>
+        <field name="sequence">206</field>
+        <field name="appears_on_payslip">False</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_isrsujeto"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+SB1=categories.sueldo+categories.oi+categories.isssl+categories.afpl
+result = round(SB1,2)
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_otrosdescuentos" model="hr.salary.rule">
+        <field name="name">Otros Descuentos</field>
+        <field name="code">r_otrosd</field>
+        <field name="active">True</field>
+        <field name="sequence">300</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_od"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+total=0.0
+if payslip.input_line_ids:
+    for l in payslip.input_line_ids:
+        if l.amount&lt;0:
+            total=total+l.amount
+result=total
+        </field>
+    </record>
+
+    <record id="sv_panilla_rule_neto" model="hr.salary.rule">
+        <field name="name">Neto</field>
+        <field name="code">r_neto</field>
+        <field name="active">True</field>
+        <field name="sequence">400</field>
+        <field name="appears_on_payslip">True</field>
+        <field name="condition_select">none</field>
+        <!--
+        <field name="condition_python">result = (payslip.horas_asueto>0)</field>
+         -->
+        <field name="amount_select">code</field>
+        <field name="category_id" ref="sv_rrhh.sv_panilla_group_neto"/>
+        <field name="struct_id" ref="sv_rrhh.sv_panilla_quincenal"/>
+        <field name="amount_python_compute">
+result=categories.sueldo+categories.oi+categories.isssl+categories.afpl+categories.isr+categories.od+categories.bancos+categories.entidad
+        </field>
+    </record>
+
+    </data>
+
+   
+</odoo>

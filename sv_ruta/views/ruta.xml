@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="odoosv_ruta_form">
+            <field name="name">odoosv_ruta_form</field>
+            <field name="model">odoosv.ruta</field>
+            <field name="arch" type="xml">
+                <form string="Rutas">
+                    <sheet>
+                        <group>
+                            <field name="name" placeholder="Ruta"/>
+                        </group>
+                    </sheet>
+                    <!--div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div-->
+                </form>
+            </field>
+        </record>
+
+        <!--tree del objetivo-->
+        <record model="ir.ui.view" id="odoosv_ruta_tree">
+            <field name="name">odoosv_ruta_tree</field>
+            <field name="model">odoosv.ruta</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!--action del objetivo-->
+        <record model="ir.actions.act_window" id="odoosv_ruta_action">
+            <field name="name">Rutas</field>
+            <field name="res_model">odoosv.ruta</field>
+            <!--field name="view_type">form</field-->
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Rutas</p>
+            </field>
+        </record>
+
+        <!--menu del objetivo-->
+        <menuitem id="odoosv_ruta_menu" parent="sale.menu_sale_config" name="Rutas" action="odoosv_ruta_action" sequence="9"/>
+
+
+    </data>
+</odoo>

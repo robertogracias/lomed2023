@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="sv_caja_permisos">
+            <field name="name">Gestión de permisos módulo Caja</field>
+            <field name="description">Permisos</field>
+            <field name="sequence">99</field>
+        </record>
+        <record model="res.groups" id="odoosv_vendedor_caja">
+            <field name="category_id" ref="sv_caja_permisos"/>
+            <field name="name">Vendedor</field>
+        </record>
+        <record model="res.groups" id="odoosv_facturador_caja">
+            <field name="category_id" ref="sv_caja_permisos"/>
+            <field name="name">Facturador</field>
+        </record>
+        <record model="res.groups" id="odoosv_administrador_caja">
+            <field name="category_id" ref="sv_caja_permisos"/>
+            <field name="name">Administrador Cajas</field>
+        </record>
+        <record model="res.groups" id="odoosv_cambia_caja">
+            <field name="category_id" ref="sv_caja_permisos"/>
+            <field name="name">Puede Cambiar Caja</field>
+        </record>
+        <record model="res.groups" id="odoosv_permisos_nota_credito_ventas" >
+            <field name="category_id" ref="sv_caja_permisos"/>
+			<field name="name">Notas de crédito en Ventas</field>
+		</record>
+        <record model="res.groups" id="odoosv_permisos_nota_credito_compras" >
+            <field name="category_id" ref="sv_caja_permisos"/>
+			<field name="name">Notas de crédito en Compras</field>
+		</record>
+        
+        <record id="diarios_caja_rule" model="ir.rule">
+            <field name="name">Filtra diarios por sucursal</field>
+            <field name="model_id" ref="model_account_journal"></field>
+            <field name="domain_force">['|',('caja_id','=',user.caja_id.id),('caja_id','=',False)]</field>
+            <field name="groups" eval="[(4,ref('odoosv_facturador_caja'))]"></field>
+        </record>
+        
+    </data>
+</odoo>

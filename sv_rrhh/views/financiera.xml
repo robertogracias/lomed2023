@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+     <record model="ir.ui.view" id="odoosv_financiera_form">
+            <field name="name">odoosv_financiera_form</field>
+            <field name="model">odoosv.hr_financiera</field>
+            <field name="arch" type="xml">
+                <form string="Financiera">
+                    <sheet>
+                        <group>
+                            <field name="name" placeholder="Banco ...."/>
+                            <field name="codigo" />
+                            <field name="categoria_id" />
+                            <field name="estructura_id" />
+                            <button name="crear_regla" type="object" string="Crear Regla" />                            
+                        </group>
+                    </sheet>
+                    <!--div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div-->
+                </form>
+            </field>
+        </record>
+
+      
+
+        <!--action del objetivo-->
+        <record model="ir.actions.act_window" id="odoosv_financiera_action">
+            <field name="name">Instituciones financieras</field>
+            <field name="res_model">odoosv.hr_financiera</field>
+            <!--field name="view_type">form</field-->
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Instituciones financieras</p>
+            </field>
+        </record>
+
+        <!--menu del objetivo-->
+        <menuitem id="odoosv_financiera_menu" parent="hr.menu_hr_root" name="Instituciones financieras" action="odoosv_financiera_action" sequence="9"/>
+
+
+
+        
+
+    </data>
+</odoo>

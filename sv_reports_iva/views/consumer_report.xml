@@ -1,0 +1,304 @@
+<odoo>
+  <data>
+
+
+
+
+    <report
+    id="ivaconsumidor_report"
+    string="Libro de Ventas Consumidor"
+    model="sv_reports_iva.calculo_iva"
+    report_type="qweb-pdf"
+    file="sv_reports_iva.consumidor_report_pdf"
+    name="sv_reports_iva.consumidor_report_pdf"
+    menu="True"/>
+
+
+    <template id="consumidor_report_pdf">
+      <t t-call="web.html_container">
+          <t t-foreach="docs" t-as="doc">
+              <t t-call="sv_reports_iva.consumer_report_document" t-lang="doc.company_id.partner_id.lang"/>
+          </t>
+      </t>
+    </template>
+
+    <template id ='consumer_report_document'>
+       <t t-call="web.html_container">
+        <t t-call="web.basic_layout">
+          <div class="page">
+            <style type="text/css">
+              table, tbody {
+                border-color: black;
+                height: 100%;
+                width: 100%;
+                border-collapse: collapse;
+                text-align: center;
+                vertical-align: middle;
+                border-spacing: 0px;
+                padding: 0;
+                margin-top:70px;
+              }
+              th {
+                text-align: center;
+                vertical-align: middle;
+                border-collapse: collapse;
+                padding: 0px;
+                border-spacing: 0px;
+              }
+              td {
+                text-align: left;
+                vertical-align: middle;
+                border-collapse: collapse;
+                padding: 0px;
+                border-spacing: 0px;
+              }
+              .pagenumber:before {
+                content: counter(page);
+              }
+              .pagecount:before {
+                content: counter(pages);
+              }
+              @page {
+                size: A4;
+                margin: 10mm 10mm 10mm 10mm;
+                @bottom-left{
+                  content: "Pag. " counter(page) " de " counter(pages);
+                }
+              }
+              .spacing-line{
+                line-height: 10pt
+              }
+              .center-middle-title{
+                font-size: 15px;
+                text-transform: uppercase;
+                line-height: 10pt;
+              }
+              .center-middle{
+                text-align: center;
+                vertical-align: middle !important;
+                padding:0.5px !important;
+                width:100%;
+              }
+              .center-middle-o{
+                text-align: center;
+                vertical-align: middle !important;
+                white-space: nowrap !important;
+              }
+              .tr-color{
+                background-color:lightgray;
+                width:100%;
+              }
+              .table-content{
+                text-align: right;
+                vertical-align: middle;
+                height: auto;
+                width: 100%;
+                padding: 0px;
+                border-collapse: collapse;
+              }
+              table{
+                width:100%;
+              }
+              table td{
+                padding:0.5px;
+                white-space: nowrap;
+              }
+              table td:last-child{
+                padding: 0.5px;
+                width:100%;
+              }
+            </style>
+
+            <!--Declaracion de variables-->
+            <t t-set="month" t-value="int(0)"/>
+            <t t-set="year" t-value="int(0)"/>
+            <t t-set="company_id" t-value="int(0)"/>
+            <t t-set="contador" t-value="null"/>
+            <t t-set="company" t-value="doc.company_id"/>
+            <t t-set="stock_id" t-value="null"/>
+            <t t-set="importacion" t-value="False"/>
+
+            <t t-set="total" t-value="float(0.00)"/>
+            <t t-set="zero" t-value="float(0.00)"/>
+            <t t-set="totalExentas" t-value="float(0.00)"/>
+            <t t-set="totalGravadasLocal" t-value="float(0.00)"/>
+            <t t-set="totalGravadasExp" t-value="float(0.00)"/>
+            <t t-set="totalRetenido" t-value="float(0.00)"/>
+            <t t-set="ventaNeta" t-value="float(0.00)"/>
+            <t t-set="totalIvaLocal" t-value="float(0.00)"/>
+            <t t-set="totalIvaExp" t-value="float(0.00)"/>
+            <t t-set="ventas" t-value="float(0.00)"/>
+            <t t-set="total1" t-value="float(0.00)"/>
+            <t t-set="total2" t-value="float(0.00)"/>
+            <t t-set="total3" t-value="float(0.00)"/>
+            <t t-set="iva" t-value="int(0)"/>
+
+            <t t-set="debito" t-value="float(0.00)"/>
+            <t t-set="ventaNeta" t-value="float(0.00)"/>
+            <t t-set="totalDebito" t-value="float(0.00)"/>
+            <t t-set="totalNeto" t-value="float(0.00)"/>
+            <!--Fin de declaraciones-->
+
+            <!--Encabezado-->
+                <t t-set="month" t-value="int(doc.mes)"/>
+                <t t-set="year" t-value="int(doc.anio)"/>
+                <t t-set="company_id" t-value="int(doc.company_id.id)"/>
+                <!--t t-set="stock_id" t-value="int(data.form.stock_location_id[0])"/>
+                <t t-set="contador" t-value="o.sv_aprueba_partida"/> -->
+                <t t-set="company" t-value="doc.company_id"/>
+                <div style="text-align:center;">
+                  <h2 class="center-middle-title" style="font-size:20px;">NOMBRE DEL CONTRIBUYENTE: <span t-field="company.name"/></h2>
+                  <h2 class="center-middle-title">SUCURSAL: <span t-esc="company.get_stock_name(stock_id)"/></h2>
+                  <h2 class="center-middle-title">LIBRO DE VENTAS A CONSUMIDORES Y EXPORTACIONES</h2>
+                  <h2 class="center-middle-title">NIT: <span t-field="company.partner_id.nit"/> NRC: <span t-field="company.partner_id.nrc"/></h2>
+                  <h2 class="center-middle-title">MES: <span t-esc="company.get_month_str(month)"/> DE <span t-esc="year"/></h2>
+                  <h2 class="center-middle-title">VALORES EXPRESADOS EN DOLARES DE LOS ESTADOS UNIDOS</h2>
+                </div>
+              <div>
+                
+              </div>
+            <!--Fin encabezado-->
+            <!--Contenido de reporte-->
+            <!--t t-foreach="company.get_consumer_details(company_id, year, month, company.sv_invoice_serie_size)" t-as="c"-->
+              <table class="table table-bordered" style="border: 1px solid black;text-align: right;vertical-align: middle;height: auto;width: 100%;padding: 0px;border-collapse: collapse;">
+                  <tr class="tr-color">
+                    <th rowspan="3" class="center-middle" style="width:5% !important;">#</th>
+                    <th rowspan="3" class="center-middle" style="width:20% !important">Fecha</th>
+                    <th colspan="2" class="center-middle">Documentos Emitidos</th>
+                    <th colspan="4" class="center-middle">Ventas</th>
+                    <th rowspan="3" class="center-middle-o" style="width:90% !important">Ventas Totales</th>
+                  </tr>
+                  <tr class="tr-color">
+                    <th rowspan="2" class="center-middle-o" style="white-space: nowrap;">Del No.</th>
+                    <th rowspan="2" class="center-middle-o" style="white-space: nowrap;">Al No.</th>
+                    <th rowspan="2" class="center-middle-o">Exentas</th>
+                    <th colspan="2" class="center-middle">Gravadas</th>
+                    <th rowspan="2" class="center-middle-o">Retención</th>
+                  </tr>
+                  <tr class="tr-color">
+                    <th class="center-middle-o" style="border-spacing: 0.5px">Locales</th>
+                    <th class="center-middle-o" style="border-spacing: 0.5px">Exportación</th>
+                  </tr>
+                  <t t-set="i" t-value="1"/>
+                  <tr t-foreach="doc.consumidores" t-as="c" class="text-align:right;vertical-align:middle;height: auto;width: 70%;padding: 0px;border-collapse:collapse;">
+                    <td class="center-middle" style="width:5% !important;"><span t-esc="i"/></td>
+                    <td class="center-middle" style="width:25% !important"><span t-esc="c.fecha.strftime('%d-%m-%Y')"/></td>
+                    <td class="center-middle-o" style="white-space: nowrap;padding:0.5px !important; width:25% !important"><span t-esc="c.inicial"/></td>
+                    <td class="center-middle-o" style="white-space: nowrap;padding:0.5px !important; width:25% !important"><span t-esc="c.final"/></td>
+                    
+                    <td class="center-middle" style="text-align: right; width:25% !important"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(c.exento)"/></td>
+                    <td class="center-middle" style="text-align:right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(c.local+c.iva_local)"/></td>
+                    
+                    <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(c.exportacion+c.iva_exportacion)"/></td>
+                    <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(c.retencion)"/></td>
+                    <t t-set="total" t-value="total + c.total_venta"/>
+                    <td class="center-middle" style="text-align: right; width:90% !important"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(c.total_venta)"/></td>
+
+                  <!--Calculo de totales-->
+                  <t t-set="totalExentas" t-value="totalExentas + c.exento"/>
+                  <t t-set="totalGravadasLocal" t-value="totalGravadasLocal + c.local"/>
+                  <t t-set="totalGravadasExp" t-value="totalGravadasExp + c.exportacion"/>
+                  <t t-set="totalRetenido" t-value="totalRetenido + c.retencion"/>
+                  <t t-set="ventas" t-value="ventas + total"/>
+                  <t t-set="totalIvaLocal" t-value="totalIvaLocal + c.iva_local"/>
+                  <t t-set="totalIvaExp" t-value="totalIvaExp + c.iva_exportacion"/>
+                  <!--Calculo de totales adicionales-->
+
+                    <!-- En caso de cambio de iva cambiar los valores del siguiente bloque -->
+
+                  <t t-set="debito" t-value="float(0.13)"/>
+                  <t t-set="ventaNeta" t-value="float(1.13)"/>
+                  <t t-set="totalDebito" t-value="((totalExentas)*debito)/ventaNeta"/>
+                  <t t-set="totalNeto" t-value="(totalExentas)/1.13"/>
+
+
+
+
+                  <t t-set="total" t-value="float(0.00)"/>
+                  <!--Fin ce calculos-->
+                  <t t-set="i" t-value="i+1"/>
+                </tr>
+                <tr class="tr-color" style="text-aling:right;">
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalExentas)"/></td>
+                  <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalGravadasLocal+totalIvaLocal)"/></td>
+                  <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalGravadasExp+totalIvaExp)"/></td>
+                  <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalRetenido)"/></td>
+                  <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(ventas)"/></td>
+                </tr>
+              </table>
+            <!--/t-->
+              <table style="text-align: right">
+                <tr style="width: 100%;">
+                  <td style="text-align: right;">
+                    <table class="table table-bordered" style="border: 1.5px solid black;width:auto">
+                      <tr class="tr-color" style="width:80% !important;">
+                        <th class="center-middle" style="width:65% !important;">Resumen de Operaciones</th>
+                        <th class="center-middle-o" style="width:35% !important;border-spacing: 0.3px">Valor Total</th>
+                        <th class="center-middle-o" style="width:35% !important;border-spacing: 0.3px">Débito Fiscal</th>
+                        <th class="center-middle-o" style="width:35% !important;border-spacing: 0.3px">Venta Neta</th>
+                      </tr>
+                      <tr>
+                        <td class="center-middle" style="text-align:left">Ventas Internas Gravadas</td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalExentas)"/></td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalDebito)"/></td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalNeto)"/></td>
+                      </tr>
+                      <tr>
+                        <td class="center-middle" style="text-align:left">Ventas Internas Exentas</td>
+ 
+
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalGravadasLocal+ totalIvaLocal)"/></td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalIvaLocal)"/></td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalGravadasLocal )"/></td>
+                      </tr>
+                      <tr>
+                        <td class="center-middle" style="text-align:left;border-spacing: 0.3px">Ventas Gravada a Sujeto Tasa Cero (0%)</td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalGravadasExp+totalIvaExp)"/></td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalIvaExp)"/></td>
+                        <td class="center-middle" style="text-align:right"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(totalGravadasExp )"/></td>
+                      </tr>
+                      <tr>
+                        <!--Calculo de totales-->
+                        <t t-set="total1" t-value="total1 + totalGravadasLocal + totalExentas + totalGravadasExp +totalIvaLocal + totalIvaExp + totalDebito"/>
+                        <t t-set="total2" t-value="total2 + totalIvaLocal + totalIvaExp + totalDebito"/>
+                        <t t-set="total3" t-value="total3 + totalGravadasLocal + totalExentas + totalGravadasExp "/>
+                        <!---->
+                        <td class="center-middle" style="text-align: left;">Totales</td>
+                        <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(total1)"/></td>
+                        <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(total2)"/></td>
+                        <td class="center-middle" style="text-align: right;"><span t-esc="company.currency_id.symbol"/><span t-esc="'{0:.2f}'.format(total3)"/></td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td style="width: 15%"> </td>
+                  <td style="text-align: right; vertical-align: bottom">
+                    <div style="text-align: center;">
+                        <p style="text-align:center">_______________________</p>
+                        <p class="spacing-line" style="vertical-align: top;text-align:center"><span t-esc="contador"/></p>
+                        <p class="spacing-line" style="vertical-align: top;text-align:center">Contador</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+                <!--Fin contenido-->
+              <!--Pie de pagina-->
+              <div class="footer" style="background-color: lightgray; bottom: 0; position: fixed; width: 100%; border-width: 55%;">
+                <div class="row">
+
+                </div>
+              </div>
+              <!-- Fin Pie de pagina-->
+          </div>
+        </t>
+      </t>
+    </template>
+  </data>
+</odoo>

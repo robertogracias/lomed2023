@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="odoosv_canal_form">
+            <field name="name">odoosv_canal_form</field>
+            <field name="model">odoosv.canal</field>
+            <field name="arch" type="xml">
+                <form string="canals">
+                    <sheet>
+                        <group>
+                            <field name="name" placeholder="canal"/>
+                        </group>
+                    </sheet>
+                    <!--div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div-->
+                </form>
+            </field>
+        </record>
+
+        <!--tree del objetivo-->
+        <record model="ir.ui.view" id="odoosv_canal_tree">
+            <field name="name">odoosv_canal_tree</field>
+            <field name="model">odoosv.canal</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!--action del objetivo-->
+        <record model="ir.actions.act_window" id="odoosv_canal_action">
+            <field name="name">canals</field>
+            <field name="res_model">odoosv.canal</field>
+            <!--field name="view_type">form</field-->
+            <field name="view_mode">tree,form</field>
+            <field name="target">current</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">Canales</p>
+            </field>
+        </record>
+
+        <!--menu del objetivo-->
+        <menuitem id="odoosv_canal_menu" parent="sale.menu_sale_config" name="Canales" action="odoosv_canal_action" sequence="9"/>
+
+
+    </data>
+</odoo>

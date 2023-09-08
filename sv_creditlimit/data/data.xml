@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sv_creditlimit_approval" model="approval.category">
+        <field name="name">Aprobacion de Limite de Credito</field>
+        <field name="description">Solicitud de aprobacion de limte de credito de un cliente</field>
+        <field name="automated_sequence">True</field>
+        <field name="sequence_code">CRE</field>
+        <field name="has_partner">required</field>
+        <field name="has_amount">required</field>
+        <field name="code">credit_limit</field>
+    </record>
+
+   
+</odoo>

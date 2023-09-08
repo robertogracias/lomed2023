@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="lomed_mrp_picking_form">
+        <field name="name">lomed_mrp_picking_form</field>
+        <field name="model">lomed.mrp.picking</field>
+        <field name="arch" type="xml">
+            <form string="Picking">
+                <script type="text/javascript">
+                        function process_barcode(barcode){
+                            document.getElementById('btn_abrir').click();
+                        }
+                    </script>
+                <header>
+                </header>
+                <sheet>
+                    <group style="display:none;">
+                        <field name="_barcode_scanned" widget="lomed_barcode_handler" />
+                    </group>
+                    
+                    <group>
+                        <field name="name" />
+                        <field name="fecha" /> 
+                        <field name="last_orden_id" /> 
+                        <button name="abrir_orden" type="object" string="Abrir" id="btn_abrir"/>
+                    </group>
+                    <field name="ordenes" />
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!--tree del objetivo-->
+    <record model="ir.ui.view" id="lomed_mrp_picking_tree">
+        <field name="name">lomed_mrp_picking_tree</field>
+        <field name="model">lomed.mrp.picking</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="fecha" />
+            </tree>
+        </field>
+    </record>
+
+
+    <!--action del objetivo-->
+    <record model="ir.actions.act_window" id="lomed_picking_action">
+        <field name="name">1. Picking</field>
+        <field name="res_model">lomed.mrp.picking</field>
+        <!--field name="view_type">form</field-->
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Picking</p>
+        </field>
+        
+    </record>
+
+    <!--menu del objetivo-->
+    
+    <menuitem id="picking_menu" parent="mrp.menu_mrp_manufacturing" name="PICKING de MP" action="lomed_picking_action" sequence="40"/>
+
+  
+
+
+    <record id="lomed_mrp_production_form" model="ir.ui.view">
+        <field name="name">lomed_mrp_production_form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='reservation_state']" position="before">
+                <group style="display:none;">
+                    <field name="_barcode_scanned" widget="lomed_barcode_handler" />
+                </group>
+                <field name="picking_id"/>
+            </xpath>
+        </field>
+    </record>
+
+  
+
+
+
+
+    <record model="ir.ui.view" id="lomed_mrp_workcenter_form">
+        <field name="name">lomed_mrp_workcenter_form</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <form string="Workcenter">
+                <script type="text/javascript">
+                        function process_barcode(barcode){
+                            document.getElementById('btn_abrir').click();
+                        }
+                    </script>
+                <header>
+                </header>
+                <sheet>
+                    <group style="display:none;">
+                        <field name="_barcode_scanned" widget="lomed_barcode_handler" />
+                    </group>
+                    <h1 style="color:red;"><field name="message"></field></h1>
+                    <group>
+                        <field name="name" readonly="1"/>  
+                        <field name="id" readonly="1" invisible="1"/>                                
+                        <field name="last_work_id" invisible="1"/> 
+                        
+                        <field name="tipo_proceso" widget="radio"/>
+                        <button name="abrir_work" type="object" string="Abrir" id="btn_abrir" style="display:none"/>
+                    </group>
+                    <field name="orden_ids" />
+                </sheet>
+                
+            </form>
+        </field>
+    </record>
+
+    <!--tree del objetivo-->
+    <record model="ir.ui.view" id="lomed_mrp_workcenter_tree">
+        <field name="name">lomed_mrp_workcenter_tree</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+
+
+    <!--action del objetivo-->
+    <record model="ir.actions.act_window" id="lomed_workcenter_action">
+        <field name="name">2. Workcenter</field>
+        <field name="res_model">mrp.workcenter</field>
+        <!--field name="view_type">form</field-->
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('lomed_mrp_workcenter_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('lomed_mrp_workcenter_form')})]"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Workcenters</p>
+        </field>
+        
+    </record>
+
+    <!--menu del objetivo-->
+    
+    <menuitem id="workcenter_menu" parent="mrp.menu_mrp_manufacturing" name="Workcenters" action="lomed_workcenter_action" sequence="50"/>
+
+
+
+
+    <record model="ir.ui.view" id="lomed_sale_order_form">
+        <field name="name">lomed_sale_order_form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//form" position="inside">
+                <script type="text/javascript" src="/lomed/static/src/js/etiqueta.js"/>
+                
+            </xpath>
+
+             <xpath expr="//button[@name='action_confirm']" position="replace">
+                 <button name="action_confirm" data-hotkey="v" string="Confirm" type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}" onclick="var x=document.getElementById('etiqueta').children[0].innerHTML;writeToSelectedPrinter(x)"/>
+            </xpath>
+                
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="imprimir_label" type="object" class="oe_stat_button" icon="fa-pencil-square-o"  onclick="var x=document.getElementById('etiqueta').children[0].innerHTML;writeToSelectedPrinter(x)">
+                    <span>Etiqueta</span>
+                </button>
+            </xpath>
+
+            <xpath expr="//group[@name='partner_details']" position="inside">
+                <field name="paciente"/>
+                <div id="etiqueta" style="display:none">
+                    <field name="etiqueta_zpl" invisible="0"/>
+                </div>
+            </xpath>
+            <xpath expr="//group[@name='order_details']" position="inside">
+                <field name="tipo_proceso"/>
+            </xpath>
+            
+
+            
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="lomed_workorder_order_form">
+        <field name="name">lomed_workorder_order_form</field>
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='state']" position="before">
+                <button name="button_start" type="object" string="Start" class="btn-success" attrs="{'invisible': ['|', '|', '|', ('production_state','in', ('draft', 'done', 'cancel')), ('working_state', '=', 'blocked'), ('state', 'in', ('done', 'cancel')), ('is_user_working', '!=', False)]}"/>
+                <button name="button_pending" type="object" string="Pause" class="btn-warning" attrs="{'invisible': ['|', '|', ('production_state', 'in', ('draft', 'done', 'cancel')), ('working_state', '=', 'blocked'), ('is_user_working', '=', False)]}"/>
+                <button name="button_finish" type="object" string="Done" class="btn-success" attrs="{'invisible': ['|', '|', ('production_state', 'in', ('draft', 'done', 'cancel')), ('working_state', '=', 'blocked'), ('is_user_working', '=', False)]}"/>
+                
+            </xpath>
+
+            <xpath expr="//page[@name='components']" position="before">
+                <page string="Orden" name="orden">
+                    <group string="Cliente" name="info_cliente">
+                        <field name="partner_id"/>
+                        <field name="paciente"/>
+                        <field name="tipo_proceso"/>
+                    </group>
+                    <group string="Receta" name="info_receta">
+
+                    </group>
+                </page>
+               
+            </xpath>
+
+           
+
+            
+        </field>
+    </record>
+
+
+
+
+
+
+
+
+    <record model="ir.ui.view" id="lomed_mrp_salida_form">
+        <field name="name">lomed_mrp_salida_form</field>
+        <field name="model">lomed.mrp.salida</field>
+        <field name="arch" type="xml">
+            <form string="Salida">
+                <script type="text/javascript">
+                        function process_barcode(barcode){
+                            document.getElementById('btn_abrir').click();
+                        }
+                    </script>
+                <header>
+                </header>
+                <sheet>
+                    <group style="display:none;">
+                        <field name="_barcode_scanned" widget="lomed_barcode_handler" />
+                    </group>
+                    
+                    <group>
+                        <field name="name" />
+                        <field name="fecha" /> 
+                        <field name="last_orden_id" /> 
+                        <button name="cerrar_orden" type="object" string="Cerrar" id="btn_abrir"/>
+                    </group>
+                    <field name="ordenes" />
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!--tree del objetivo-->
+    <record model="ir.ui.view" id="lomed_mrp_salida_tree">
+        <field name="name">lomed_mrp_salida_tree</field>
+        <field name="model">lomed.mrp.salida</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="fecha" />
+            </tree>
+        </field>
+    </record>
+
+
+    <!--action del objetivo-->
+    <record model="ir.actions.act_window" id="lomed_salida_action">
+        <field name="name">3. Salida</field>
+        <field name="res_model">lomed.mrp.salida</field>
+        <!--field name="view_type">form</field-->
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Salida</p>
+        </field>
+        
+    </record>
+
+    <!--menu del objetivo-->
+    
+    <menuitem id="salida_menu" parent="mrp.menu_mrp_manufacturing" name="Salida Produccion" action="lomed_salida_action" sequence="60"/>
+
+  
+
+
+
+
+
+    
+</odoo>
