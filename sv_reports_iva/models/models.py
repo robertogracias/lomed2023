@@ -56,6 +56,7 @@ class calculo_iva(models.Model):
 					dic['gravado_importacion']=0.0
 				dic['credito_fiscal']=l.get('iva')
 				dic['retenido']=l.get('retenido')
+				dic['retenido']=l.get('retenido2')
 				dic['percibido']=l.get('percibido')
 				dic['excluido']=l.get('excluido')
 				dic['terceros']=l.get('retencion3')
@@ -152,7 +153,7 @@ class calculo_iva(models.Model):
 				dic['anio']=r.anio
 				dic['mes']=r.mes
 				dic['calculo_id']=r.id
-				dic['sucursal']=''
+				dic['sucursal']=l.get('sucursal')
 				dic['correlativo']=i
 				dic['fecha']=l.get('fecha')
 				dic['inicial']=l.get('delnum')

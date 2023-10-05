@@ -258,7 +258,7 @@ where ai.company_id= {0}
 	and date_part('month',COALESCE(ai.date,ai.invoice_date))=  {2}
 	and ai.move_type='in_invoice' 
 	and doc.contribuyente = true 
-	and doc.requiere_poliza = true
+	and doc.requiere_poliza = false
 	and doc.codigo='Liquidacion'
 	and ai.state in ('posted') 
 	and ((ai.nofiscal is not null and ai.nofiscal = False)or (ai.nofiscal is null))	
