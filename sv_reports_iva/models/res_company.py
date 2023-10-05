@@ -62,6 +62,7 @@ select ai.id as id,ai.invoice_date as fecha
        where ait.move_id=ai.id
 	       and lower(atg.code) = 'retencion'
        ) as Retenido
+	   ,0.0 as retenido2
 	    ,/*Calculando el percibido*/
       (Select coalesce(sum(ait.debit-ait.credit),0.00)
        from account_move_line ait 
@@ -103,6 +104,7 @@ where ai.company_id= {0}
 	and ai.move_type='in_invoice' 
 	and ai.state in ('posted')  
 	and doc.contribuyente = true
+	and doc.codigo='CCF'
 	and ((doc.requiere_poliza is null) or (doc.requiere_poliza = false))
 	and ((ai.nofiscal is not null and ai.nofiscal = False)or (ai.nofiscal is null))
 	
@@ -152,6 +154,7 @@ where ai.company_id= {0}
        where ait.move_id=ai.id
 	       and lower(atg.code) = 'retencion'
        ) as Retenido
+	   ,0.0 as retenido2
 	    ,/*Calculando el percibido*/
       (Select coalesce(sum(ait.debit-ait.credit),0.00)
        from account_move_line ait 
@@ -194,6 +197,7 @@ where ai.company_id= {0}
 	and doc.contribuyente = true 
 	and ((doc.requiere_poliza is null) or (doc.requiere_poliza = false))
 	and ai.state in ('posted') 
+	and doc.codigo='CCF'
 	and ((ai.nofiscal is not null and ai.nofiscal = False)or (ai.nofiscal is null))
 	
 
@@ -210,6 +214,7 @@ select  ai.id as id,ai.invoice_date as fecha
                ,0.0  Exento
                ,ai.amount_total as  Iva
                ,0.0 as  Retenido
+			   ,0.0 as retenido2
                ,0.0 as  Percibido
                ,0.0 as  nosujeto
                ,0.0 as  excluido
@@ -225,6 +230,37 @@ where ai.company_id= {0}
 	and doc.requiere_poliza = true
 	and ai.state in ('posted') 
 	and ((ai.nofiscal is not null and ai.nofiscal = False)or (ai.nofiscal is null))
+
+
+
+
+select  ai.id as id,ai.invoice_date as fecha
+	,ai.doc_numero as factura
+	,rp.name as proveedor
+	,rp.nrc as NRC
+	,rp.nit as NIT
+	,True as Importacion
+               ,0.0 as  Gravado
+               ,0.0  Exento
+               ,0.0 as  Iva
+               ,0.0 as  Retenido
+			   ,ai.amount_total as retenido2
+               ,0.0 as  Percibido
+               ,0.0 as  nosujeto
+               ,0.0 as  excluido
+                 ,0.0 as  otros
+from account_move ai
+	inner join res_partner rp on ai.partner_id=rp.id
+	inner join odoosv_fiscal_document doc on ai.tipo_documento_id =doc.id
+where ai.company_id= {0} 
+	and date_part('year',COALESCE(ai.date,ai.invoice_date))=  {1} 
+	and date_part('month',COALESCE(ai.date,ai.invoice_date))=  {2}
+	and ai.move_type='in_invoice' 
+	and doc.contribuyente = true 
+	and doc.requiere_poliza = true
+	and doc.codigo='Liquidacion'
+	and ai.state in ('posted') 
+	and ((ai.nofiscal is not null and ai.nofiscal = False)or (ai.nofiscal is null))	
 
 ) S
 order by s.Fecha, s.Factura,S.nrc,s.nit
@@ -477,7 +513,7 @@ order by s.fecha, s.factura
         sql = """CREATE OR REPLACE VIEW sv_reports_iva_consumer_report AS (
             Select
 	SS.Fecha
-    ,0 as sucursal
+    ,SS.Sucursal as sucursal
 	,SS.grupo
 	,min(SS.Factura) as DELNum
 	,max(SS.Factura) as ALNum
@@ -495,6 +531,7 @@ select S.fecha
 	,S.estado
 	,S.grupo
 	,S.exento
+	,S.Sucursal
 	,case 
 		when S.tipo_localidad='Local' then S.Gravado 
 		else 0.00 end as GravadoLocal
@@ -552,9 +589,11 @@ select ai.invoice_date as fecha
        where ait.move_id=ai.id
 	       and lower(atg.code)='retencion'
        ) as Retenido
+	   ,caja.name as sucursal
 from account_move ai
 	inner join res_partner rp on ai.partner_id=rp.id
 	inner join odoosv_fiscal_document doc on ai.tipo_documento_id =doc.id
+	inner join odoosv_caja caja on ai.caja_id=caja.id
 	inner join (select * from FacturasAgrupadas( {0}, {2} , {1} , 8 )) FG on ai.id=FG.invoice_id
 where ai.company_id=   {0} 
 	and date_part('year',COALESCE(ai.date,ai.invoice_date))=    {1}  
@@ -574,9 +613,11 @@ select COALESCE(ai.date,ai.invoice_date) as fecha
 	,0.0 as Exento
     ,0.0 as Iva
 	,0.0 as Retenido
+	,caja.name as sucursal
 from account_move ai
 	inner join res_partner rp on ai.partner_id=rp.id
 	inner join odoosv_fiscal_document doc on ai.tipo_documento_id =doc.id
+	inner join odoosv_caja caja on ai.caja_id=caja.id
 	inner join (select * from FacturasAgrupadas( {0} , {2}, {1} , 8)) FG on ai.id=FG.invoice_id
 where ai.company_id=   {0} 
 	and date_part('year',COALESCE(ai.date,ai.invoice_date))=    {1} 
@@ -587,7 +628,7 @@ where ai.company_id=   {0}
 	and (ai.nofiscal is null or ai.nofiscal = False)
 )S
 )SS
-group by SS.fecha, SS.Grupo,SS.estado
+group by SS.fecha, SS.Grupo,SS.estado,SS.sucursal
 order by SS.fecha, SS.Grupo
             )""".format(company_id,date_year,date_month,sv_invoice_serie_size)
         tools.drop_view_if_exists(self._cr, 'sv_reports_iva_consumer_report')

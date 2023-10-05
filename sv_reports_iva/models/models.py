@@ -202,6 +202,7 @@ class calculo_compras(models.Model):
 	percibido=fields.Float("Percibido")
 	proveedor=fields.Char("Porveedor")
 	retenido=fields.Float("Retenido")
+	retenido2=fields.Float("Retenido 2%")
 	terceros=fields.Float("Compras por terceros")
 	tipo_documento_emitido=fields.Char("Tipo documento emitido")
 	total_compra=fields.Float("Total compras")

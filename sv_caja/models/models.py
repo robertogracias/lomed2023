@@ -252,18 +252,18 @@ class sucursales_cierre(models.Model):
                 efectivo_inicial=apertura.total
 
             #facturas=env['account.move'].search([('invoice_date','>=',hoy_1),('invoice_date','<=',hoy_2),('type','=','out_invoice'),('state','!=','draft'),('state','!=','cancel')])
-            facturas=self.env['account.move'].search([('create_date','>=',hoy_1),('create_date','<=',hoy_2),('caja_id','=',record.caja_id.id),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel')])
+            facturas=self.env['account.move'].search([('invoice_date','>=',hoy_1),('invoice_date','<=',hoy_2),('caja_id','=',record.caja_id.id),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel')])
             for factura in facturas:
                 if not factura.cierre_id:
                     factura.write({'cierre_id':record.id})
                     total_facturado=total_facturado+factura.amount_total
             
-            facturas=self.env['account.move'].search([('create_date','>=',hoy_1),('create_date','<=',hoy_2),('caja_id','=',record.caja_id.id),('move_type','in',['out_invoice','out_refund']),('state','=','cancel')])
+            facturas=self.env['account.move'].search([('invoice_date','>=',hoy_1),('invoice_date','<=',hoy_2),('caja_id','=',record.caja_id.id),('move_type','in',['out_invoice','out_refund']),('state','=','cancel')])
             for factura in facturas:
                 if not factura.cierre_id:
                     factura.write({'cierrea_id':record.id})
             #pagos=env['account.payment'].search([('payment_date','>=',hoy_1),('payment_date','<=',hoy_2),('payment_type','=','inbound'),('state','!=','draft'),('state','!=','cancelled')])
-            pagos=self.env['account.payment'].search([('create_date','>=',hoy_1),('create_date','<=',hoy_2),('caja_id','=',record.caja_id.id),('payment_type','=','inbound'),('state','!=','draft'),('state','!=','cancel'),('is_internal_transfer','=',False)])
+            pagos=self.env['account.payment'].search([('date','>=',hoy_1),('date','<=',hoy_2),('caja_id','=',record.caja_id.id),('payment_type','=','inbound'),('state','!=','draft'),('state','!=','cancel'),('is_internal_transfer','=',False)])
             for pago in pagos:
                 if not pago.cierre_id:
                     pago.write({'cierre_id':record.id})
@@ -271,7 +271,7 @@ class sucursales_cierre(models.Model):
                     if pago.journal_id.type=='cash':
                         efectivo_ingresado+=pago.amount
             #pagos2=env['account.payment'].search(['&',('payment_date','>=',hoy_1),('payment_date','<=',hoy_2),('payment_type','=','outbound'),('state','!=','draft'),('state','!=','cancelled')])
-            pagos2=self.env['account.payment'].search([('create_date','>=',hoy_1),('create_date','<=',hoy_2),('caja_id','=',record.caja_id.id),('payment_type','=','outbound'),('state','!=','draft'),('state','!=','cancelled'),('is_internal_transfer','=',False)])
+            pagos2=self.env['account.payment'].search([('date','>=',hoy_1),('date','<=',hoy_2),('caja_id','=',record.caja_id.id),('payment_type','=','outbound'),('state','!=','draft'),('state','!=','cancelled'),('is_internal_transfer','=',False)])
             for pago in pagos2:
                 if not pago.cierre_id:
                     if pago.journal_id.type=='cash':
@@ -280,7 +280,7 @@ class sucursales_cierre(models.Model):
                         cash_sacado=cash_sacado+pago.amount
                         efectivo_egresado+=pago.amount
             #remesas=env['account.payment'].search(['&',('payment_date','>=',hoy_1),('payment_date','<=',hoy_2),('payment_type','=','transfer'),('state','!=','draft'),('state','!=','cancelled')])
-            remesas=self.env['account.payment'].search([('create_date','>=',hoy_1),('create_date','<=',hoy_2),('caja_id','=',record.caja_id.id),('payment_type','=','outbound'),('state','!=','draft'),('state','!=','cancelled'),('is_internal_transfer','=',True)])
+            remesas=self.env['account.payment'].search([('date','>=',hoy_1),('date','<=',hoy_2),('caja_id','=',record.caja_id.id),('payment_type','=','outbound'),('state','!=','draft'),('state','!=','cancelled'),('is_internal_transfer','=',True)])
             for remesa in remesas:
                 dic={}
                 dic['origen_id']=remesa.journal_id.id
@@ -321,7 +321,7 @@ class sucursales_cierre(models.Model):
                 tax=[]
                 for e in exentos:
                     tax.append(e.id)
-                group=self.env['account.move.line'].read_group([('move_id.create_date','>=',hoy_1),('move_id.create_date','<=',hoy_2),('move_id.caja_id','=',record.caja_id.id),('move_id.move_type','in',['out_invoice','out_refund']),('move_id.state','!=','draft'),('move_id.state','!=','cancel'),('move_id.tipo_documento_id','=',tipo.id),('display_type','not in',('product','line_section','line_note')),('tax_ids','in',tax)],['total:sum(price_total)'],[])
+                group=self.env['account.move.line'].read_group([('move_id.invoice_date','>=',hoy_1),('move_id.invoice_date','<=',hoy_2),('move_id.caja_id','=',record.caja_id.id),('move_id.move_type','in',['out_invoice','out_refund']),('move_id.state','!=','draft'),('move_id.state','!=','cancel'),('move_id.tipo_documento_id','=',tipo.id),('display_type','not in',('product','line_section','line_note')),('tax_ids','in',tax)],['total:sum(price_total)'],[])
                 exento=0
                 print(str(group))
                 if group:
@@ -335,7 +335,7 @@ class sucursales_cierre(models.Model):
                 tax=[]
                 for e in nosujeto:
                     tax.append(e.id)
-                group=self.env['account.move.line'].read_group([('move_id.create_date','>=',hoy_1),('move_id.create_date','<=',hoy_2),('move_id.caja_id','=',record.caja_id.id),('move_id.move_type','in',['out_invoice','out_refund']),('move_id.state','!=','draft'),('move_id.state','!=','cancel'),('move_id.tipo_documento_id','=',tipo.id),('display_type','not in',('product','line_section','line_note')),('tax_ids','in',tax)],['total:sum(price_total)'],[])
+                group=self.env['account.move.line'].read_group([('move_id.invoice_date','>=',hoy_1),('move_id.invoice_date','<=',hoy_2),('move_id.caja_id','=',record.caja_id.id),('move_id.move_type','in',['out_invoice','out_refund']),('move_id.state','!=','draft'),('move_id.state','!=','cancel'),('move_id.tipo_documento_id','=',tipo.id),('display_type','not in',('product','line_section','line_note')),('tax_ids','in',tax)],['total:sum(price_total)'],[])
                 nosujeto=0
                 print(str(group))
                 if group:
