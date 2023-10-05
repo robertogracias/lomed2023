@@ -232,6 +232,7 @@ where ai.company_id= {0}
 	and ((ai.nofiscal is not null and ai.nofiscal = False)or (ai.nofiscal is null))
 
 
+union all
 
 
 select  ai.id as id,ai.invoice_date as fecha
