@@ -43,7 +43,7 @@ class AccountInvoice(models.Model):
     def action_stock_picking(self):
         warehouse_obj = self.env['stock.warehouse']
         company_id = self.env.company
-        ware_ids = self.env.company.warehouse_id
+        ware_ids = self.env.user.caja_id.warehouse_id
         if not ware_ids:
             raise UserError('You cannot  create picking because you not have not slected a warehouse!')
 
@@ -119,7 +119,7 @@ class AccountInvoice(models.Model):
     def _create_stock_moves(self):
         moves = self.env['stock.move']
         done = []
-        ware_id = self.env.company.warehouse_id
+        ware_id = self.env.user.caja_id.warehouse_id
         for line in self.invoice_line_ids:
             if line.product_id.type in ['product','consu']:
                 price_unit = line.price_unit
