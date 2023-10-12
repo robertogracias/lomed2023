@@ -1,0 +1,192 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h3>Display echarts in Odoo's form view, support all chart types.</h3>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan" style="color:#875A7B;">Screenshots</h2>
+    </div>
+    <div class="oe_demo oe_picture oe_screenshot" style="max-height: none;">
+        <img src="images/screenshot.png">
+    </div>
+    <div class="oe_demo oe_picture oe_screenshot" style="max-height: none;">
+        <img src="images/screenshot1.png">
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row">
+        <h2 class="oe_slogan" style="color:#875A7B;">User Guide</h2>
+    </div>
+
+    <div class="oe_row">
+        <h3>Step 1: Add a calculated field to the model and return the JSON format</h3>
+    </div>
+    <div class="oe_row">
+        <pre style="background-color: #f8f9fa;">
+# model.py
+_inherit = 'modelName'
+
+chart = fields.Char(string='Exchange rate chart', compute='_compute_chart')
+
+def _compute_chart(self):
+# You can query internal and external data sources through Odoo's ORM methods, SQL statements, etc., and then return data in JSON format
+option = {
+    'xAxis': {
+        'type': 'category',
+        'data': [
+            '2010-01-01', '2023-03-25', '2023-03-26', '2023-03-27',
+            '2023-03-28', '2023-03-29', '2023-03-30', '2023-03-31',
+            '2023-04-01', '2023-04-02', '2023-04-03', '2023-04-04',
+            '2023-04-05', '2023-04-06', '2023-04-07', '2023-04-08',
+            '2023-04-09', '2023-04-10', '2023-04-11', '2023-04-12',
+            '2023-04-13', '2023-04-14', '2023-04-15', '2023-04-16',
+            '2023-04-17', '2023-04-18', '2023-04-19', '2023-04-20',
+            '2023-04-21', '2023-04-22', '2023-04-23', '2023-06-06'
+        ]
+    },
+    'yAxis': {'type': 'value'},
+    'series': [
+        {
+            'data': [
+                1.2834, 1.5289, 1.2834, 1.4365, 1.3256, 1.4526, 1.6523,
+                1.5234, 1.2548, 1.5434, 1.3154, 1.4253, 1.3521, 1.5234,
+                1.5321, 1.1235, 1.3215, 1.3543, 1.5214, 1.4531, 1.3245,
+                1.4531, 1.3245, 1.1532, 1.5563, 1.3541, 1.5213, 1.3515,
+                1.5312, 1.5313, 1.2145, 1.5289
+            ],
+            'type': 'line',
+            'smooth': True
+        }
+    ]
+}
+options = json.dumps(option).replace('True', 'true').replace('False', 'false')
+self.chart = options
+        </pre>
+    </div>
+
+    <div class="oe_row">
+        <h3>Step 2: Add calculated fields to the Form view, using the echarts widget</h3>
+    </div>
+    <div class="oe_row">
+        <pre style="background-color: #f8f9fa;">
+&lt;script type="text/javascript" src="/module_name/static/src/js/chart.js"/&gt;
+&lt;field name="chart" widget="echarts" style="height:300px;"/&gt;
+        </pre>
+        <div>
+            Notes: You can set the height of the echarts chart via the style property.
+        </div>
+    </div>
+
+    <div class="oe_row">
+        <h3>eCharts chart function & callback</h3>
+    </div>
+    <div class="oe_row">
+        <div>
+            The echarts setOption attribute can be supplemented /module_name/static/src/js/chart.js
+        </div>
+        <pre style="background-color: #f8f9fa;">
+if ($('div[name="chart"]>div').length > 0) {
+    let chart = echarts.getInstanceByDom($('div[name="chart"]>div')[0])
+    chart.setOption(
+        {
+            title: {
+                text: 'Displays a floating line chart of all exchange rates for the current currency'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+        }
+    )
+}
+        </pre>
+    </div>
+
+    <div class="oe_row">
+        <h3>All options of the chart after combining calculated fields with JavaScript are set as follows</h3>
+    </div>
+    <div class="oe_row">
+        <pre style="background-color: #f8f9fa;">
+{
+    title: {
+        text: 'Displays a floating line chart of all exchange rates for the current currency'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    xAxis: {
+        type: 'category',
+        data: [
+            '2010-01-01', '2023-03-25', '2023-03-26', '2023-03-27',
+            '2023-03-28', '2023-03-29', '2023-03-30', '2023-03-31',
+            '2023-04-01', '2023-04-02', '2023-04-03', '2023-04-04',
+            '2023-04-05', '2023-04-06', '2023-04-07', '2023-04-08',
+            '2023-04-09', '2023-04-10', '2023-04-11', '2023-04-12',
+            '2023-04-13', '2023-04-14', '2023-04-15', '2023-04-16',
+            '2023-04-17', '2023-04-18', '2023-04-19', '2023-04-20',
+            '2023-04-21', '2023-04-22', '2023-04-23', '2023-06-06'
+        ]
+    },
+    yAxis: {type: 'value'},
+    series: [
+        {
+            data: [
+                1.2834, 1.5289, 1.2834, 1.4365, 1.3256, 1.4526, 1.6523,
+                1.5234,1.2548, 1.5434, 1.3154, 1.4253, 1.3521, 1.5234,
+                1.5321, 1.1235, 1.3215, 1.3543, 1.5214, 1.4531,
+                1.3245, 1.4531, 1.3245, 1.1532, 1.5563, 1.3541,
+                1.5213, 1.3515, 1.5312, 1.5313, 1.2145, 1.5289],
+            type: 'line',
+            smooth: true
+        }
+    ]
+}
+        </pre>
+    </div>
+
+    <div class="oe_row">
+        <h3>Reference content</h3>
+    </div>
+    <div class="oe_row">
+        <ul>
+            <li>
+                Odoo demo module:&nbsp;
+                <a target="_blank" href="https://apps.odoo.com/apps/modules/16.0/echarts_widget_demo/">echarts_widget_demo</a>
+            </li>
+            <li>
+                eCharts
+                <ul>
+                    <li>
+                        Website:&nbsp;
+                        <a target="_blank" href="https://echarts.apache.org/en/index.html">https://echarts.apache.org/en/index.html</a>
+                    </li>
+                    <li>
+                        Examples:&nbsp;
+                        <a target="_blank" href="https://echarts.apache.org/examples/en/index.html">https://echarts.apache.org/examples/en/index.html</a>
+                    </li>
+                    <li>
+                        Options reference:&nbsp;
+                        <a target="_blank" href="https://echarts.apache.org/en/option.html">https://echarts.apache.org/en/option.html</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</section>
+
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan" style="color:#875A7B;">Support</h2>
+        <div>
+            <ul>
+                <li>
+                    email: <a href="mailto:it@yumtown.com.cn">it@yumtown.com.cn</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
