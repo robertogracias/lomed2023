@@ -15,13 +15,15 @@ export class FieldChart extends Component {
 
     _renderChart() {
         let self = this;
-        const el = $('.echarts_container')[0];
+        //alert(str(this));
+        let expresion="[name='"+self.props.name+"']";
+        const el = $(expresion)[0]; // $('.echarts_container')[0];
         if (el) {
             // 实例化图表
             try {
                 let options = JSON.parse(self.props.value)
                 if (options) {
-                    let chart = echarts.init(el);
+                    let chart = echarts.init(el.children[0]);
                     chart.setOption(options)
                     // 宽度撑满容器
                     setTimeout(() => {
