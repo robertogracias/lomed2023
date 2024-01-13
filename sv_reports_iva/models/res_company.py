@@ -18,7 +18,7 @@ class res_company(models.Model):
 
         sql = """CREATE OR REPLACE VIEW sv_reports_iva_purchase_report AS (
             select * from (
-select ai.id as id,ai.invoice_date as fecha
+select ai.id as id,ai.id as factura_id,ai.invoice_date as fecha
 	,ai.doc_numero as factura
 	,rp.name as proveedor
 	,rp.nrc as NRC
@@ -80,13 +80,16 @@ select ai.id as id,ai.invoice_date as fecha
 	       and lower(atg.code) = 'nosujeto'
        ) as nosujeto
 	   ,/*Calculando el retencion a terceros*/
-      (Select coalesce(sum(ait.credit-ait.debit),0.00)
-       from account_move_line ait 
- 	       inner join account_tax atx on ait.tax_line_id=atx.id
-	       inner join account_tax_group atg on atx.tax_group_id=atg.id
-       where ait.move_id=ai.id
-	       and lower(atg.code) = 'excluido'
-       ) as excluido
+      (select coalesce(sum(ail.price_subtotal),0.00) 
+      from account_move_line ail
+      where ail.move_id=ai.id
+      	  and ail.display_type in ('product') 
+	      and exists(select ailt.account_tax_id 
+					from account_move_line_account_tax_rel ailt
+				        inner join account_tax atx on ailt.account_tax_id=atx.id
+				        inner join account_tax_group atg on atx.tax_group_id=atg.id
+			         where ailt.account_move_line_id=ail.id and lower(atg.code) = 'excluido')
+      ) as excluido
         ,/*Calculando el retencion a terceros*/
       (Select coalesce(sum(ait.debit-ait.credit),0.00)
        from account_move_line ait 
@@ -110,7 +113,7 @@ where ai.company_id= {0}
 	
 	union all
 	
-	select ai.id as id,ai.invoice_date as fecha
+	select ai.id as id,ai.id as factura_id,ai.invoice_date as fecha
 	,ai.doc_numero as factura
 	,rp.name as proveedor
 	,rp.nrc as NRC
@@ -172,13 +175,16 @@ where ai.company_id= {0}
 	       and lower(atg.code) = 'nosujeto'
        ) as nosujeto
 	   ,/*Calculando el retencion a terceros*/
-      (Select coalesce(sum(ait.credit-ait.debit),0.00)
-       from account_move_line ait 
- 	       inner join account_tax atx on ait.tax_line_id=atx.id
-	       inner join account_tax_group atg on atx.tax_group_id=atg.id
-       where ait.move_id=ai.id
-	       and lower(atg.code) = 'excluido'
-       ) as excluido
+      (select coalesce(sum(ail.price_subtotal),0.00) 
+      from account_move_line ail
+      where ail.move_id=ai.id
+      	  and ail.display_type in ('product') 
+	      and exists(select ailt.account_tax_id 
+					from account_move_line_account_tax_rel ailt
+				        inner join account_tax atx on ailt.account_tax_id=atx.id
+				        inner join account_tax_group atg on atx.tax_group_id=atg.id
+			         where ailt.account_move_line_id=ail.id and lower(atg.code) = 'excluido')
+      ) as excluido
          ,/*Calculando el retencion a terceros*/
       (Select coalesce(sum(ait.debit-ait.credit),0.00)
        from account_move_line ait 
@@ -204,15 +210,15 @@ where ai.company_id= {0}
 
 union all
 
-select  ai.id as id,ai.invoice_date as fecha
+select  ai.id as id,ai.id as factura_id,ai.invoice_date as fecha
 	,ai.doc_numero as factura
 	,rp.name as proveedor
 	,rp.nrc as NRC
 	,rp.nit as NIT
 	,True as Importacion
-               ,(ai.amount_total*100/13) as  Gravado
+               ,(sum(ail.price_unit)*100/13) as  Gravado
                ,0.0  Exento
-               ,ai.amount_total as  Iva
+               ,sum(ail.price_unit) as  Iva
                ,0.0 as  Retenido
 			   ,0.0 as retenido2
                ,0.0 as  Percibido
@@ -220,9 +226,11 @@ select  ai.id as id,ai.invoice_date as fecha
                ,0.0 as  excluido
                  ,0.0 as  otros
 from account_move ai
+    inner join account_move_line ail on ail.move_id=ai.id
 	inner join res_partner rp on ai.partner_id=rp.id
 	inner join odoosv_fiscal_document doc on ai.tipo_documento_id =doc.id
 where ai.company_id= {0} 
+    and (ail.is_landed_costs_line=false or ail.is_landed_costs_line is null) 
 	and date_part('year',COALESCE(ai.date,ai.invoice_date))=  {1} 
 	and date_part('month',COALESCE(ai.date,ai.invoice_date))=  {2}
 	and ai.move_type='in_invoice' 
@@ -230,12 +238,13 @@ where ai.company_id= {0}
 	and doc.requiere_poliza = true
 	and ai.state in ('posted') 
 	and ((ai.nofiscal is not null and ai.nofiscal = False)or (ai.nofiscal is null))
+group by ai.id,ai.invoice_date,ai.doc_numero,rp.name,rp.nrc	,rp.nit
 
 
 union all
 
 
-select  ai.id as id,ai.invoice_date as fecha
+select  ai.id as id,ai.id as factura_id,ai.invoice_date as fecha
 	,ai.doc_numero as factura
 	,rp.name as proveedor
 	,rp.nrc as NRC

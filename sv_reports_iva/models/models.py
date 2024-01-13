@@ -60,7 +60,7 @@ class calculo_iva(models.Model):
 				dic['percibido']=l.get('percibido')
 				dic['excluido']=l.get('excluido')
 				dic['terceros']=l.get('retencion3')
-				dic['total_compra']=l.get('exento')+l.get('gravado')+l.get('iva')+l.get('retenido')+l.get('percibido')
+				dic['total_compra']=l.get('exento')+l.get('gravado')+l.get('iva')-l.get('retenido')+l.get('percibido')+l.get('excluido')
 
 
 				dic['anexo']='3'
@@ -101,7 +101,7 @@ class calculo_iva(models.Model):
 				dic['total_venta']=l.get('gravado')+l.get('exento')+l.get('iva')
 				dic['retenido']=l.get('retenido')
 				dic['percibido']=l.get('percibido')
-				dic['total']=l.get('exento')+l.get('gravado')+l.get('iva')+l.get('retenido')+l.get('percibido')
+				dic['total']=l.get('exento')+l.get('gravado')+l.get('iva')-l.get('retenido')+l.get('percibido')
 
 
 
@@ -142,7 +142,7 @@ class calculo_iva(models.Model):
 				dic['total_venta']=l.get('gravado')+l.get('exento')+l.get('iva')
 				dic['retenido']=l.get('retenido')
 				dic['percibido']=l.get('percibido')
-				dic['total']=l.get('exento')+l.get('gravado')+l.get('iva')+l.get('retenido')+l.get('percibido')
+				dic['total']=l.get('exento')+l.get('gravado')+l.get('iva')-l.get('retenido')+l.get('percibido')
 				self.env['sv_reports_iva.iva_consumidor_full'].create(dic)
 				i=i+1
 			
@@ -162,7 +162,7 @@ class calculo_iva(models.Model):
 				dic['local']=l.get('gravadolocal')
 				dic['exportacion']=l.get('gravadoexportacion')
 				dic['retencion']=l.get('retenido')
-				dic['total_venta']=l.get('gravadolocal')+l.get('gravadoexportacion')+l.get('exento')+l.get('retenido')
+				dic['total_venta']=l.get('gravadolocal')+l.get('gravadoexportacion')+l.get('exento')-l.get('retenido')
 
 				dic['anexo']='2'
 				dic['clase_doc']='1'
