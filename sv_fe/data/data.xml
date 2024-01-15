@@ -28,11 +28,11 @@
 
 
         <record id="svfe_modelo_1" model="sv_fe.modelo"><field name="name">Modelo Facturación previo</field><field name="codigo">1</field></record>
-        <record id="svfe_modelo_1" model="sv_fe.modelo"><field name="name">Modelo Facturación diferido</field><field name="codigo">2</field></record>
+        <record id="svfe_modelo_2" model="sv_fe.modelo"><field name="name">Modelo Facturación diferido</field><field name="codigo">2</field></record>
 
 
         <record id="svfe_transmision_1" model="sv_fe.transmision"><field name="name">Transmisión normal</field><field name="codigo">1</field></record>
-        <record id="svfe_transmision_1" model="sv_fe.transmision"><field name="name">Transmisión por contingencia</field><field name="codigo">2</field></record>
+        <record id="svfe_transmision_2" model="sv_fe.transmision"><field name="name">Transmisión por contingencia</field><field name="codigo">2</field></record>
 
 
         <record id="svfe_contingencia_1" model="sv_fe.contingencia"><field name="name">No disponibilidad de sistema del MH</field><field name="codigo">1</field></record>
@@ -69,6 +69,209 @@
         <record id="svfe_tipo_item_3" model="sv_fe.tipo_item"><field name="name">Ambos (Bienes y Servicios, incluye los dos inherente a los Productos o servicios)</field><field name="codigo">3</field></record>
         <record id="svfe_tipo_item_4" model="sv_fe.tipo_item"><field name="name">Otros tributos por ítem</field><field name="codigo">4</field></record>
     
+        <record id="base.af" model="res.country"><field name="fe_codigo">9303</field></record>
+        <record id="base.al" model="res.country"><field name="fe_codigo">9306</field></record>
+        <record id="base.de" model="res.country"><field name="fe_codigo">9311</field></record>
+        <record id="base.ad" model="res.country"><field name="fe_codigo">9317</field></record>
+        <record id="base.ao" model="res.country"><field name="fe_codigo">9318</field></record>
+        <record id="base.ai" model="res.country"><field name="fe_codigo">9320</field></record>
+        <record id="base.ag" model="res.country"><field name="fe_codigo">9319</field></record>
+        <record id="base.sa" model="res.country"><field name="fe_codigo">9324</field></record>
+        <record id="base.dz" model="res.country"><field name="fe_codigo">9327</field></record>
+        <record id="base.ar" model="res.country"><field name="fe_codigo">9330</field></record>
+        <record id="base.aw" model="res.country"><field name="fe_codigo">9332</field></record>
+        <record id="base.au" model="res.country"><field name="fe_codigo">9333</field></record>
+        <record id="base.at" model="res.country"><field name="fe_codigo">9336</field></record>
+        <record id="base.az" model="res.country"><field name="fe_codigo">9338</field></record>
+        <record id="base.bs" model="res.country"><field name="fe_codigo">9862</field></record>
+        <record id="base.bh" model="res.country"><field name="fe_codigo">9342</field></record>
+        <record id="base.bd" model="res.country"><field name="fe_codigo">9339</field></record>
+        <record id="base.bb" model="res.country"><field name="fe_codigo">9345</field></record>
+        <record id="base.bz" model="res.country"><field name="fe_codigo">9349</field></record>
+        <record id="base.bj" model="res.country"><field name="fe_codigo">9350</field></record>
+        <record id="base.bm" model="res.country"><field name="fe_codigo">9863</field></record>
+        <record id="base.bt" model="res.country"><field name="fe_codigo">9375</field></record>
+        <record id="base.by" model="res.country"><field name="fe_codigo">9353</field></record>
+        <record id="base.mm" model="res.country"><field name="fe_codigo">9354</field></record>
+        <record id="base.bo" model="res.country"><field name="fe_codigo">9357</field></record>
+        <record id="base.bw" model="res.country"><field name="fe_codigo">9360</field></record>
+        <record id="base.br" model="res.country"><field name="fe_codigo">9363</field></record>
+        <record id="base.bg" model="res.country"><field name="fe_codigo">9369</field></record>
+        <record id="base.bf" model="res.country"><field name="fe_codigo">9371</field></record>
+        <record id="base.bi" model="res.country"><field name="fe_codigo">9372</field></record>
+        <record id="base.be" model="res.country"><field name="fe_codigo">9348</field></record>
+        <record id="base.cv" model="res.country"><field name="fe_codigo">9377</field></record>
+        <record id="base.kh" model="res.country"><field name="fe_codigo">9378</field></record>
+        <record id="base.cm" model="res.country"><field name="fe_codigo">9381</field></record>
+        <record id="base.ca" model="res.country"><field name="fe_codigo">9384</field></record>
+        <record id="base.td" model="res.country"><field name="fe_codigo">9417</field></record>
+        <record id="base.cl" model="res.country"><field name="fe_codigo">9423</field></record>
+        <record id="base.cn" model="res.country"><field name="fe_codigo">9426</field></record>
+        <record id="base.cy" model="res.country"><field name="fe_codigo">9432</field></record>
+        <record id="base.co" model="res.country"><field name="fe_codigo">9393</field></record>
+        <record id="base.cg" model="res.country"><field name="fe_codigo">9399</field></record>
+        <record id="base.kp" model="res.country"><field name="fe_codigo">9402</field></record>
+        <record id="base.kr" model="res.country"><field name="fe_codigo">9405</field></record>
+        <record id="base.cr" model="res.country"><field name="fe_codigo">9411</field></record>
+        <record id="base.ci" model="res.country"><field name="fe_codigo">9408</field></record>
+        <record id="base.hr" model="res.country"><field name="fe_codigo">9641</field></record>
+        <record id="base.cu" model="res.country"><field name="fe_codigo">9414</field></record>
+        <record id="base.cw" model="res.country"><field name="fe_codigo">9415</field></record>
+        <record id="base.dk" model="res.country"><field name="fe_codigo">9438</field></record>
+        <record id="base.dm" model="res.country"><field name="fe_codigo">9440</field></record>
+        <record id="base.ec" model="res.country"><field name="fe_codigo">9444</field></record>
+        <record id="base.eg" model="res.country"><field name="fe_codigo">9666</field></record>
+        <record id="base.sv" model="res.country"><field name="fe_codigo">9300</field></record>
+        <record id="base.ae" model="res.country"><field name="fe_codigo">9446</field></record>
+        <record id="base.er" model="res.country"><field name="fe_codigo">9454</field></record>
+        <record id="base.sk" model="res.country"><field name="fe_codigo">9449</field></record>
+        <record id="base.si" model="res.country"><field name="fe_codigo">9451</field></record>
+        <record id="base.es" model="res.country"><field name="fe_codigo">9447</field></record>
+        <record id="base.us" model="res.country"><field name="fe_codigo">9450</field></record>
+        <record id="base.ee" model="res.country"><field name="fe_codigo">9457</field></record>
+        <record id="base.et" model="res.country"><field name="fe_codigo">9453</field></record>
+        <record id="base.ru" model="res.country"><field name="fe_codigo">9733</field></record>
+        <record id="base.fj" model="res.country"><field name="fe_codigo">9456</field></record>
+        <record id="base.ph" model="res.country"><field name="fe_codigo">9459</field></record>
+        <record id="base.fi" model="res.country"><field name="fe_codigo">9462</field></record>
+        <record id="base.fr" model="res.country"><field name="fe_codigo">9465</field></record>
+        <record id="base.ga" model="res.country"><field name="fe_codigo">9468</field></record>
+        <record id="base.gm" model="res.country"><field name="fe_codigo">9471</field></record>
+        <record id="base.ge" model="res.country"><field name="fe_codigo">9472</field></record>
+        <record id="base.gh" model="res.country"><field name="fe_codigo">9474</field></record>
+        <record id="base.gi" model="res.country"><field name="fe_codigo">9477</field></record>
+        <record id="base.gd" model="res.country"><field name="fe_codigo">9481</field></record>
+        <record id="base.gr" model="res.country"><field name="fe_codigo">9480</field></record>
+        <record id="base.gl" model="res.country"><field name="fe_codigo">9482</field></record>
+        <record id="base.gp" model="res.country"><field name="fe_codigo">9489</field></record>
+        <record id="base.gu" model="res.country"><field name="fe_codigo">9490</field></record>
+        <record id="base.gt" model="res.country"><field name="fe_codigo">9483</field></record>
+        <record id="base.gy" model="res.country"><field name="fe_codigo">9487</field></record>
+        <record id="base.gf" model="res.country"><field name="fe_codigo">9491</field></record>
+        <record id="base.gg" model="res.country"><field name="fe_codigo">9492</field></record>
+        <record id="base.gn" model="res.country"><field name="fe_codigo">9486</field></record>
+        <record id="base.gq" model="res.country"><field name="fe_codigo">9493</field></record>
+        <record id="base.ht" model="res.country"><field name="fe_codigo">9495</field></record>
+        <record id="base.nl" model="res.country"><field name="fe_codigo">9498</field></record>
+        <record id="base.hn" model="res.country"><field name="fe_codigo">9501</field></record>
+        <record id="base.hk" model="res.country"><field name="fe_codigo">9504</field></record>
+        <record id="base.hu" model="res.country"><field name="fe_codigo">9507</field></record>
+        <record id="base.in" model="res.country"><field name="fe_codigo">9510</field></record>
+        <record id="base.id" model="res.country"><field name="fe_codigo">9513</field></record>
+        <record id="base.iq" model="res.country"><field name="fe_codigo">9516</field></record>
+        <record id="base.ie" model="res.country"><field name="fe_codigo">9522</field></record>
+        <record id="base.ir" model="res.country"><field name="fe_codigo">9519</field></record>
+        <record id="base.im" model="res.country"><field name="fe_codigo">9521</field></record>
+        <record id="base.cx" model="res.country"><field name="fe_codigo">9523</field></record>
+        <record id="base.is" model="res.country"><field name="fe_codigo">9525</field></record>
+        <record id="base.ky" model="res.country"><field name="fe_codigo">9887</field></record>
+        <record id="base.ck" model="res.country"><field name="fe_codigo">9527</field></record>
+        <record id="base.fo" model="res.country"><field name="fe_codigo">9529</field></record>
+        <record id="base.fk" model="res.country"><field name="fe_codigo">9533</field></record>
+        <record id="base.mp" model="res.country"><field name="fe_codigo">9535</field></record>
+        <record id="base.mh" model="res.country"><field name="fe_codigo">9536</field></record>
+        <record id="base.sb" model="res.country"><field name="fe_codigo">9526</field></record>
+        <record id="base.tc" model="res.country"><field name="fe_codigo">9539</field></record>
+        <record id="base.vg" model="res.country"><field name="fe_codigo">9897</field></record>
+        <record id="base.il" model="res.country"><field name="fe_codigo">9528</field></record>
+        <record id="base.it" model="res.country"><field name="fe_codigo">9531</field></record>
+        <record id="base.jm" model="res.country"><field name="fe_codigo">9534</field></record>
+        <record id="base.jp" model="res.country"><field name="fe_codigo">9537</field></record>
+        <record id="base.je" model="res.country"><field name="fe_codigo">9547</field></record>
+        <record id="base.jo" model="res.country"><field name="fe_codigo">9540</field></record>
+        <record id="base.ke" model="res.country"><field name="fe_codigo">9543</field></record>
+        <record id="base.kg" model="res.country"><field name="fe_codigo">9548</field></record>
+        <record id="base.ki" model="res.country"><field name="fe_codigo">9544</field></record>
+        <record id="base.kw" model="res.country"><field name="fe_codigo">9546</field></record>
+        <record id="base.la" model="res.country"><field name="fe_codigo">9549</field></record>
+        <record id="base.ls" model="res.country"><field name="fe_codigo">9552</field></record>
+        <record id="base.lv" model="res.country"><field name="fe_codigo">9551</field></record>
+        <record id="base.lr" model="res.country"><field name="fe_codigo">9558</field></record>
+        <record id="base.ly" model="res.country"><field name="fe_codigo">9561</field></record>
+        <record id="base.li" model="res.country"><field name="fe_codigo">9564</field></record>
+        <record id="base.lt" model="res.country"><field name="fe_codigo">9565</field></record>
+        <record id="base.lu" model="res.country"><field name="fe_codigo">9567</field></record>
+        <record id="base.lb" model="res.country"><field name="fe_codigo">9555</field></record>
+        <record id="base.mo" model="res.country"><field name="fe_codigo">9568</field></record>
+        <record id="base.mg" model="res.country"><field name="fe_codigo">9570</field></record>
+        <record id="base.my" model="res.country"><field name="fe_codigo">9573</field></record>
+        <record id="base.mw" model="res.country"><field name="fe_codigo">9576</field></record>
+        <record id="base.mv" model="res.country"><field name="fe_codigo">9577</field></record>
+        <record id="base.ml" model="res.country"><field name="fe_codigo">9579</field></record>
+        <record id="base.mt" model="res.country"><field name="fe_codigo">9582</field></record>
+        <record id="base.ma" model="res.country"><field name="fe_codigo">9585</field></record>
+        <record id="base.mq" model="res.country"><field name="fe_codigo">9865</field></record>
+        <record id="base.mu" model="res.country"><field name="fe_codigo">9594</field></record>
+        <record id="base.mr" model="res.country"><field name="fe_codigo">9597</field></record>
+        <record id="base.yt" model="res.country"><field name="fe_codigo">9598</field></record>
+        <record id="base.fm" model="res.country"><field name="fe_codigo">9601</field></record>
+        <record id="base.md" model="res.country"><field name="fe_codigo">9602</field></record>
+        <record id="base.mn" model="res.country"><field name="fe_codigo">9606</field></record>
+        <record id="base.me" model="res.country"><field name="fe_codigo">9607</field></record>
+        <record id="base.mz" model="res.country"><field name="fe_codigo">9609</field></record>
+        <record id="base.mx" model="res.country"><field name="fe_codigo">9600</field></record>
+        <record id="base.mc" model="res.country"><field name="fe_codigo">9603</field></record>
+        <record id="base.na" model="res.country"><field name="fe_codigo">9610</field></record>
+        <record id="base.nr" model="res.country"><field name="fe_codigo">9611</field></record>
+        <record id="base.np" model="res.country"><field name="fe_codigo">9612</field></record>
+        <record id="base.ni" model="res.country"><field name="fe_codigo">9615</field></record>
+        <record id="base.ng" model="res.country"><field name="fe_codigo">9621</field></record>
+        <record id="base.nu" model="res.country"><field name="fe_codigo">9622</field></record>
+        <record id="base.no" model="res.country"><field name="fe_codigo">9624</field></record>
+        <record id="base.ne" model="res.country"><field name="fe_codigo">9618</field></record>
+        <record id="base.pk" model="res.country"><field name="fe_codigo">9639</field></record>
+        <record id="base.pa" model="res.country"><field name="fe_codigo">9642</field></record>
+        <record id="base.py" model="res.country"><field name="fe_codigo">9645</field></record>
+        <record id="base.pe" model="res.country"><field name="fe_codigo">9648</field></record>
+        <record id="base.pf" model="res.country"><field name="fe_codigo">9652</field></record>
+        <record id="base.pl" model="res.country"><field name="fe_codigo">9651</field></record>
+        <record id="base.pt" model="res.country"><field name="fe_codigo">9654</field></record>
+        <record id="base.pr" model="res.country"><field name="fe_codigo">9850</field></record>
+        <record id="base.uk" model="res.country"><field name="fe_codigo">9663</field></record>
+        <record id="base.re" model="res.country"><field name="fe_codigo">9667</field></record>
+        <record id="base.rw" model="res.country"><field name="fe_codigo">9672</field></record>
+        <record id="base.ro" model="res.country"><field name="fe_codigo">9675</field></record>
+        <record id="base.as" model="res.country"><field name="fe_codigo">9685</field></record>
+        <record id="base.sm" model="res.country"><field name="fe_codigo">9677</field></record>
+        <record id="base.sn" model="res.country"><field name="fe_codigo">9681</field></record>
+        <record id="base.rs" model="res.country"><field name="fe_codigo">9689</field></record>
+        <record id="base.sc" model="res.country"><field name="fe_codigo">9691</field></record>
+        <record id="base.sl" model="res.country"><field name="fe_codigo">9684</field></record>
+        <record id="base.sg" model="res.country"><field name="fe_codigo">9687</field></record>
+        <record id="base.sy" model="res.country"><field name="fe_codigo">9690</field></record>
+        <record id="base.so" model="res.country"><field name="fe_codigo">9693</field></record>
+        <record id="base.lk" model="res.country"><field name="fe_codigo">9707</field></record>
+        <record id="base.za" model="res.country"><field name="fe_codigo">9696</field></record>
+        <record id="base.se" model="res.country"><field name="fe_codigo">9702</field></record>
+        <record id="base.ch" model="res.country"><field name="fe_codigo">9705</field></record>
+        <record id="base.sr" model="res.country"><field name="fe_codigo">9706</field></record>
+        <record id="base.sj" model="res.country"><field name="fe_codigo">9692</field></record>
+        <record id="base.th" model="res.country"><field name="fe_codigo">9711</field></record>
+        <record id="base.tw" model="res.country"><field name="fe_codigo">9899</field></record>
+        <record id="base.tz" model="res.country"><field name="fe_codigo">9714</field></record>
+        <record id="base.tl" model="res.country"><field name="fe_codigo">9716</field></record>
+        <record id="base.tg" model="res.country"><field name="fe_codigo">9717</field></record>
+        <record id="base.tk" model="res.country"><field name="fe_codigo">9718</field></record>
+        <record id="base.to" model="res.country"><field name="fe_codigo">9722</field></record>
+        <record id="base.tr" model="res.country"><field name="fe_codigo">9726</field></record>
+        <record id="base.tv" model="res.country"><field name="fe_codigo">9727</field></record>
+        <record id="base.tn" model="res.country"><field name="fe_codigo">9723</field></record>
+        <record id="base.ua" model="res.country"><field name="fe_codigo">9736</field></record>
+        <record id="base.ug" model="res.country"><field name="fe_codigo">9729</field></record>
+        <record id="base.uy" model="res.country"><field name="fe_codigo">9735</field></record>
+        <record id="base.uz" model="res.country"><field name="fe_codigo">9737</field></record>
+        <record id="base.vu" model="res.country"><field name="fe_codigo">9739</field></record>
+        <record id="base.ve" model="res.country"><field name="fe_codigo">9741</field></record>
+        <record id="base.vn" model="res.country"><field name="fe_codigo">9746</field></record>
+        <record id="base.wf" model="res.country"><field name="fe_codigo">9452</field></record>
+        <record id="base.ye" model="res.country"><field name="fe_codigo">9750</field></record>
+        <record id="base.dj" model="res.country"><field name="fe_codigo">9751</field></record>
+        <record id="base.zm" model="res.country"><field name="fe_codigo">9759</field></record>
+        <record id="base.zw" model="res.country"><field name="fe_codigo">9760</field></record>
+
+
+
+
         <record id="svfe_departamento_1" model="res.country.state"><field name="name">Ahuachapán</field><field name="code">01</field><field name="country_id" ref="base.sv"/></record>
         <record id="svfe_departamento_2" model="res.country.state"><field name="name">Santa Ana</field><field name="code">02</field><field name="country_id" ref="base.sv"/></record>
         <record id="svfe_departamento_3" model="res.country.state"><field name="name">Sonsonate</field><field name="code">03</field><field name="country_id" ref="base.sv"/></record>
@@ -85,40 +288,40 @@
         <record id="svfe_departamento_14" model="res.country.state"><field name="name">La Unión</field><field name="code">14</field><field name="country_id" ref="base.sv"/></record>
 
         <record id="svfe_municipio_0" model="sv_fe.municipio"><field name="name">Otro País</field><field name="codigo">0</field></record>
-<record id="svfe_municipio_1" model="sv_fe.municipio"><field name="name">AHUACHAPÁN</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_2" model="sv_fe.municipio"><field name="name">APANECA</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_3" model="sv_fe.municipio"><field name="name">ATIQUIZAYA</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_4" model="sv_fe.municipio"><field name="name">CONCEPCIÓN DE ATACO</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_5" model="sv_fe.municipio"><field name="name">EL REFUGIO</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_6" model="sv_fe.municipio"><field name="name">GUAYMANGO</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_7" model="sv_fe.municipio"><field name="name">JUJUTLA</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_8" model="sv_fe.municipio"><field name="name">SAN FRANCISCO MENÉNDEZ</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_9" model="sv_fe.municipio"><field name="name">SAN LORENZO</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_1" model="sv_fe.municipio"><field name="name">AHUACHAPÁN</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_2" model="sv_fe.municipio"><field name="name">APANECA</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_3" model="sv_fe.municipio"><field name="name">ATIQUIZAYA</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_4" model="sv_fe.municipio"><field name="name">CONCEPCIÓN DE ATACO</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_5" model="sv_fe.municipio"><field name="name">EL REFUGIO</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_6" model="sv_fe.municipio"><field name="name">GUAYMANGO</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_7" model="sv_fe.municipio"><field name="name">JUJUTLA</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_8" model="sv_fe.municipio"><field name="name">SAN FRANCISCO MENÉNDEZ</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
+<record id="svfe_municipio_9" model="sv_fe.municipio"><field name="name">SAN LORENZO</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
 <record id="svfe_municipio_10" model="sv_fe.municipio"><field name="name">SAN PEDRO PUXTLA</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
 <record id="svfe_municipio_11" model="sv_fe.municipio"><field name="name">TACUBA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
 <record id="svfe_municipio_12" model="sv_fe.municipio"><field name="name">TURÍN</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_1"></field></record>
-<record id="svfe_municipio_13" model="sv_fe.municipio"><field name="name">CANDELARIA DE LA FRONTERA</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_14" model="sv_fe.municipio"><field name="name">COATEPEQUE</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_15" model="sv_fe.municipio"><field name="name">CHALCHUAPA</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_16" model="sv_fe.municipio"><field name="name">EL CONGO</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_17" model="sv_fe.municipio"><field name="name">EL PORVENIR</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_18" model="sv_fe.municipio"><field name="name">MASAHUAT</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_19" model="sv_fe.municipio"><field name="name">METAPÁN</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_20" model="sv_fe.municipio"><field name="name">SAN ANTONIO PAJONAL</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_21" model="sv_fe.municipio"><field name="name">SAN SEBASTIÁN SALITRILLO</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_13" model="sv_fe.municipio"><field name="name">CANDELARIA DE LA FRONTERA</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_14" model="sv_fe.municipio"><field name="name">COATEPEQUE</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_15" model="sv_fe.municipio"><field name="name">CHALCHUAPA</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_16" model="sv_fe.municipio"><field name="name">EL CONGO</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_17" model="sv_fe.municipio"><field name="name">EL PORVENIR</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_18" model="sv_fe.municipio"><field name="name">MASAHUAT</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_19" model="sv_fe.municipio"><field name="name">METAPÁN</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_20" model="sv_fe.municipio"><field name="name">SAN ANTONIO PAJONAL</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
+<record id="svfe_municipio_21" model="sv_fe.municipio"><field name="name">SAN SEBASTIÁN SALITRILLO</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
 <record id="svfe_municipio_22" model="sv_fe.municipio"><field name="name">SANTA ANA</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
 <record id="svfe_municipio_23" model="sv_fe.municipio"><field name="name">STA ROSA GUACHI</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
 <record id="svfe_municipio_24" model="sv_fe.municipio"><field name="name">STGO D LA FRONT</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
 <record id="svfe_municipio_25" model="sv_fe.municipio"><field name="name">TEXISTEPEQUE</field><field name="codigo">13</field><field name="departamento_id" ref="svfe_departamento_2"></field></record>
-<record id="svfe_municipio_26" model="sv_fe.municipio"><field name="name">ACAJUTLA</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_27" model="sv_fe.municipio"><field name="name">ARMENIA</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_28" model="sv_fe.municipio"><field name="name">CALUCO</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_29" model="sv_fe.municipio"><field name="name">CUISNAHUAT</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_30" model="sv_fe.municipio"><field name="name">STA I ISHUATAN</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_31" model="sv_fe.municipio"><field name="name">IZALCO</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_32" model="sv_fe.municipio"><field name="name">JUAYÚA</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_33" model="sv_fe.municipio"><field name="name">NAHUIZALCO</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_34" model="sv_fe.municipio"><field name="name">NAHULINGO</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_26" model="sv_fe.municipio"><field name="name">ACAJUTLA</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_27" model="sv_fe.municipio"><field name="name">ARMENIA</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_28" model="sv_fe.municipio"><field name="name">CALUCO</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_29" model="sv_fe.municipio"><field name="name">CUISNAHUAT</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_30" model="sv_fe.municipio"><field name="name">STA I ISHUATAN</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_31" model="sv_fe.municipio"><field name="name">IZALCO</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_32" model="sv_fe.municipio"><field name="name">JUAYÚA</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_33" model="sv_fe.municipio"><field name="name">NAHUIZALCO</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
+<record id="svfe_municipio_34" model="sv_fe.municipio"><field name="name">NAHULINGO</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
 <record id="svfe_municipio_35" model="sv_fe.municipio"><field name="name">SALCOATITÁN</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
 <record id="svfe_municipio_36" model="sv_fe.municipio"><field name="name">SAN ANTONIO DEL MONTE</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
 <record id="svfe_municipio_37" model="sv_fe.municipio"><field name="name">SAN JULIÁN</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
@@ -126,15 +329,15 @@
 <record id="svfe_municipio_39" model="sv_fe.municipio"><field name="name">SANTO DOMINGO GUZMÁN</field><field name="codigo">14</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
 <record id="svfe_municipio_40" model="sv_fe.municipio"><field name="name">SONSONATE</field><field name="codigo">15</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
 <record id="svfe_municipio_41" model="sv_fe.municipio"><field name="name">SONZACATE</field><field name="codigo">16</field><field name="departamento_id" ref="svfe_departamento_3"></field></record>
-<record id="svfe_municipio_42" model="sv_fe.municipio"><field name="name">AGUA CALIENTE</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_43" model="sv_fe.municipio"><field name="name">ARCATAO</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_44" model="sv_fe.municipio"><field name="name">AZACUALPA</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_45" model="sv_fe.municipio"><field name="name">CITALÁ</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_46" model="sv_fe.municipio"><field name="name">COMALAPA</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_47" model="sv_fe.municipio"><field name="name">CONCEPCIÓN QUEZALTEPEQUE</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_48" model="sv_fe.municipio"><field name="name">CHALATENANGO</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_49" model="sv_fe.municipio"><field name="name">DULCE NOM MARÍA</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_50" model="sv_fe.municipio"><field name="name">EL CARRIZAL</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_42" model="sv_fe.municipio"><field name="name">AGUA CALIENTE</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_43" model="sv_fe.municipio"><field name="name">ARCATAO</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_44" model="sv_fe.municipio"><field name="name">AZACUALPA</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_45" model="sv_fe.municipio"><field name="name">CITALÁ</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_46" model="sv_fe.municipio"><field name="name">COMALAPA</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_47" model="sv_fe.municipio"><field name="name">CONCEPCIÓN QUEZALTEPEQUE</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_48" model="sv_fe.municipio"><field name="name">CHALATENANGO</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_49" model="sv_fe.municipio"><field name="name">DULCE NOM MARÍA</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
+<record id="svfe_municipio_50" model="sv_fe.municipio"><field name="name">EL CARRIZAL</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
 <record id="svfe_municipio_51" model="sv_fe.municipio"><field name="name">EL PARAÍSO</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
 <record id="svfe_municipio_52" model="sv_fe.municipio"><field name="name">LA LAGUNA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
 <record id="svfe_municipio_53" model="sv_fe.municipio"><field name="name">LA PALMA</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
@@ -159,15 +362,15 @@
 <record id="svfe_municipio_72" model="sv_fe.municipio"><field name="name">SAN RAFAEL</field><field name="codigo">31</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
 <record id="svfe_municipio_73" model="sv_fe.municipio"><field name="name">SANTA RITA</field><field name="codigo">32</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
 <record id="svfe_municipio_74" model="sv_fe.municipio"><field name="name">TEJUTLA</field><field name="codigo">33</field><field name="departamento_id" ref="svfe_departamento_4"></field></record>
-<record id="svfe_municipio_75" model="sv_fe.municipio"><field name="name">ANTGO CUSCATLÁN</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_76" model="sv_fe.municipio"><field name="name">CIUDAD ARCE</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_77" model="sv_fe.municipio"><field name="name">COLON</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_78" model="sv_fe.municipio"><field name="name">COMASAGUA</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_79" model="sv_fe.municipio"><field name="name">CHILTIUPAN</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_80" model="sv_fe.municipio"><field name="name">HUIZÚCAR</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_81" model="sv_fe.municipio"><field name="name">JAYAQUE</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_82" model="sv_fe.municipio"><field name="name">JICALAPA</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_83" model="sv_fe.municipio"><field name="name">LA LIBERTAD</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_75" model="sv_fe.municipio"><field name="name">ANTGO CUSCATLÁN</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_76" model="sv_fe.municipio"><field name="name">CIUDAD ARCE</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_77" model="sv_fe.municipio"><field name="name">COLON</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_78" model="sv_fe.municipio"><field name="name">COMASAGUA</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_79" model="sv_fe.municipio"><field name="name">CHILTIUPAN</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_80" model="sv_fe.municipio"><field name="name">HUIZÚCAR</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_81" model="sv_fe.municipio"><field name="name">JAYAQUE</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_82" model="sv_fe.municipio"><field name="name">JICALAPA</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
+<record id="svfe_municipio_83" model="sv_fe.municipio"><field name="name">LA LIBERTAD</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
 <record id="svfe_municipio_84" model="sv_fe.municipio"><field name="name">NUEVO CUSCATLÁN</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
 <record id="svfe_municipio_85" model="sv_fe.municipio"><field name="name">SANTA TECLA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
 <record id="svfe_municipio_86" model="sv_fe.municipio"><field name="name">QUEZALTEPEQUE</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
@@ -181,15 +384,15 @@
 <record id="svfe_municipio_94" model="sv_fe.municipio"><field name="name">TEOTEPEQUE</field><field name="codigo">20</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
 <record id="svfe_municipio_95" model="sv_fe.municipio"><field name="name">TEPECOYO</field><field name="codigo">21</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
 <record id="svfe_municipio_96" model="sv_fe.municipio"><field name="name">ZARAGOZA</field><field name="codigo">22</field><field name="departamento_id" ref="svfe_departamento_5"></field></record>
-<record id="svfe_municipio_97" model="sv_fe.municipio"><field name="name">AGUILARES</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_98" model="sv_fe.municipio"><field name="name">APOPA</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_99" model="sv_fe.municipio"><field name="name">AYUTUXTEPEQUE</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_100" model="sv_fe.municipio"><field name="name">CUSCATANCINGO</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_101" model="sv_fe.municipio"><field name="name">EL PAISNAL</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_102" model="sv_fe.municipio"><field name="name">GUAZAPA</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_103" model="sv_fe.municipio"><field name="name">ILOPANGO</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_104" model="sv_fe.municipio"><field name="name">MEJICANOS</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_105" model="sv_fe.municipio"><field name="name">NEJAPA</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_97" model="sv_fe.municipio"><field name="name">AGUILARES</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_98" model="sv_fe.municipio"><field name="name">APOPA</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_99" model="sv_fe.municipio"><field name="name">AYUTUXTEPEQUE</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_100" model="sv_fe.municipio"><field name="name">CUSCATANCINGO</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_101" model="sv_fe.municipio"><field name="name">EL PAISNAL</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_102" model="sv_fe.municipio"><field name="name">GUAZAPA</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_103" model="sv_fe.municipio"><field name="name">ILOPANGO</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_104" model="sv_fe.municipio"><field name="name">MEJICANOS</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
+<record id="svfe_municipio_105" model="sv_fe.municipio"><field name="name">NEJAPA</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
 <record id="svfe_municipio_106" model="sv_fe.municipio"><field name="name">PANCHIMALCO</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
 <record id="svfe_municipio_107" model="sv_fe.municipio"><field name="name">ROSARIO DE MORA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
 <record id="svfe_municipio_108" model="sv_fe.municipio"><field name="name">SAN MARCOS</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
@@ -200,15 +403,15 @@
 <record id="svfe_municipio_113" model="sv_fe.municipio"><field name="name">SOYAPANGO</field><field name="codigo">17</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
 <record id="svfe_municipio_114" model="sv_fe.municipio"><field name="name">TONACATEPEQUE</field><field name="codigo">18</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
 <record id="svfe_municipio_115" model="sv_fe.municipio"><field name="name">CIUDAD DELGADO</field><field name="codigo">19</field><field name="departamento_id" ref="svfe_departamento_6"></field></record>
-<record id="svfe_municipio_116" model="sv_fe.municipio"><field name="name">CANDELARIA</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_117" model="sv_fe.municipio"><field name="name">COJUTEPEQUE</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_118" model="sv_fe.municipio"><field name="name">EL CARMEN</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_119" model="sv_fe.municipio"><field name="name">EL ROSARIO</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_120" model="sv_fe.municipio"><field name="name">MONTE SAN JUAN</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_121" model="sv_fe.municipio"><field name="name">ORAT CONCEPCIÓN</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_122" model="sv_fe.municipio"><field name="name">SAN B PERULAPIA</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_123" model="sv_fe.municipio"><field name="name">SAN CRISTÓBAL</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_124" model="sv_fe.municipio"><field name="name">SAN J GUAYABAL</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_116" model="sv_fe.municipio"><field name="name">CANDELARIA</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_117" model="sv_fe.municipio"><field name="name">COJUTEPEQUE</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_118" model="sv_fe.municipio"><field name="name">EL CARMEN</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_119" model="sv_fe.municipio"><field name="name">EL ROSARIO</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_120" model="sv_fe.municipio"><field name="name">MONTE SAN JUAN</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_121" model="sv_fe.municipio"><field name="name">ORAT CONCEPCIÓN</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_122" model="sv_fe.municipio"><field name="name">SAN B PERULAPIA</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_123" model="sv_fe.municipio"><field name="name">SAN CRISTÓBAL</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
+<record id="svfe_municipio_124" model="sv_fe.municipio"><field name="name">SAN J GUAYABAL</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
 <record id="svfe_municipio_125" model="sv_fe.municipio"><field name="name">SAN P PERULAPÁN</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
 <record id="svfe_municipio_126" model="sv_fe.municipio"><field name="name">SAN RAF CEDROS</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
 <record id="svfe_municipio_127" model="sv_fe.municipio"><field name="name">SAN RAMON</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
@@ -216,15 +419,15 @@
 <record id="svfe_municipio_129" model="sv_fe.municipio"><field name="name">STA C MICHAPA</field><field name="codigo">14</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
 <record id="svfe_municipio_130" model="sv_fe.municipio"><field name="name">SUCHITOTO</field><field name="codigo">15</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
 <record id="svfe_municipio_131" model="sv_fe.municipio"><field name="name">TENANCINGO</field><field name="codigo">16</field><field name="departamento_id" ref="svfe_departamento_7"></field></record>
-<record id="svfe_municipio_132" model="sv_fe.municipio"><field name="name">CUYULTITÁN</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_133" model="sv_fe.municipio"><field name="name">EL ROSARIO</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_134" model="sv_fe.municipio"><field name="name">JERUSALÉN</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_135" model="sv_fe.municipio"><field name="name">MERCED LA CEIBA</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_136" model="sv_fe.municipio"><field name="name">OLOCUILTA</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_137" model="sv_fe.municipio"><field name="name">PARAÍSO OSORIO</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_138" model="sv_fe.municipio"><field name="name">SN ANT MASAHUAT</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_139" model="sv_fe.municipio"><field name="name">SAN EMIGDIO</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_140" model="sv_fe.municipio"><field name="name">SN FCO CHINAMEC</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_132" model="sv_fe.municipio"><field name="name">CUYULTITÁN</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_133" model="sv_fe.municipio"><field name="name">EL ROSARIO</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_134" model="sv_fe.municipio"><field name="name">JERUSALÉN</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_135" model="sv_fe.municipio"><field name="name">MERCED LA CEIBA</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_136" model="sv_fe.municipio"><field name="name">OLOCUILTA</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_137" model="sv_fe.municipio"><field name="name">PARAÍSO OSORIO</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_138" model="sv_fe.municipio"><field name="name">SN ANT MASAHUAT</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_139" model="sv_fe.municipio"><field name="name">SAN EMIGDIO</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
+<record id="svfe_municipio_140" model="sv_fe.municipio"><field name="name">SN FCO CHINAMEC</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
 <record id="svfe_municipio_141" model="sv_fe.municipio"><field name="name">SAN J NONUALCO</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
 <record id="svfe_municipio_142" model="sv_fe.municipio"><field name="name">SAN JUAN TALPA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
 <record id="svfe_municipio_143" model="sv_fe.municipio"><field name="name">SAN JUAN TEPEZONTES</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
@@ -238,37 +441,37 @@
 <record id="svfe_municipio_151" model="sv_fe.municipio"><field name="name">TAPALHUACA</field><field name="codigo">20</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
 <record id="svfe_municipio_152" model="sv_fe.municipio"><field name="name">ZACATECOLUCA</field><field name="codigo">21</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
 <record id="svfe_municipio_153" model="sv_fe.municipio"><field name="name">SN LUIS LA HERR</field><field name="codigo">22</field><field name="departamento_id" ref="svfe_departamento_8"></field></record>
-<record id="svfe_municipio_154" model="sv_fe.municipio"><field name="name">CINQUERA</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_155" model="sv_fe.municipio"><field name="name">GUACOTECTI</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_156" model="sv_fe.municipio"><field name="name">ILOBASCO</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_157" model="sv_fe.municipio"><field name="name">JUTIAPA</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_158" model="sv_fe.municipio"><field name="name">SAN ISIDRO</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_159" model="sv_fe.municipio"><field name="name">SENSUNTEPEQUE</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_160" model="sv_fe.municipio"><field name="name">TEJUTEPEQUE</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_161" model="sv_fe.municipio"><field name="name">VICTORIA</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_162" model="sv_fe.municipio"><field name="name">DOLORES</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
-<record id="svfe_municipio_163" model="sv_fe.municipio"><field name="name">APASTEPEQUE</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_164" model="sv_fe.municipio"><field name="name">GUADALUPE</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_165" model="sv_fe.municipio"><field name="name">SAN CAY ISTEPEQ</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_166" model="sv_fe.municipio"><field name="name">SANTA CLARA</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_167" model="sv_fe.municipio"><field name="name">SANTO DOMINGO</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_168" model="sv_fe.municipio"><field name="name">SN EST CATARINA</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_169" model="sv_fe.municipio"><field name="name">SAN ILDEFONSO</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_170" model="sv_fe.municipio"><field name="name">SAN LORENZO</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_171" model="sv_fe.municipio"><field name="name">SAN SEBASTIÁN</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_154" model="sv_fe.municipio"><field name="name">CINQUERA</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_155" model="sv_fe.municipio"><field name="name">GUACOTECTI</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_156" model="sv_fe.municipio"><field name="name">ILOBASCO</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_157" model="sv_fe.municipio"><field name="name">JUTIAPA</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_158" model="sv_fe.municipio"><field name="name">SAN ISIDRO</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_159" model="sv_fe.municipio"><field name="name">SENSUNTEPEQUE</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_160" model="sv_fe.municipio"><field name="name">TEJUTEPEQUE</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_161" model="sv_fe.municipio"><field name="name">VICTORIA</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_162" model="sv_fe.municipio"><field name="name">DOLORES</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_9"></field></record>
+<record id="svfe_municipio_163" model="sv_fe.municipio"><field name="name">APASTEPEQUE</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_164" model="sv_fe.municipio"><field name="name">GUADALUPE</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_165" model="sv_fe.municipio"><field name="name">SAN CAY ISTEPEQ</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_166" model="sv_fe.municipio"><field name="name">SANTA CLARA</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_167" model="sv_fe.municipio"><field name="name">SANTO DOMINGO</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_168" model="sv_fe.municipio"><field name="name">SN EST CATARINA</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_169" model="sv_fe.municipio"><field name="name">SAN ILDEFONSO</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_170" model="sv_fe.municipio"><field name="name">SAN LORENZO</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
+<record id="svfe_municipio_171" model="sv_fe.municipio"><field name="name">SAN SEBASTIÁN</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
 <record id="svfe_municipio_172" model="sv_fe.municipio"><field name="name">SAN VICENTE</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
 <record id="svfe_municipio_173" model="sv_fe.municipio"><field name="name">TECOLUCA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
 <record id="svfe_municipio_174" model="sv_fe.municipio"><field name="name">TEPETITÁN</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
 <record id="svfe_municipio_175" model="sv_fe.municipio"><field name="name">VERAPAZ</field><field name="codigo">13</field><field name="departamento_id" ref="svfe_departamento_10"></field></record>
-<record id="svfe_municipio_176" model="sv_fe.municipio"><field name="name">ALEGRÍA</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_177" model="sv_fe.municipio"><field name="name">BERLÍN</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_178" model="sv_fe.municipio"><field name="name">CALIFORNIA</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_179" model="sv_fe.municipio"><field name="name">CONCEP BATRES</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_180" model="sv_fe.municipio"><field name="name">EL TRIUNFO</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_181" model="sv_fe.municipio"><field name="name">EREGUAYQUÍN</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_182" model="sv_fe.municipio"><field name="name">ESTANZUELAS</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_183" model="sv_fe.municipio"><field name="name">JIQUILISCO</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_184" model="sv_fe.municipio"><field name="name">JUCUAPA</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_176" model="sv_fe.municipio"><field name="name">ALEGRÍA</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_177" model="sv_fe.municipio"><field name="name">BERLÍN</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_178" model="sv_fe.municipio"><field name="name">CALIFORNIA</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_179" model="sv_fe.municipio"><field name="name">CONCEP BATRES</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_180" model="sv_fe.municipio"><field name="name">EL TRIUNFO</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_181" model="sv_fe.municipio"><field name="name">EREGUAYQUÍN</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_182" model="sv_fe.municipio"><field name="name">ESTANZUELAS</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_183" model="sv_fe.municipio"><field name="name">JIQUILISCO</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
+<record id="svfe_municipio_184" model="sv_fe.municipio"><field name="name">JUCUAPA</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
 <record id="svfe_municipio_185" model="sv_fe.municipio"><field name="name">JUCUARÁN</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
 <record id="svfe_municipio_186" model="sv_fe.municipio"><field name="name">MERCEDES UMAÑA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
 <record id="svfe_municipio_187" model="sv_fe.municipio"><field name="name">NUEVA GRANADA</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
@@ -283,15 +486,15 @@
 <record id="svfe_municipio_196" model="sv_fe.municipio"><field name="name">STGO DE MARÍA</field><field name="codigo">21</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
 <record id="svfe_municipio_197" model="sv_fe.municipio"><field name="name">TECAPÁN</field><field name="codigo">22</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
 <record id="svfe_municipio_198" model="sv_fe.municipio"><field name="name">USULUTÁN</field><field name="codigo">23</field><field name="departamento_id" ref="svfe_departamento_11"></field></record>
-<record id="svfe_municipio_199" model="sv_fe.municipio"><field name="name">CAROLINA</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_200" model="sv_fe.municipio"><field name="name">CIUDAD BARRIOS</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_201" model="sv_fe.municipio"><field name="name">COMACARÁN</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_202" model="sv_fe.municipio"><field name="name">CHAPELTIQUE</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_203" model="sv_fe.municipio"><field name="name">CHINAMECA</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_204" model="sv_fe.municipio"><field name="name">CHIRILAGUA</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_205" model="sv_fe.municipio"><field name="name">EL TRANSITO</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_206" model="sv_fe.municipio"><field name="name">LOLOTIQUE</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_207" model="sv_fe.municipio"><field name="name">MONCAGUA</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_199" model="sv_fe.municipio"><field name="name">CAROLINA</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_200" model="sv_fe.municipio"><field name="name">CIUDAD BARRIOS</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_201" model="sv_fe.municipio"><field name="name">COMACARÁN</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_202" model="sv_fe.municipio"><field name="name">CHAPELTIQUE</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_203" model="sv_fe.municipio"><field name="name">CHINAMECA</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_204" model="sv_fe.municipio"><field name="name">CHIRILAGUA</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_205" model="sv_fe.municipio"><field name="name">EL TRANSITO</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_206" model="sv_fe.municipio"><field name="name">LOLOTIQUE</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
+<record id="svfe_municipio_207" model="sv_fe.municipio"><field name="name">MONCAGUA</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
 <record id="svfe_municipio_208" model="sv_fe.municipio"><field name="name">NUEVA GUADALUPE</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
 <record id="svfe_municipio_209" model="sv_fe.municipio"><field name="name">NVO EDÉN S JUAN</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
 <record id="svfe_municipio_210" model="sv_fe.municipio"><field name="name">QUELEPA</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
@@ -303,15 +506,15 @@
 <record id="svfe_municipio_216" model="sv_fe.municipio"><field name="name">SAN RAF ORIENTE</field><field name="codigo">18</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
 <record id="svfe_municipio_217" model="sv_fe.municipio"><field name="name">SESORI</field><field name="codigo">19</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
 <record id="svfe_municipio_218" model="sv_fe.municipio"><field name="name">ULUAZAPA</field><field name="codigo">20</field><field name="departamento_id" ref="svfe_departamento_12"></field></record>
-<record id="svfe_municipio_219" model="sv_fe.municipio"><field name="name">ARAMBALA</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_220" model="sv_fe.municipio"><field name="name">CACAOPERA</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_221" model="sv_fe.municipio"><field name="name">CORINTO</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_222" model="sv_fe.municipio"><field name="name">CHILANGA</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_223" model="sv_fe.municipio"><field name="name">DELIC DE CONCEP</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_224" model="sv_fe.municipio"><field name="name">EL DIVISADERO</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_225" model="sv_fe.municipio"><field name="name">EL ROSARIO</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_226" model="sv_fe.municipio"><field name="name">GUALOCOCTI</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_227" model="sv_fe.municipio"><field name="name">GUATAJIAGUA</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_219" model="sv_fe.municipio"><field name="name">ARAMBALA</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_220" model="sv_fe.municipio"><field name="name">CACAOPERA</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_221" model="sv_fe.municipio"><field name="name">CORINTO</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_222" model="sv_fe.municipio"><field name="name">CHILANGA</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_223" model="sv_fe.municipio"><field name="name">DELIC DE CONCEP</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_224" model="sv_fe.municipio"><field name="name">EL DIVISADERO</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_225" model="sv_fe.municipio"><field name="name">EL ROSARIO</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_226" model="sv_fe.municipio"><field name="name">GUALOCOCTI</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
+<record id="svfe_municipio_227" model="sv_fe.municipio"><field name="name">GUATAJIAGUA</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
 <record id="svfe_municipio_228" model="sv_fe.municipio"><field name="name">JOATECA</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
 <record id="svfe_municipio_229" model="sv_fe.municipio"><field name="name">JOCOAITIQUE</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
 <record id="svfe_municipio_230" model="sv_fe.municipio"><field name="name">JOCORO</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
@@ -329,15 +532,15 @@
 <record id="svfe_municipio_242" model="sv_fe.municipio"><field name="name">TOROLA</field><field name="codigo">24</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
 <record id="svfe_municipio_243" model="sv_fe.municipio"><field name="name">YAMABAL</field><field name="codigo">25</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
 <record id="svfe_municipio_244" model="sv_fe.municipio"><field name="name">YOLOAIQUÍN</field><field name="codigo">26</field><field name="departamento_id" ref="svfe_departamento_13"></field></record>
-<record id="svfe_municipio_245" model="sv_fe.municipio"><field name="name">ANAMOROS</field><field name="codigo">1</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_246" model="sv_fe.municipio"><field name="name">BOLÍVAR</field><field name="codigo">2</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_247" model="sv_fe.municipio"><field name="name">CONCEP DE OTE</field><field name="codigo">3</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_248" model="sv_fe.municipio"><field name="name">CONCHAGUA</field><field name="codigo">4</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_249" model="sv_fe.municipio"><field name="name">EL CARMEN</field><field name="codigo">5</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_250" model="sv_fe.municipio"><field name="name">EL SAUCE</field><field name="codigo">6</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_251" model="sv_fe.municipio"><field name="name">INTIPUCÁ</field><field name="codigo">7</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_252" model="sv_fe.municipio"><field name="name">LA UNIÓN</field><field name="codigo">8</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
-<record id="svfe_municipio_253" model="sv_fe.municipio"><field name="name">LISLIQUE</field><field name="codigo">9</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_245" model="sv_fe.municipio"><field name="name">ANAMOROS</field><field name="codigo">01</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_246" model="sv_fe.municipio"><field name="name">BOLÍVAR</field><field name="codigo">02</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_247" model="sv_fe.municipio"><field name="name">CONCEP DE OTE</field><field name="codigo">03</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_248" model="sv_fe.municipio"><field name="name">CONCHAGUA</field><field name="codigo">04</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_249" model="sv_fe.municipio"><field name="name">EL CARMEN</field><field name="codigo">05</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_250" model="sv_fe.municipio"><field name="name">EL SAUCE</field><field name="codigo">06</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_251" model="sv_fe.municipio"><field name="name">INTIPUCÁ</field><field name="codigo">07</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_252" model="sv_fe.municipio"><field name="name">LA UNIÓN</field><field name="codigo">08</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
+<record id="svfe_municipio_253" model="sv_fe.municipio"><field name="name">LISLIQUE</field><field name="codigo">09</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
 <record id="svfe_municipio_254" model="sv_fe.municipio"><field name="name">MEANG DEL GOLFO</field><field name="codigo">10</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
 <record id="svfe_municipio_255" model="sv_fe.municipio"><field name="name">NUEVA ESPARTA</field><field name="codigo">11</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>
 <record id="svfe_municipio_256" model="sv_fe.municipio"><field name="name">PASAQUINA</field><field name="codigo">12</field><field name="departamento_id" ref="svfe_departamento_14"></field></record>

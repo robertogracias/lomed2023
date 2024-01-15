@@ -62,7 +62,8 @@ class sv_fe_tipodoc(models.Model):
     _description='Tipo de documento'
     name=fields.Char("Tipo documento")
     codigo=fields.Char("Codigo")
-
+    sequencia_id=fields.Many2one(comodel_name='ir.sequence',string="Numeracion")
+    version=fields.Integer("Version")
 
 class sv_fe_modelo(models.Model):
     _name='sv_fe.modelo'

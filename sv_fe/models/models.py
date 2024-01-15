@@ -25,8 +25,11 @@ class sv_fe_company(models.Model):
     fe_transmision_id=fields.Many2one(comodel_name='sv_fe.transmision',string='Modelo de Transmision')
     fe_contingencia_id=fields.Many2one(comodel_name='sv_fe.contingencia',string='Tipo de contingencia')
     fe_establecimiento_id=fields.Many2one(comodel_name='sv_fe.tipo_establecimiento',string='Tipo de establecimiento')
+    
 
-
+class sv_fe_country(models.Model):
+    _inherit='res.country'
+    fe_codigo=fields.Char("Codigo")
     
 
     
@@ -58,7 +61,7 @@ class sv_fe_partner(models.Model):
     fe_identificacion_id=fields.Many2one(comodel_name='sv_fe.doc_identificacion',string="Documento de identificacion")
     fe_tipo_persona_id=fields.Many2one(comodel_name='sv_fe.tipo_persona',string="Tipo de Persona")
     fe_domicilio_id=fields.Many2one(comodel_name='sv_fe.domicilio',string="Domicilio")
-
+    #comercial=fields.Char("Nombre Comercial")
 
 class sv_fe_uom(models.Model):
     _inherit='uom.uom'
@@ -74,3 +77,6 @@ class sv_fe_journal(models.Model):
     fe_formapago_ids=fields.Many2one(comodel_name='sv_fe.formapago',string="Formas de pago")
 
 
+class sv_ve_incoterms(models.Model):
+    _inherit='account.incoterms'
+    fe_incoterm_id=fields.Many2one(comodel_name='sv_fe.incoterms',string="Incoterms")
