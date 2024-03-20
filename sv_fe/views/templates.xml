@@ -110,8 +110,14 @@
 
                   </td>
                 </tr>
-
-
+                <tr style="line-height:200%;" t-if="o.sello==False">
+                  <td colspan="3">
+                    <strong>ESTE DOCUMENTO ES UNA PROFORMA, NO PRODUCE EFECTOS FISCALES NI CONTABLES</strong>
+                    <br/>
+                    <strong>CONFIRMAR SI LOS DATOS SON CORRECTOS PARA PROCEDER A LA TRANSMISION DEL DTE</strong>
+                    
+                  </td>
+                </tr>
 
                 <tr style="font-size:12px;">
                   <td style="text-align:center"><strong>Emisor</strong></td>
@@ -177,6 +183,7 @@
                    <th style="width:10%;">UNIDAD</th>
                    <th style="width:25%;">DESCRIPCION</th>
                    <th style="width:10%;">PRECIO UNITARIO</th>
+                   <th style="width:10%;">DESCUENTO</th>
                    <th style="width:10%;">VENTAS NO SUJETAS</th>
                    <th style="width:10%;">VENTAS EXENTAS</th>
                    <th style="width:10%;">VENTAS GRAVADAS</th>
@@ -190,6 +197,7 @@
                    <td style="text-align: center;"><span t-esc="request.env['sv_fe.unidad'].search([('codigo','=',l['uniMedida'])],limit=1).name"/></td>
                    <td style="text-align: left;"><span t-esc="l['descripcion']"/></td>
                    <td style="text-align: right;"><span t-esc="l['precioUni']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                   <td style="text-align: right;"><span t-esc="l['montoDescu']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                    <td style="text-align: right;"><span t-if="'ventaNoSuj' in l" t-esc="l['ventaNoSuj']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                    <td style="text-align: right;"><span t-if="'ventaExenta' in l" t-esc="l['ventaExenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                    <td style="text-align: right;"><span t-esc="l['ventaGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
