@@ -207,6 +207,8 @@ class sv_fe_contingencia(models.Model):
             f.dte_estado=respuesta['estado']
             if respuesta['estado']=='RECIBIDO':
                 f.sello=respuesta['selloRecibido']
+            else:
+                f.dte_error=respuesta['observaciones']
             #raise UserError(result.text)
         #raise UserError(result.text)
 
@@ -354,6 +356,7 @@ class sv_fe_move(models.Model):
     reversion_solicita_tipo_id=fields.Many2one(comodel_name='sv_fe.doc_identificacion',string='Tipo documento')
     doc_relacionado=fields.Many2one(comodel_name='account.move',string='Documento relacionado',copy=False)
     dte_estado=fields.Char("Estado del DTE",copy=False)
+    dte_error=fields.Char("Error del DTE",copy=False)
     dte_qr=fields.Char(string='QR',compute='get_qr',store=False)
     fe_tipo_doc_id=fields.Many2one(comodel_name='sv_fe.tipo_doc',related='tipo_documento_id.fe_tipo_doc_id',store=True,string="Tipo de documento")
     fe_codigo=fields.Char(string='Codigo tipo doc',related='fe_tipo_doc_id.codigo',store=True)
@@ -501,6 +504,8 @@ class sv_fe_move(models.Model):
                 f.dte_estado=respuesta['estado']
                 if respuesta['estado']=='PROCESADO':
                     f.sello=respuesta['selloRecibido']
+                else:
+                    f.dte_error=respuesta['observaciones']
             except:
                 print('Error')
             #raise UserError(result.text)
@@ -562,6 +567,8 @@ class sv_fe_move(models.Model):
                 f.dte_estado=respuesta['estado']
                 if respuesta['estado']=='PROCESADO':
                     f.sello=respuesta['selloRecibido']
+                else:
+                    f.dte_error=respuesta['observaciones']
             except:
                 print('Error')
             #raise UserError(result.text)
@@ -810,7 +817,10 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            if f.tipo_documento_id.sequencia_id:
+                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
+            else:
+                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -1069,7 +1079,10 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            if f.tipo_documento_id.sequencia_id:
+                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
+            else:
+                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -1348,7 +1361,10 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            if f.tipo_documento_id.sequencia_id:
+                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
+            else:
+                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -1547,7 +1563,10 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            if f.tipo_documento_id.sequencia_id:
+                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
+            else:
+                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -1794,7 +1813,10 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            if f.tipo_documento_id.sequencia_id:
+                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
+            else:
+                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -1999,7 +2021,10 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            if f.tipo_documento_id.sequencia_id:
+                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
+            else:
+                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -2346,7 +2371,10 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            if f.tipo_documento_id.sequencia_id:
+                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
+            else:
+                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo

@@ -86,7 +86,8 @@
                         <field name="fe_generacion_id" />
                         <field name="fe_doc_asociado_id" />
                         <field name="fe_contingencia_id" />   
-                        <field name="version" />                        
+                        <field name="version" />  
+                        <field name="sequencia_id" />                        
                         </group>
                     </group>                          
                 </xpath>
@@ -190,7 +191,16 @@
             </field>
         </record>  
 
-
+        <record id="fe_fact_tree" model="ir.ui.view">
+            <field name="name">fe_fact_tree</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="dte_estado" widget="badge" decoration-success="dte_estado == 'PROCESADO'" decoration-danger="dte_estado == 'RECHAZADO'"/>
+                 </xpath>
+            </field>
+        </record>
 
 
         <record id="fe_fact_form" model="ir.ui.view">
@@ -200,6 +210,10 @@
             <field name="arch" type="xml">
                  <xpath expr="//header" position="inside">
                     <button name="generar_fe" type="object" string="Transmitir DTE" attrs="{'invisible':['|',('state','!=','posted'),('sello','!=',False)]}" />
+                 </xpath>
+                 <xpath expr="//field[@name='move_type']" position="after">
+                    <field name="dte_estado" readonly="1"/>
+                    <field name="dte_error" style="color:red;" readonly="1" attrs="{'invisible':[('dte_estado','=','PROCESADO')]}"/>
                  </xpath>
                  <xpath expr="//notebook" position="inside">
                     <page string="Factura Electronica">

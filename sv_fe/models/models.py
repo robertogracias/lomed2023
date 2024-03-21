@@ -41,6 +41,7 @@ class sv_fe_documento(models.Model):
     fe_generacion_id=fields.Many2one(comodel_name='sv_fe.generacion',string="Tipo de Generación del Documento")
     fe_doc_asociado_id=fields.Many2one(comodel_name='sv_fe.docasociado',string="Documento Asociado")
     fe_contingencia_id=fields.Many2one(comodel_name='sv_fe.doc_contingencia',string="Documento en contingencia")
+    sequencia_id=fields.Many2one(comodel_name='ir.sequence',string="Numeracion")
     version=fields.Integer("Version")
 
 class sv_fe_tax(models.Model):
