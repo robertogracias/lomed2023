@@ -2068,12 +2068,12 @@ class sv_fe_move(models.Model):
         resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
         #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         
-        resumen['subTotal']=f.nosujetas
+        resumen['subTotal']=round(f.nosujetas,2)
         #resumen['ivaPerci1']=round(f.percepcion,2)
         resumen['ivaRete1']=round(f.retencion,2)
         resumen['reteRenta']=round(abs(f.isr),2)
         #resumen['montoTotalOperacion']=round(resumen['subTotal']-resumen['reteRenta']+f.iva,2)
-        resumen['totalCompra']=f.nosujetas
+        resumen['totalCompra']=round(f.nosujetas,2)
         resumen['totalPagar']=round(resumen['totalCompra']-resumen['reteRenta'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
         ##resumen['totalIva']=round(f.iva,2)
