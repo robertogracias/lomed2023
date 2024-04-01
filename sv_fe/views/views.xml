@@ -215,6 +215,10 @@
                     <field name="dte_estado" readonly="1"/>
                     <field name="dte_error" style="color:red;" readonly="1" attrs="{'invisible':[('dte_estado','=','PROCESADO')]}"/>
                  </xpath>
+
+                 <xpath expr="//field[@name='doc_numero']" position="replace">
+                    <field name="doc_numero" readonly="1"  required="0" attrs="{'required':[(1,'=',0)]}"/>
+                 </xpath>
                  <xpath expr="//notebook" position="inside">
                     <page string="Factura Electronica">
                         <group>

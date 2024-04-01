@@ -315,13 +315,21 @@ class sv_fe_move(models.Model):
     gravadas=fields.Float("Ventas Gravadas",copy=False)
     exentas=fields.Float("Ventas Exentas",copy=False)
     nosujetas=fields.Float("Ventas No Sujetas",copy=False)
+    
     gravadas_des=fields.Float("Descuento Gravado ",copy=False)
     exentas_des=fields.Float("Descuento Exento",copy=False)
     nosujetas_des=fields.Float("Descuento Exento",copy=False)
+
+    gravadas_linea_des=fields.Float("Descuento lineas Gravado ",copy=False)
+    exentas_linea_des=fields.Float("Descuento lineas Exento",copy=False)
+    nosujetas_linea_des=fields.Float("Descuento lineas Exento",copy=False)
+    
     retencion=fields.Float("Retencion",copy=False)
     percepcion=fields.Float("Percepcion",copy=False)
     isr=fields.Float("ISR",copy=False)
     iva=fields.Float("IVA",copy=False)
+    iva_des=fields.Float("IVA Desc.",copy=False)
+
     entrega=fields.Char("Entrega",copy=False)
     doc_entrega=fields.Char("Doc. Entrega",copy=False)
     recibe=fields.Char("Recibe",copy=False)
@@ -361,6 +369,14 @@ class sv_fe_move(models.Model):
     fe_tipo_doc_id=fields.Many2one(comodel_name='sv_fe.tipo_doc',related='tipo_documento_id.fe_tipo_doc_id',store=True,string="Tipo de documento")
     fe_codigo=fields.Char(string='Codigo tipo doc',related='fe_tipo_doc_id.codigo',store=True)
 
+
+    def button_draft(self):
+        res=super(sv_fe_move,self).button_draft()
+        for r in self:
+            if r.sello:
+                raise UserError("EL DTE YA FUE TRANSMITIDO Y SELLADO")
+
+        
 
     def get_json(self):
         for r in self:
@@ -855,17 +871,47 @@ class sv_fe_move(models.Model):
                     receptor['numDocumento']=f.partner_id.dui.replace('-','')
                     if f.partner_id.nrc:
                         receptor['nrc']=f.partner_id.nrc
+                else:
+                    receptor['tipoDocumento']=None
+                    receptor['numDocumento']=None
+                    receptor['nrc']=None
             
                 
             receptor['nombre']=f.partner_id.name
-            receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
-            receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            receptor['direccion']=f.get_direccion(f.partner_id)
-            receptor['telefono']=f.partner_id.phone
-            receptor['correo']=f.partner_id.email
+            if f.partner_id.fe_actividad_id:
+                receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
+                receptor['descActividad']=f.partner_id.fe_actividad_id.name
+            else:
+                receptor['codActividad']=None
+                receptor['descActividad']=None
+            receptor['direccion']=f.get_direccion_fact(f.partner_id)
+            if f.partner_id.phone:
+                receptor['telefono']=f.partner_id.phone
+            if f.partner_id.email:
+                receptor['correo']=f.partner_id.email
+            else:
+                receptor['correo']=None
             return receptor
         else:
             return None
+    
+    def get_direccion_fact(self,partner):
+        self.ensure_one()
+        f=self
+        direccion={}
+        if partner.state_id:
+            direccion['departamento']=partner.state_id.code
+        else:
+           return None
+        if partner.fe_municipio_id:
+            direccion['municipio']=partner.fe_municipio_id.codigo
+        else:
+            return None
+        if partner.street:
+            direccion['complemento']=partner.street
+        else:
+            return None
+        return direccion
 
     def get_cuerpo_fac(self):
         self.ensure_one()
@@ -876,10 +922,14 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
+        f.gravadas_linea_des=0
+        f.exentas_linea_des=0
+        f.nosujetas_linea_des=0
         f.retencion=0
         f.percepcion=0
         f.isr=0
         f.iva=0
+        f.iva_des=0
         lista=[]
         i=1
         incluido=False
@@ -927,7 +977,8 @@ class sv_fe_move(models.Model):
                     if incluido:
                         price_unit=l.price_unit
                         price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
+                        ivaitem=(l.price_unit*valor_con_descuento)-((l.price_unit*valor_con_descuento)/(1+ivap))
+                        #raise UserError(str(ivaitem)+" price_unit:"+str(l.price_unit)+" valor descuento:"+str(valor_con_descuento)+"  ivap:"+str(ivap))
                     else:
                         price_unit=l.price_unit*(1+ivap)
                         price_unit_notax=l.price_unit
@@ -944,25 +995,25 @@ class sv_fe_move(models.Model):
                     if t.fe_tributo_id:
                         if  t.fe_tributo_id.codigo!='20':
                             tributos.append(t.fe_tributo_id.codigo)
+                dic['precioUni']=round(price_unit,6)
                 if iva or retencion or persepcion:
                     dic['ventaNoSuj']=0
                     dic['ventaExenta']=0
-                    dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento),6)
-                    dic['precioUni']=round(price_unit,6)
+                    dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento),6)                    
                     dic['montoDescu']= round(price_unit*l.quantity*descuento,6)
-                    f.gravadas_des+=dic['montoDescu']
+                    f.gravadas_linea_des+=dic['montoDescu']
                 elif exento:
                     dic['ventaNoSuj']=0
-                    dic['ventaExenta']=round((price_unit*l.quantityvalor_con_descuento),6)
+                    dic['ventaExenta']=round((price_unit*l.quantity*valor_con_descuento),6)
                     dic['ventaGravada']=0
                     dic['montoDescu']=  round(price_unit*l.quantity*descuento,6)
-                    f.exentas_des+=dic['montoDescu']
+                    f.exentas_linea_des+=dic['montoDescu']
                 elif nosujeto:
-                    dic['ventaNoSuj']=round((price_unit*l.quantityvalor_con_descuento),6)
+                    dic['ventaNoSuj']=round((price_unit*l.quantity*valor_con_descuento),6)
                     dic['ventaExenta']=0
                     dic['ventaGravada']=0
                     dic['montoDescu']=  round(price_unit*l.quantity*descuento,6)
-                    f.nosujetas_des+=dic['montoDescu']
+                    f.nosujetas_linea_des+=dic['montoDescu']
                 else:
                     dic['ventaNoSuj']=0
                     dic['ventaExenta']=0
@@ -975,7 +1026,7 @@ class sv_fe_move(models.Model):
                 else:
                     dic['tributos']=None
                 dic['psv']=0
-                dic['noGravado']=0
+                dic['noGravado']=0                
                 dic['ivaItem']=round(ivaitem*l.quantity,6)
                 f.iva+=dic['ivaItem']
                 #f.iva+=round(ivaitem*l.quantity,2)
@@ -1006,12 +1057,8 @@ class sv_fe_move(models.Model):
                 for t in l.tax_ids:
                     iva=True if t.tax_group_id.code=='iva' else False
                     ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-                f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),6))
+                f.iva+=(round((l.price_unit*l.quantity)*(ivap),6))
+                f.iva_des+=(round((l.price_unit*l.quantity*-1)*(ivap),6))
             i+=1
         return lista
 
@@ -1026,7 +1073,7 @@ class sv_fe_move(models.Model):
         resumen['descuNoSuj']=round(f.nosujetas_des,2)
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
         resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
@@ -1037,7 +1084,7 @@ class sv_fe_move(models.Model):
                             tributos.append(t.fe_tributo_id.codigo)
 
         resumen['tributos']=tributos
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
+        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
         #resumen['subTotal']=round(resumen['subTotalVentas'],2)
         resumen['ivaRete1']=round(f.retencion*-1,2)
         resumen['reteRenta']=round(f.isr*-1,2)
@@ -1125,10 +1172,15 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
+        f.gravadas_linea_des=0
+        f.exentas_linea_des=0
+        f.nosujetas_linea_des=0
+
         f.retencion=0
         f.percepcion=0
         f.isr=0
         f.iva=0
+        f.iva_des=0
         lista=[]
         i=1
         descuento_global=0
@@ -1149,7 +1201,7 @@ class sv_fe_move(models.Model):
                 else:
                     dic['uniMedida']=59
                 dic['descripcion']=l.name
-                dic['precioUni']=round(l.price_unit,2)
+                
 
                 descuento=l.discount/100
                 valor_con_descuento=1-descuento
@@ -1166,35 +1218,47 @@ class sv_fe_move(models.Model):
                 for t in l.tax_ids:
                     iva=True if t.tax_group_id.code=='iva' else False
                     ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                    if iva==True:
+                        incluido=t.price_include
+                        price_unit=l.price_unit/(1+ivap)
+                    if incluido:
+                        price_unit=l.price_unit
+                        price_unit_notax=l.price_unit/(1+ivap)
+                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
+                    else:
+                        price_unit=l.price_unit*(1+ivap)
+                        price_unit_notax=l.price_unit
+                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
                     exento=True if t.tax_group_id.code=='exento' else False
                     nosujeto=True if t.tax_group_id.code=='nosujeto' else False
                     retencion=True if t.tax_group_id.code=='retencion' else False
                     persepcion=True if t.tax_group_id.code=='persepcion' else False
                     isr=True if t.tax_group_id.code=='isr' else False
 
-                    f.retencion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                    f.percepcion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                    f.isr+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
                     if t.fe_tributo_id:
                         tributos.append(t.fe_tributo_id.codigo)
+                dic['precioUni']=round(price_unit_notax,6)
                 if iva or retencion or persepcion:
                     dic['ventaNoSuj']=0
                     dic['ventaExenta']=0
-                    dic['ventaGravada']=round((l.price_unit*l.quantity*valor_con_descuento),6)
-                    dic['montoDescu']= round(l.price_unit*l.quantity*descuento,6)
-                    f.gravadas_des+=dic['montoDescu']
+                    dic['ventaGravada']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.gravadas_linea_des+=dic['montoDescu']
                 elif exento:
                     dic['ventaNoSuj']=0
-                    dic['ventaExenta']=round((l.price_unit*l.quantity*valor_con_descuento),6)
+                    dic['ventaExenta']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
                     dic['ventaGravada']=0
-                    dic['montoDescu']= round(l.price_unit*l.quantity*descuento,6)
-                    f.exentas_des+=dic['montoDescu']
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.exentas_linea_des+=dic['montoDescu']
                 elif nosujeto:
-                    dic['ventaNoSuj']=round((l.price_unit*l.quantity*valor_con_descuento),6)
+                    dic['ventaNoSuj']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
                     dic['ventaExenta']=0
                     dic['ventaGravada']=0
-                    dic['montoDescu']= round(l.price_unit*l.quantity*descuento,6)
-                    f.nosujetas_des+=dic['montoDescu']
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.nosujetas_linea_des+=dic['montoDescu']
                 else:
                     dic['ventaNoSuj']=0
                     dic['ventaExenta']=0
@@ -1208,7 +1272,7 @@ class sv_fe_move(models.Model):
                     dic['tributos']=None
                 dic['psv']=0
                 dic['noGravado']=0
-                f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),6))
+                f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
                 lista.append(dic)
             else:
                 descuento_global+=(l.price_total*-1)
@@ -1236,12 +1300,17 @@ class sv_fe_move(models.Model):
                 for t in l.tax_ids:
                     iva=True if t.tax_group_id.code=='iva' else False
                     ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-                f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),6))
+                    if iva==True:
+                        incluido=t.price_include
+                        price_unit=price_unit/(1+ivap)
+                    if incluido:
+                        price_unit=l.price_unit
+                        price_unit_notax=l.price_unit/(1+ivap)
+                    else:
+                        price_unit=l.price_unit*(1+ivap)
+                        price_unit_notax=l.price_unit
+                f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
+                f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
             i+=1
         return lista
 
@@ -1257,7 +1326,7 @@ class sv_fe_move(models.Model):
         resumen['descuNoSuj']=round(f.nosujetas_des,2)
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
         resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
@@ -1283,7 +1352,7 @@ class sv_fe_move(models.Model):
             resumen['tributos']=tributosmh
         else:
             resumen['tributos']=None
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
+        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
         resumen['ivaPerci1']=round(f.percepcion*-1,2)
         resumen['ivaRete1']=round(f.retencion*-1,2)
         resumen['reteRenta']=round(f.isr,2)
@@ -1397,7 +1466,7 @@ class sv_fe_move(models.Model):
             receptor['nombre']=f.partner_id.name
             receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
             receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            receptor['nombreComercial']=f.partner_id.x_comercial
+            receptor['nombreComercial']=f.partner_id.comercial
             #receptor['tipoEstablecimiento']=f.fe_establecimiento_id.codigo
             receptor['direccion']=f.get_direccion(f.partner_id)
             receptor['telefono']=f.partner_id.phone
@@ -1595,7 +1664,7 @@ class sv_fe_move(models.Model):
             receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
             receptor['descActividad']=f.partner_id.fe_actividad_id.name
             
-            receptor['nombreComercial']=f.partner_id.x_comercial if f.partner_id.x_comercial else f.partner_id.name
+            receptor['nombreComercial']=f.partner_id.comercial if f.partner_id.comercial else f.partner_id.name
             #receptor['tipoEstablecimiento']=f.fe_establecimiento_id.codigo
             receptor['direccion']=f.get_direccion(f.partner_id)
             receptor['telefono']=f.partner_id.phone
@@ -1617,85 +1686,141 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
+        f.gravadas_linea_des=0
+        f.exentas_linea_des=0
+        f.nosujetas_linea_des=0
         f.retencion=0
         f.percepcion=0
         f.isr=0
         f.iva=0
         lista=[]
         i=1
+        descuento_global=0
         for l in f.invoice_line_ids:
-            dic={}
-            dic['numItem']=i
-            if l.product_id and l.product_id.fe_tipo_item_id:
-                dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-            else:
-                dic['tipoItem']=1
-            dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-            dic['cantidad']=l.quantity
-            dic['codigo']=l.product_id.default_code
-            dic['codTributo']=None
-            if l.product_uom_id.fe_unidad_id:
-                dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
-            else:
-                dic['uniMedida']=59
-            dic['descripcion']=l.name
-            dic['precioUni']=l.price_unit
+            if l.price_total>0:
+                dic={}
+                dic['numItem']=i
+                if l.product_id and l.product_id.fe_tipo_item_id:
+                    dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
+                else:
+                    dic['tipoItem']=1
+                dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
+                dic['cantidad']=l.quantity
+                dic['codigo']=l.product_id.default_code
+                dic['codTributo']=None
+                if l.product_uom_id.fe_unidad_id:
+                    dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
+                else:
+                    dic['uniMedida']=59
+                dic['descripcion']=l.name
+                dic['precioUni']=l.price_unit
 
-            descuento=l.discount/100
-            valor_con_descuento=1-descuento
+                descuento=l.discount/100
+                valor_con_descuento=1-descuento
 
-            dic['montoDescu']=(l.price_unit*l.quantity*descuento)
-            iva=False
-            ivap=0
-            exento=True
-            nosujeto=False
-            retencion=False
-            persepcion=False
-            isr=False
-            tributos=[]
-            for t in l.tax_ids:
-                iva=True if t.tax_group_id.code=='iva' else False
-                ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                exento=True if t.tax_group_id.code=='exento' else False
-                nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                retencion=True if t.tax_group_id.code=='retencion' else False
-                persepcion=True if t.tax_group_id.code=='persepcion' else False
-                isr=True if t.tax_group_id.code=='isr' else False
+                dic['montoDescu']=(l.price_unit*l.quantity*descuento)
+                iva=False
+                ivap=0
+                exento=True
+                nosujeto=False
+                retencion=False
+                persepcion=False
+                isr=False
+                tributos=[]
+                for t in l.tax_ids:
+                    iva=True if t.tax_group_id.code=='iva' else False
+                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                    if iva==True:
+                        incluido=t.price_include
+                        price_unit=l.price_unit/(1+ivap)
+                    if incluido:
+                        price_unit=l.price_unit
+                        price_unit_notax=l.price_unit/(1+ivap)
+                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
+                    else:
+                        price_unit=l.price_unit*(1+ivap)
+                        price_unit_notax=l.price_unit
+                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
+                    exento=True if t.tax_group_id.code=='exento' else False
+                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                    retencion=True if t.tax_group_id.code=='retencion' else False
+                    persepcion=True if t.tax_group_id.code=='persepcion' else False
+                    isr=True if t.tax_group_id.code=='isr' else False
 
-                f.retencion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                f.percepcion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                f.isr+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
-                if t.fe_tributo_id:
-                    tributos.append(t.fe_tributo_id.codigo)
-            if iva or retencion or persepcion:
-                dic['ventaNoSuj']=0
-                dic['ventaExenta']=0
-                dic['ventaGravada']=round((l.price_unit*l.quantity*valor_con_descuento),2)
-                #dic['precioUni']=round(l.price_unit*(1+ivap),2)
-                f.gravadas_des+=dic['montoDescu']
-            elif exento:
-                dic['ventaNoSuj']=0
-                dic['ventaExenta']=round((l.price_unit*l.quantity*valor_con_descuento),2)
-                dic['ventaGravada']=0
-                f.exentas_des+=dic['montoDescu']
-            elif nosujeto:
-                dic['ventaNoSuj']=round((l.price_unit*l.quantity*valor_con_descuento),2)
-                dic['ventaExenta']=0
-                dic['ventaGravada']=0
-                f.nosujetas_des+=dic['montoDescu']
+                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                    if t.fe_tributo_id:
+                        tributos.append(t.fe_tributo_id.codigo)
+                dic['precioUni']=round(price_unit_notax,6)
+                if iva or retencion or persepcion:
+                    dic['ventaNoSuj']=0
+                    dic['ventaExenta']=0
+                    dic['ventaGravada']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.gravadas_linea_des+=dic['montoDescu']
+                elif exento:
+                    dic['ventaNoSuj']=0
+                    dic['ventaExenta']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
+                    dic['ventaGravada']=0
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.exentas_linea_des+=dic['montoDescu']
+                elif nosujeto:
+                    dic['ventaNoSuj']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
+                    dic['ventaExenta']=0
+                    dic['ventaGravada']=0
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.nosujetas_linea_des+=dic['montoDescu']
+                else:
+                    dic['ventaNoSuj']=0
+                    dic['ventaExenta']=0
+                    dic['ventaGravada']=0
+                f.gravadas+=dic['ventaGravada']
+                f.exentas+=dic['ventaExenta']
+                f.nosujetas+=dic['ventaNoSuj']
+                if len(tributos)>0:
+                    dic['tributos']=tributos
+                else:
+                    dic['tributos']=None
+                f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
+                lista.append(dic)
             else:
-                dic['ventaNoSuj']=0
-                dic['ventaExenta']=0
-                dic['ventaGravada']=0
-            f.gravadas+=dic['ventaGravada']
-            f.exentas+=dic['ventaExenta']
-            f.nosujetas+=dic['ventaNoSuj']
-            if len(tributos)>0:
-                dic['tributos']=tributos
-            else:
-                dic['tributos']=None
-            f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),2))
-            lista.append(dic)
+                descuento_global+=(l.price_total*-1)
+                iva=False
+                exento=True
+                nosujeto=False
+                for t in l.tax_ids:
+                    iva=True if t.tax_group_id.code=='iva' else False
+                    exento=True if t.tax_group_id.code=='exento' else False
+                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                if iva or retencion or persepcion:
+                    f.gravadas_des+=(l.price_subtotal*-1)
+                elif exento:
+                    f.exentas_des+=(l.price_subtotal*-1)
+                elif nosujeto:
+                    f.nosujetas_des+=(l.price_subtotal*-1)
+                iva=False
+                ivap=0
+                exento=True
+                nosujeto=False
+                retencion=False
+                persepcion=False
+                isr=False
+                tributos=[]
+                for t in l.tax_ids:
+                    iva=True if t.tax_group_id.code=='iva' else False
+                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                    if iva==True:
+                        incluido=t.price_include
+                        price_unit=price_unit/(1+ivap)
+                    if incluido:
+                        price_unit=l.price_unit
+                        price_unit_notax=l.price_unit/(1+ivap)
+                    else:
+                        price_unit=l.price_unit*(1+ivap)
+                        price_unit_notax=l.price_unit
+                f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
+                f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
             i+=1
         return lista
 
@@ -1711,7 +1836,7 @@ class sv_fe_move(models.Model):
         resumen['descuNoSuj']=round(f.nosujetas_des,2)
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
         #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
@@ -1736,11 +1861,11 @@ class sv_fe_move(models.Model):
             resumen['tributos']=tributosmh
         else:
             resumen['tributos']=None
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
-        resumen['ivaPerci1']=round(f.percepcion,2)
-        resumen['ivaRete1']=round(f.retencion,2)
+        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
+        resumen['ivaPerci1']=round(f.percepcion*-1,2)
+        resumen['ivaRete1']=round(f.retencion*-1,2)
         resumen['reteRenta']=round(f.isr,2)
-        resumen['montoTotalOperacion']=round(resumen['subTotal']-resumen['ivaRete1']-resumen['reteRenta']+f.iva,2)
+        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
         #resumen['totalNoGravado']=0
         #resumen['totalPagar']=round(resumen['montoTotalOperacion'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['montoTotalOperacion'],2))
@@ -2053,7 +2178,7 @@ class sv_fe_move(models.Model):
             receptor['nombre']=f.partner_id.name
             receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
             receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            receptor['nombreComercial']=f.partner_id.x_comercial
+            receptor['nombreComercial']=f.partner_id.comercial
             receptor['direccion']=f.get_direccion(f.partner_id)
             receptor['telefono']=f.partner_id.phone
             receptor['correo']=f.partner_id.email
@@ -2077,79 +2202,132 @@ class sv_fe_move(models.Model):
         lista=[]
         i=1
         for l in f.invoice_line_ids:
-            dic={}
-            dic['numItem']=i
-            if l.product_id and l.product_id.fe_tipo_item_id:
-                dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-            else:
-                dic['tipoItem']=1
-            dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-            dic['cantidad']=l.quantity
-            dic['codigo']=l.product_id.default_code
-            dic['codTributo']=None
-            if l.product_uom_id.fe_unidad_id:
-                dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
-            else:
-                dic['uniMedida']=59
-            dic['descripcion']=l.name
-            dic['precioUni']=l.price_unit
+            if l.price_total>0:
+                dic={}
+                dic['numItem']=i
+                if l.product_id and l.product_id.fe_tipo_item_id:
+                    dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
+                else:
+                    dic['tipoItem']=1
+                dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
+                dic['cantidad']=l.quantity
+                dic['codigo']=l.product_id.default_code
+                dic['codTributo']=None
+                if l.product_uom_id.fe_unidad_id:
+                    dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
+                else:
+                    dic['uniMedida']=59
+                dic['descripcion']=l.name
+                
 
+                descuento=l.discount/100
+                valor_con_descuento=1-descuento
+                
+                dic['montoDescu']=0
+                iva=False
+                ivap=0
+                exento=True
+                nosujeto=False
+                retencion=False
+                persepcion=False
+                isr=False
+                tributos=[]
+                for t in l.tax_ids:
+                    iva=True if t.tax_group_id.code=='iva' else False
+                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                    if iva==True:
+                        incluido=t.price_include
+                        price_unit=l.price_unit/(1+ivap)
+                    if incluido:
+                        price_unit=l.price_unit
+                        price_unit_notax=l.price_unit/(1+ivap)
+                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
+                    else:
+                        price_unit=l.price_unit*(1+ivap)
+                        price_unit_notax=l.price_unit
+                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
+                    exento=True if t.tax_group_id.code=='exento' else False
+                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                    retencion=True if t.tax_group_id.code=='retencion' else False
+                    persepcion=True if t.tax_group_id.code=='persepcion' else False
+                    isr=True if t.tax_group_id.code=='isr' else False
 
-            descuento=l.discount/100
-            valor_con_descuento=1-descuento
-            
-            dic['montoDescu']=(l.price_unit*l.quantity*descuento)
-            iva=False
-            ivap=0
-            exento=True
-            nosujeto=False
-            retencion=False
-            persepcion=False
-            isr=False
-            tributos=[]
-            for t in l.tax_ids:
-                iva=True if t.tax_group_id.code=='iva' else False
-                ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                exento=True if t.tax_group_id.code=='exento' else False
-                nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                retencion=True if t.tax_group_id.code=='retencion' else False
-                persepcion=True if t.tax_group_id.code=='persepcion' else False
-                isr=True if t.tax_group_id.code=='isr' else False
-
-                f.retencion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                f.percepcion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                f.isr+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
-                if t.fe_tributo_id:
-                    tributos.append(t.fe_tributo_id.codigo)
-            if iva or retencion or persepcion:
-                dic['ventaNoSuj']=0
-                dic['ventaExenta']=0
-                dic['ventaGravada']=round((l.price_unit*l.quantity*valor_con_descuento),2)
-                #dic['precioUni']=round(l.price_unit*(1+ivap),2)
-                f.gravadas_des+=dic['montoDescu']
-            elif exento:
-                dic['ventaNoSuj']=0
-                dic['ventaExenta']=round((l.price_unit*l.quantity*valor_con_descuento),2)
-                dic['ventaGravada']=0
-                f.exentas_des+=dic['montoDescu']
-            elif nosujeto:
-                dic['ventaNoSuj']=round((l.price_unit*l.quantity*valor_con_descuento),2)
-                dic['ventaExenta']=0
-                dic['ventaGravada']=0
-                f.nosujetas_des+=dic['montoDescu']
+                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                    if t.fe_tributo_id:
+                        tributos.append(t.fe_tributo_id.codigo)
+                dic['precioUni']=round(price_unit_notax,6)
+                if iva or retencion or persepcion:
+                    dic['ventaNoSuj']=0
+                    dic['ventaExenta']=0
+                    dic['ventaGravada']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.gravadas_linea_des+=dic['montoDescu']
+                elif exento:
+                    dic['ventaNoSuj']=0
+                    dic['ventaExenta']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
+                    dic['ventaGravada']=0
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.exentas_linea_des+=dic['montoDescu']
+                elif nosujeto:
+                    dic['ventaNoSuj']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
+                    dic['ventaExenta']=0
+                    dic['ventaGravada']=0
+                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
+                    f.nosujetas_linea_des+=dic['montoDescu']
+                else:
+                    dic['ventaNoSuj']=0
+                    dic['ventaExenta']=0
+                    dic['ventaGravada']=0
+                f.gravadas+=dic['ventaGravada']
+                f.exentas+=dic['ventaExenta']
+                f.nosujetas+=dic['ventaNoSuj']
+                if len(tributos)>0:
+                    dic['tributos']=tributos
+                else:
+                    dic['tributos']=None
+                #dic['psv']=0
+                #dic['noGravado']=0
+                f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
+                lista.append(dic)
             else:
-                dic['ventaNoSuj']=0
-                dic['ventaExenta']=0
-                dic['ventaGravada']=0
-            f.gravadas+=dic['ventaGravada']
-            f.exentas+=dic['ventaExenta']
-            f.nosujetas+=dic['ventaNoSuj']
-            if len(tributos)>0:
-                dic['tributos']=tributos
-            else:
-                dic['tributos']=None
-            f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),2))
-            lista.append(dic)
+                descuento_global+=(l.price_total*-1)
+                iva=False
+                exento=True
+                nosujeto=False
+                for t in l.tax_ids:
+                    iva=True if t.tax_group_id.code=='iva' else False
+                    exento=True if t.tax_group_id.code=='exento' else False
+                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                if iva or retencion or persepcion:
+                    f.gravadas_des+=(l.price_subtotal*-1)
+                elif exento:
+                    f.exentas_des+=(l.price_subtotal*-1)
+                elif nosujeto:
+                    f.nosujetas_des+=(l.price_subtotal*-1)
+                iva=False
+                ivap=0
+                exento=True
+                nosujeto=False
+                retencion=False
+                persepcion=False
+                isr=False
+                tributos=[]
+                for t in l.tax_ids:
+                    iva=True if t.tax_group_id.code=='iva' else False
+                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                    if iva==True:
+                        incluido=t.price_include
+                        price_unit=price_unit/(1+ivap)
+                    if incluido:
+                        price_unit=l.price_unit
+                        price_unit_notax=l.price_unit/(1+ivap)
+                    else:
+                        price_unit=l.price_unit*(1+ivap)
+                        price_unit_notax=l.price_unit
+                f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
+                f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
             i+=1
         return lista
 
@@ -2165,16 +2343,16 @@ class sv_fe_move(models.Model):
         resumen['descuNoSuj']=round(f.nosujetas_des,2)
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['numPagoElectronico']=None
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
         #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
+        resumen['numPagoElectronico']=None
         tributos=[]
         for l in f.invoice_line_ids:
             for t in l.tax_ids:
                 if t.fe_tributo_id:
                     if  t.fe_tributo_id.codigo!='0':
-                        if not t.id in tributos:                            
-                            tributos.append(t.id)
+                            if not t.id in tributos:                            
+                                tributos.append(t.id)
         if len(tributos)>0:
             tributosmh=[]
             for t in tributos:
@@ -2186,16 +2364,16 @@ class sv_fe_move(models.Model):
                 for l in f.line_ids:
                    if l.tax_line_id and l.tax_line_id.id==t:
                       valor=l.credit-l.debit if l.credit>l.debit else l.debit-l.credit
-                tmh['valor']=round(valor)
+                tmh['valor']=round(valor,2)
                 tributosmh.append(tmh)
             resumen['tributos']=tributosmh
         else:
             resumen['tributos']=None
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
-        resumen['ivaPerci1']=round(f.percepcion,2)
-        resumen['ivaRete1']=round(f.retencion,2)
+        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
+        resumen['ivaPerci1']=round(f.percepcion*-1,2)
+        resumen['ivaRete1']=round(f.retencion*-1,2)
         resumen['reteRenta']=round(f.isr,2)
-        resumen['montoTotalOperacion']=round(resumen['subTotal']-resumen['ivaRete1']-resumen['reteRenta']+f.iva,2)
+        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
         #resumen['totalNoGravado']=0
         #resumen['totalPagar']=round(resumen['montoTotalOperacion'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['montoTotalOperacion'],2))
@@ -2410,8 +2588,8 @@ class sv_fe_move(models.Model):
                     receptor['tipoDocumento']='13'
                     receptor['numDocumento']=f.partner_id.dui.replace('-','')
             #receptor['nit']=f.partner_id.x_nit.replace('-','')
-            if f.partner_id.x_comercial:
-                 receptor['nombreComercial']=f.partner_id.x_comercial
+            if f.partner_id.comercial:
+                 receptor['nombreComercial']=f.partner_id.comercial
             else:
                  receptor['nombreComercial'] = None
             receptor['nombrePais'] = f.partner_id.country_id.name
@@ -2447,6 +2625,9 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
+        f.gravadas_linea_des=0
+        f.exentas_linea_des=0
+        f.nosujetas_linea_des=0
         f.retencion=0
         f.percepcion=0
         f.isr=0
@@ -2455,6 +2636,7 @@ class sv_fe_move(models.Model):
         exportacion = 0
         i=1
         incluido=False
+        descuento_global=0.0
         for l in f.invoice_line_ids:
             if l.price_total>0:
                 dic={}
@@ -2521,7 +2703,8 @@ class sv_fe_move(models.Model):
                     #dic['ventaExenta']=0
                     dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento)*(1),2)
                     dic['precioUni']=round(price_unit,2)
-                    f.gravadas_des+=dic['montoDescu']
+                    f.gravadas_linea_des+=dic['montoDescu']
+                    f.gravadas+=dic['ventaGravada']
                 
             
                 #f.nosujetas+=dic['ventaNoSuj']
@@ -2543,11 +2726,13 @@ class sv_fe_move(models.Model):
                     exento=True if t.tax_group_id.code=='exento' else False
                     nosujeto=True if t.tax_group_id.code=='nosujeto' else False
                 if iva or retencion or persepcion:
-                    f.gravadas_des+=l.price_subtotal
+                    f.gravadas_des+=(l.price_total*-1)
                 elif exento:
-                    f.exentas_des+=l.price_total
+                    f.gravadas_des+=(l.price_total*-1)
                 elif nosujeto:
-                    f.nosujetas_des+=l.price_total
+                    f.gravadas_des+=(l.price_total*-1)
+                else:
+                    f.gravadas_des+=(l.price_total*-1)
             i+=1
         return lista
     
@@ -2578,14 +2763,15 @@ class sv_fe_move(models.Model):
         resumen={}
         #resumen['totalNoSuj']=round(f.nosujetas,2)
         #resumen['totalExenta']=round(f.exentas,2)
-        resumen['totalGravada']=round(f.amount_total,2)
+        resumen['totalGravada']=round(f.gravadas,2)
         #resumen['subTotalVentas']=round(f.nosujetas+f.exentas+f.gravadas,2)
-        resumen['descuNoSuj']=round(f.nosujetas_des,2)
-        resumen['descuExenta']=round(f.exentas_des,2)
-        resumen['descuGravada']=round(f.gravadas_des,2)
+        #resumen['descuNoSuj']=round(f.nosujetas_des,2)
+        #resumen['descuExenta']=round(f.exentas_des,2)
+        #resumen['descuGravada']=round(f.gravadas_des,2)
         resumen['porcentajeDescuento'] = 0
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
-        resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
+        resumen['totalDescu']=round(f.gravadas_des+f.gravadas_linea_des,2)
+        #resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['totalGravada'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
             for t in l.tax_ids:
@@ -2600,7 +2786,7 @@ class sv_fe_move(models.Model):
         #resumen['ivaRete1']=round(f.retencion,2)
         #resumen['reteRenta']=round(f.isr,2)
         resumen['observaciones']=f.observaciones
-        resumen['montoTotalOperacion']=round(f.amount_total,2)
+        
         resumen['totalNoGravado']=0
        
        
@@ -2615,11 +2801,12 @@ class sv_fe_move(models.Model):
         resumen['pagos']=f.get_pagos()
         resumen['numPagoElectronico']=None
         resumen['flete']= f.flete
-        resumen['descuento']=round(f.gravadas_des,2)
+        resumen['descuento']=f.gravadas_des
         resumen['seguro']= f.sv_fe_seguro
+        resumen['montoTotalOperacion']=round(resumen['totalGravada']-resumen['descuento'],2)
         resumen['descIncoterms'] = f.invoice_incoterm_id.name
         resumen['totalPagar']=round(resumen['montoTotalOperacion']+f.flete+f.sv_fe_seguro,2)
         resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
         #resumen['codIncoterms']= f.
-        
+        #raise UserError(str(f.gravadas_des))
         return resumen        
