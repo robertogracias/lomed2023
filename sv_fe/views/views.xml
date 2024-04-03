@@ -224,14 +224,14 @@
                         <group>
                             <field name="fe_tipo_doc_id" invisible="1"/>
                             <field name="fe_codigo" invisible="1"/>
-                            <field name="entrega" attrs="{'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
-                            <field name="doc_entrega"  attrs="{'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
-                            <field name="recibe"  attrs="{'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
-                            <field name="doc_recibe"  attrs="{'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
-                            <field name="observaciones"  attrs="{'invisible':[('fe_codigo','not in',['05','06','11','14'])],'readonly':[('sello','=',True)]}"/>
-                            <field name="doc_relacionado" attrs="{'invisible':[('fe_codigo','not in',['05','06'])],'readonly':[('sello','=',True)]}" domain="[('partner_id','=',partner_id),('move_type','=','out_invoice')]"/>
+                            <field name="entrega" attrs="{'required':[('fe_codigo','in',['05','06','14'])],'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
+                            <field name="doc_entrega"  attrs="{'required':[('fe_codigo','in',['05','06','14'])],'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
+                            <field name="recibe"  attrs="{'required':[('fe_codigo','in',['05','06','14'])],'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
+                            <field name="doc_recibe"  attrs="{'required':[('fe_codigo','in',['05','06','14'])],'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
+                            <field name="observaciones"  attrs="{'required':[('fe_codigo','in',['05','06','11','14'])],'invisible':[('fe_codigo','not in',['05','06','11','14'])],'readonly':[('sello','=',True)]}"/>
+                            <field name="doc_relacionado" attrs="{'required':[('fe_codigo','in',['05','06'])],'invisible':[('fe_codigo','not in',['05','06'])],'readonly':[('sello','=',True)]}" domain="[('partner_id','=',partner_id),('move_type','=','out_invoice')]"/>
                             <field name="sv_fe_regimen_id" attrs="{'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
-                            <field name="sv_fe_tipo_itemexpor_id" attrs="{'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
+                            <field name="sv_fe_tipo_itemexpor_id" attrs="{'required':[('fe_codigo','=','11')],'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
                             <field name="sv_fe_resinto_id" attrs="{'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
                             <field name="placa" invisible="1"/>
                         </group>

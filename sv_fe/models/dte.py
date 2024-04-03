@@ -368,6 +368,8 @@ class sv_fe_move(models.Model):
     dte_qr=fields.Char(string='QR',compute='get_qr',store=False)
     fe_tipo_doc_id=fields.Many2one(comodel_name='sv_fe.tipo_doc',related='tipo_documento_id.fe_tipo_doc_id',store=True,string="Tipo de documento")
     fe_codigo=fields.Char(string='Codigo tipo doc',related='fe_tipo_doc_id.codigo',store=True)
+    fe_transmision_id=fields.Many2one(comodel_name='sv_fe.transmision',string='Modelo de Transmision')
+    fe_ambiente_id=fields.Many2one(comodel_name='sv_fe.ambiente',string='Ambiente')
 
 
     def button_draft(self):
@@ -387,7 +389,12 @@ class sv_fe_move(models.Model):
         for r in self:
             res=''
             if r.move_type in ('out_invoice','out_refund','in_invoice','in_refound'):
-                res='https://admin.factura.gob.sv/consultaPublica%3Fambiente=01%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+                ambiente='00'
+                if r.fe_ambiente_id:
+                    ambiente=r.fe_ambiente_id.codigo
+                else:
+                    ambiente=r.company_id.fe_ambiente_id.codigo
+                res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
                 #res='https://admin.factura.gob.sv/consultaPublica?ambiente=01&codGen='+r.uuid+'&echaEmi='+(r.date_confirm).strftime('%Y-%m-%d')
             r.dte_qr=res
 
@@ -443,10 +450,16 @@ class sv_fe_move(models.Model):
         json_datos_cliente=json_datos_cliente.replace('false','null')
         f.doc_json=json_datos_cliente
         
-    def generar_fe(self):
+    def generar_fe(self,contingencia=False):
         self.ensure_one()
         f=self
-        
+
+        if not contingencia:
+            f.e_transmision_id=self.env.ref('svfe_transmision_1').id
+            f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
+        else:
+            f.e_transmision_id=self.env.ref('svfe_transmision_2').id
+
         #generando el dte
         #dte=str(f.get_factura())
         #dte=dte.replace('None','null')

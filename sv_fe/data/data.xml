@@ -684,27 +684,27 @@
 
 
 <record id="svfe_actividad_01111" model="sv_fe.actividad"><field name="name">Cultivo de cereales excepto arroz y para forrajes</field><field name="codigo">01111</field></record>
-<record id="svfe_actividad_01112" model="sv_fe.actividad"><field name="name">Cultivo de legumbres </field><field name="codigo">01112</field></record>
-<record id="svfe_actividad_01113" model="sv_fe.actividad"><field name="name">Cultivo de semillas  oleaginosas </field><field name="codigo">01113</field></record>
-<record id="svfe_actividad_01114" model="sv_fe.actividad"><field name="name">Cultivo de plantas para la preparación de semillas </field><field name="codigo">01114</field></record>
+<record id="svfe_actividad_01112" model="sv_fe.actividad"><field name="name">Cultivo de legumbres</field><field name="codigo">01112</field></record>
+<record id="svfe_actividad_01113" model="sv_fe.actividad"><field name="name">Cultivo de semillas oleaginosas</field><field name="codigo">01113</field></record>
+<record id="svfe_actividad_01114" model="sv_fe.actividad"><field name="name">Cultivo de plantas para la preparación de semillas</field><field name="codigo">01114</field></record>
 <record id="svfe_actividad_01119" model="sv_fe.actividad"><field name="name">Cultivo de otros cereales excepto arroz y forrajeros n.c.p.</field><field name="codigo">01119</field></record>
 <record id="svfe_actividad_01120" model="sv_fe.actividad"><field name="name">Cultivo de arroz</field><field name="codigo">01120</field></record>
 <record id="svfe_actividad_01131" model="sv_fe.actividad"><field name="name">Cultivo de raíces y tubérculos</field><field name="codigo">01131</field></record>
 <record id="svfe_actividad_01132" model="sv_fe.actividad"><field name="name">Cultivo de brotes, bulbos, vegetales tubérculos y cultivos similares</field><field name="codigo">01132</field></record>
 <record id="svfe_actividad_01133" model="sv_fe.actividad"><field name="name">Cultivo hortícola de fruto</field><field name="codigo">01133</field></record>
-<record id="svfe_actividad_01134" model="sv_fe.actividad"><field name="name">Cultivo de hortalizas de hoja y otras hortalizas n.c.p.</field><field name="codigo">01134</field></record>
+<record id="svfe_actividad_01134" model="sv_fe.actividad"><field name="name">Cultivo de hortalizas de hoja y otras hortalizas ncp</field><field name="codigo">01134</field></record>
 <record id="svfe_actividad_01140" model="sv_fe.actividad"><field name="name">Cultivo de caña de azúcar</field><field name="codigo">01140</field></record>
 <record id="svfe_actividad_01150" model="sv_fe.actividad"><field name="name">Cultivo de tabaco</field><field name="codigo">01150</field></record>
 <record id="svfe_actividad_01161" model="sv_fe.actividad"><field name="name">Cultivo de algodón</field><field name="codigo">01161</field></record>
 <record id="svfe_actividad_01162" model="sv_fe.actividad"><field name="name">Cultivo de fibras vegetales excepto algodón</field><field name="codigo">01162</field></record>
-<record id="svfe_actividad_01191" model="sv_fe.actividad"><field name="name">Cultivo de plantas no perennes  para la producción de semillas y flores  </field><field name="codigo">01191</field></record>
+<record id="svfe_actividad_01191" model="sv_fe.actividad"><field name="name">Cultivo de plantas no perennes  para la producción de semillas y flores</field><field name="codigo">01191</field></record>
 <record id="svfe_actividad_01192" model="sv_fe.actividad"><field name="name">Cultivo de cereales y pastos para la alimentación animal</field><field name="codigo">01192</field></record>
-<record id="svfe_actividad_01199" model="sv_fe.actividad"><field name="name">Producción de cultivos no estaciónales  n.c.p.</field><field name="codigo">01199</field></record>
+<record id="svfe_actividad_01199" model="sv_fe.actividad"><field name="name">Producción de cultivos no estacionales  ncp</field><field name="codigo">01199</field></record>
 <record id="svfe_actividad_01220" model="sv_fe.actividad"><field name="name">Cultivo de frutas tropicales</field><field name="codigo">01220</field></record>
 <record id="svfe_actividad_01230" model="sv_fe.actividad"><field name="name">Cultivo de cítricos</field><field name="codigo">01230</field></record>
-<record id="svfe_actividad_01240" model="sv_fe.actividad"><field name="name">Cultivo de frutas de pepita y hueso </field><field name="codigo">01240</field></record>
-<record id="svfe_actividad_01251" model="sv_fe.actividad"><field name="name">Cultivo de frutas n.c.p.</field><field name="codigo">01251</field></record>
-<record id="svfe_actividad_01252" model="sv_fe.actividad"><field name="name">Cultivo de otros frutos  y nueces de árboles y arbustos </field><field name="codigo">01252</field></record>
+<record id="svfe_actividad_01240" model="sv_fe.actividad"><field name="name">Cultivo de frutas de pepita y hueso</field><field name="codigo">01240</field></record>
+<record id="svfe_actividad_01251" model="sv_fe.actividad"><field name="name">Cultivo de frutas ncp</field><field name="codigo">01251</field></record>
+<record id="svfe_actividad_01252" model="sv_fe.actividad"><field name="name">Cultivo de otros frutos  y nueces de árboles y arbustos</field><field name="codigo">01252</field></record>
 <record id="svfe_actividad_01260" model="sv_fe.actividad"><field name="name">Cultivo de frutos oleaginosos</field><field name="codigo">01260</field></record>
 <record id="svfe_actividad_01271" model="sv_fe.actividad"><field name="name">Cultivo de café</field><field name="codigo">01271</field></record>
 <record id="svfe_actividad_01272" model="sv_fe.actividad"><field name="name">Cultivo de plantas para la elaboración de bebidas excepto café</field><field name="codigo">01272</field></record>
@@ -712,31 +712,32 @@
 <record id="svfe_actividad_01282" model="sv_fe.actividad"><field name="name">Cultivo de plantas para la obtención de productos medicinales y farmacéuticos</field><field name="codigo">01282</field></record>
 <record id="svfe_actividad_01291" model="sv_fe.actividad"><field name="name">Cultivo de árboles de hule (caucho) para la obtención de látex</field><field name="codigo">01291</field></record>
 <record id="svfe_actividad_01292" model="sv_fe.actividad"><field name="name">Cultivo de plantas para la obtención de productos químicos y colorantes</field><field name="codigo">01292</field></record>
-<record id="svfe_actividad_01299" model="sv_fe.actividad"><field name="name">Producción de cultivos perennes n.c.p.</field><field name="codigo">01299</field></record>
-<record id="svfe_actividad_01300" model="sv_fe.actividad"><field name="name">Propagación de plantas </field><field name="codigo">01300</field></record>
+<record id="svfe_actividad_01299" model="sv_fe.actividad"><field name="name">Producción de cultivos perennes ncp</field><field name="codigo">01299</field></record>
+<record id="svfe_actividad_01300" model="sv_fe.actividad"><field name="name">Propagación de plantas</field><field name="codigo">01300</field></record>
+<record id="svfe_actividad_01301" model="sv_fe.actividad"><field name="name">Cultivo de plantas y flores ornamentales</field><field name="codigo">01301</field></record>
 <record id="svfe_actividad_01410" model="sv_fe.actividad"><field name="name">Cría y engorde de ganado bovino</field><field name="codigo">01410</field></record>
 <record id="svfe_actividad_01420" model="sv_fe.actividad"><field name="name">Cría de caballos y otros equinos</field><field name="codigo">01420</field></record>
-<record id="svfe_actividad_01440" model="sv_fe.actividad"><field name="name">Cría de ovejas y cabras </field><field name="codigo">01440</field></record>
+<record id="svfe_actividad_01440" model="sv_fe.actividad"><field name="name">Cría de ovejas y cabras</field><field name="codigo">01440</field></record>
 <record id="svfe_actividad_01450" model="sv_fe.actividad"><field name="name">Cría de cerdos</field><field name="codigo">01450</field></record>
 <record id="svfe_actividad_01460" model="sv_fe.actividad"><field name="name">Cría de aves de corral y producción de huevos</field><field name="codigo">01460</field></record>
 <record id="svfe_actividad_01491" model="sv_fe.actividad"><field name="name">Cría de abejas apicultura para la obtención de miel y otros productos apícolas</field><field name="codigo">01491</field></record>
 <record id="svfe_actividad_01492" model="sv_fe.actividad"><field name="name">Cría de conejos</field><field name="codigo">01492</field></record>
 <record id="svfe_actividad_01493" model="sv_fe.actividad"><field name="name">Cría de iguanas y garrobos</field><field name="codigo">01493</field></record>
-<record id="svfe_actividad_01494" model="sv_fe.actividad"><field name="name">Cría de mariposas y otros insectos </field><field name="codigo">01494</field></record>
+<record id="svfe_actividad_01494" model="sv_fe.actividad"><field name="name">Cría de mariposas y otros insectos</field><field name="codigo">01494</field></record>
 <record id="svfe_actividad_01499" model="sv_fe.actividad"><field name="name">Cría y obtención de productos animales n.c.p.</field><field name="codigo">01499</field></record>
 <record id="svfe_actividad_01500" model="sv_fe.actividad"><field name="name">Cultivo de productos agrícolas en combinación con la cría de animales</field><field name="codigo">01500</field></record>
 <record id="svfe_actividad_01611" model="sv_fe.actividad"><field name="name">Servicios de maquinaria agrícola</field><field name="codigo">01611</field></record>
 <record id="svfe_actividad_01612" model="sv_fe.actividad"><field name="name">Control de plagas</field><field name="codigo">01612</field></record>
 <record id="svfe_actividad_01613" model="sv_fe.actividad"><field name="name">Servicios de riego</field><field name="codigo">01613</field></record>
 <record id="svfe_actividad_01614" model="sv_fe.actividad"><field name="name">Servicios de contratación de mano de obra para la agricultura</field><field name="codigo">01614</field></record>
-<record id="svfe_actividad_01619" model="sv_fe.actividad"><field name="name">Servicios agrícolas n.c.p.</field><field name="codigo">01619</field></record>
-<record id="svfe_actividad_01621" model="sv_fe.actividad"><field name="name">Actividades para mejorar la reproducción , el crecimiento y el rendimiento de los animales y sus productos</field><field name="codigo">01621</field></record>
+<record id="svfe_actividad_01619" model="sv_fe.actividad"><field name="name">Servicios agrícolas ncp</field><field name="codigo">01619</field></record>
+<record id="svfe_actividad_01621" model="sv_fe.actividad"><field name="name">Actividades para mejorar la reproducción, el crecimiento y el rendimiento de los animales y sus productos</field><field name="codigo">01621</field></record>
 <record id="svfe_actividad_01622" model="sv_fe.actividad"><field name="name">Servicios de mano de obra pecuaria</field><field name="codigo">01622</field></record>
-<record id="svfe_actividad_01629" model="sv_fe.actividad"><field name="name">Servicios pecuarios n.c.p.</field><field name="codigo">01629</field></record>
+<record id="svfe_actividad_01629" model="sv_fe.actividad"><field name="name">Servicios pecuarios ncp</field><field name="codigo">01629</field></record>
 <record id="svfe_actividad_01631" model="sv_fe.actividad"><field name="name">Labores post cosecha de preparación de los productos agrícolas para su comercialización o para la industria</field><field name="codigo">01631</field></record>
 <record id="svfe_actividad_01632" model="sv_fe.actividad"><field name="name">Servicio de beneficio de café</field><field name="codigo">01632</field></record>
 <record id="svfe_actividad_01633" model="sv_fe.actividad"><field name="name">Servicio de beneficiado de plantas textiles (incluye el beneficiado cuando este es realizado en la misma explotación agropecuaria)</field><field name="codigo">01633</field></record>
-<record id="svfe_actividad_01640" model="sv_fe.actividad"><field name="name">TRATAMIENTO DE SEMILLAS PARA  LA PROPAGACIÓN</field><field name="codigo">01640</field></record>
+<record id="svfe_actividad_01640" model="sv_fe.actividad"><field name="name">Tratamiento de semillas para la propagación</field><field name="codigo">01640</field></record>
 <record id="svfe_actividad_01700" model="sv_fe.actividad"><field name="name">Caza ordinaria y mediante trampas, repoblación de animales de caza y servicios conexos</field><field name="codigo">01700</field></record>
 <record id="svfe_actividad_02100" model="sv_fe.actividad"><field name="name">Silvicultura y otras actividades forestales</field><field name="codigo">02100</field></record>
 <record id="svfe_actividad_02200" model="sv_fe.actividad"><field name="name">Extracción de madera</field><field name="codigo">02200</field></record>
@@ -747,44 +748,42 @@
 <record id="svfe_actividad_03210" model="sv_fe.actividad"><field name="name">Acuicultura marítima</field><field name="codigo">03210</field></record>
 <record id="svfe_actividad_03220" model="sv_fe.actividad"><field name="name">Acuicultura de agua dulce</field><field name="codigo">03220</field></record>
 <record id="svfe_actividad_03300" model="sv_fe.actividad"><field name="name">Servicios de apoyo a la pesca y acuicultura</field><field name="codigo">03300</field></record>
-<record id="svfe_actividad_05100" model="sv_fe.actividad"><field name="name">Extracción de hulla </field><field name="codigo">05100</field></record>
-<record id="svfe_actividad_05200" model="sv_fe.actividad"><field name="name">Extracción  y aglomeración de  lignito</field><field name="codigo">05200</field></record>
+<record id="svfe_actividad_05100" model="sv_fe.actividad"><field name="name">Extracción de hulla</field><field name="codigo">05100</field></record>
+<record id="svfe_actividad_05200" model="sv_fe.actividad"><field name="name">Extracción y aglomeración de lignito</field><field name="codigo">05200</field></record>
 <record id="svfe_actividad_06100" model="sv_fe.actividad"><field name="name">Extracción de petróleo crudo</field><field name="codigo">06100</field></record>
-<record id="svfe_actividad_06200" model="sv_fe.actividad"><field name="name">Extracción de gas natural </field><field name="codigo">06200</field></record>
+<record id="svfe_actividad_06200" model="sv_fe.actividad"><field name="name">Extracción de gas natural</field><field name="codigo">06200</field></record>
 <record id="svfe_actividad_07100" model="sv_fe.actividad"><field name="name">Extracción de minerales  de hierro</field><field name="codigo">07100</field></record>
-<record id="svfe_actividad_07210" model="sv_fe.actividad"><field name="name">Extracción de minerales de uranio y torio </field><field name="codigo">07210</field></record>
-<record id="svfe_actividad_07290" model="sv_fe.actividad"><field name="name">Extracción de minerales metalíferos no ferrosos </field><field name="codigo">07290</field></record>
+<record id="svfe_actividad_07210" model="sv_fe.actividad"><field name="name">Extracción de minerales de uranio y torio</field><field name="codigo">07210</field></record>
+<record id="svfe_actividad_07290" model="sv_fe.actividad"><field name="name">Extracción de minerales metalíferos no ferrosos</field><field name="codigo">07290</field></record>
 <record id="svfe_actividad_08100" model="sv_fe.actividad"><field name="name">Extracción de piedra, arena y arcilla</field><field name="codigo">08100</field></record>
-<record id="svfe_actividad_08910" model="sv_fe.actividad"><field name="name">Extracción  de minerales para la fabricación de abonos  y productos químicos </field><field name="codigo">08910</field></record>
+<record id="svfe_actividad_08910" model="sv_fe.actividad"><field name="name">Extracción de minerales para la fabricación de abonos y productos químicos</field><field name="codigo">08910</field></record>
 <record id="svfe_actividad_08920" model="sv_fe.actividad"><field name="name">Extracción y aglomeración de turba</field><field name="codigo">08920</field></record>
 <record id="svfe_actividad_08930" model="sv_fe.actividad"><field name="name">Extracción de sal</field><field name="codigo">08930</field></record>
 <record id="svfe_actividad_08990" model="sv_fe.actividad"><field name="name">Explotación de otras minas y canteras ncp</field><field name="codigo">08990</field></record>
-<record id="svfe_actividad_09100" model="sv_fe.actividad"><field name="name">Actividades  de apoyo a la extracción de petróleo y gas natural </field><field name="codigo">09100</field></record>
-<record id="svfe_actividad_09900" model="sv_fe.actividad"><field name="name">Actividades de apoyo a la  explotación de minas y canteras </field><field name="codigo">09900</field></record>
-<record id="svfe_actividad_10101" model="sv_fe.actividad"><field name="name">Servicio de rastros y mataderos  de bovinos y porcinos</field><field name="codigo">10101</field></record>
-<record id="svfe_actividad_10102" model="sv_fe.actividad"><field name="name">Matanza y procesamiento de bovinos y porcinos  </field><field name="codigo">10102</field></record>
-<record id="svfe_actividad_10103" model="sv_fe.actividad"><field name="name">Matanza y procesamientos de aves de corral </field><field name="codigo">10103</field></record>
+<record id="svfe_actividad_09100" model="sv_fe.actividad"><field name="name">Actividades de apoyo a la extracción de petróleo y gas natural</field><field name="codigo">09100</field></record>
+<record id="svfe_actividad_09900" model="sv_fe.actividad"><field name="name">Actividades de apoyo a la explotación de minas y canteras</field><field name="codigo">09900</field></record>
+<record id="svfe_actividad_10101" model="sv_fe.actividad"><field name="name">Servicio de rastros y mataderos de bovinos y porcinos</field><field name="codigo">10101</field></record>
+<record id="svfe_actividad_10102" model="sv_fe.actividad"><field name="name">Matanza y procesamiento de bovinos y porcinos</field><field name="codigo">10102</field></record>
+<record id="svfe_actividad_10103" model="sv_fe.actividad"><field name="name">Matanza y procesamientos de aves de corral</field><field name="codigo">10103</field></record>
 <record id="svfe_actividad_10104" model="sv_fe.actividad"><field name="name">Elaboración y conservación de embutidos y tripas naturales</field><field name="codigo">10104</field></record>
-<record id="svfe_actividad_10105" model="sv_fe.actividad"><field name="name">Servicios de conservación y empaque  de carnes</field><field name="codigo">10105</field></record>
+<record id="svfe_actividad_10105" model="sv_fe.actividad"><field name="name">Servicios de conservación y empaque de carnes</field><field name="codigo">10105</field></record>
 <record id="svfe_actividad_10106" model="sv_fe.actividad"><field name="name">Elaboración y conservación de grasas y aceites animales</field><field name="codigo">10106</field></record>
 <record id="svfe_actividad_10107" model="sv_fe.actividad"><field name="name">Servicios de molienda de carne</field><field name="codigo">10107</field></record>
-<record id="svfe_actividad_10108" model="sv_fe.actividad"><field name="name">Elaboración de productos de carne n.c.p.</field><field name="codigo">10108</field></record>
+<record id="svfe_actividad_10108" model="sv_fe.actividad"><field name="name">Elaboración de productos de carne ncp</field><field name="codigo">10108</field></record>
 <record id="svfe_actividad_10201" model="sv_fe.actividad"><field name="name">Procesamiento y conservación de pescado, crustáceos y moluscos</field><field name="codigo">10201</field></record>
-<record id="svfe_actividad_10208" model="sv_fe.actividad"><field name="name">Servicio de maquilado del procesamiento y conservación de pescado, crustáceos,  moluscos y otros productos acuáticos</field><field name="codigo">10208</field></record>
-<record id="svfe_actividad_10209" model="sv_fe.actividad"><field name="name">Fabricación de productos de pescado n.c.p.</field><field name="codigo">10209</field></record>
+<record id="svfe_actividad_10209" model="sv_fe.actividad"><field name="name">Fabricación de productos de pescado ncp</field><field name="codigo">10209</field></record>
 <record id="svfe_actividad_10301" model="sv_fe.actividad"><field name="name">Elaboración de jugos de frutas y hortalizas</field><field name="codigo">10301</field></record>
 <record id="svfe_actividad_10302" model="sv_fe.actividad"><field name="name">Elaboración y envase de jaleas, mermeladas y frutas deshidratadas</field><field name="codigo">10302</field></record>
 <record id="svfe_actividad_10309" model="sv_fe.actividad"><field name="name">Elaboración de productos de frutas y hortalizas n.c.p.</field><field name="codigo">10309</field></record>
 <record id="svfe_actividad_10401" model="sv_fe.actividad"><field name="name">Fabricación de aceites y grasas vegetales y animales comestibles</field><field name="codigo">10401</field></record>
-<record id="svfe_actividad_10402" model="sv_fe.actividad"><field name="name">Fabricación de aceites y grasas vegetales y animales  no comestibles</field><field name="codigo">10402</field></record>
+<record id="svfe_actividad_10402" model="sv_fe.actividad"><field name="name">Fabricación de aceites y grasas vegetales y animales no comestibles</field><field name="codigo">10402</field></record>
 <record id="svfe_actividad_10409" model="sv_fe.actividad"><field name="name">Servicio de maquilado de aceites</field><field name="codigo">10409</field></record>
 <record id="svfe_actividad_10501" model="sv_fe.actividad"><field name="name">Fabricación de productos lácteos excepto sorbetes y quesos sustitutos</field><field name="codigo">10501</field></record>
-<record id="svfe_actividad_10502" model="sv_fe.actividad"><field name="name">Fabricación de sorbetes y Helados </field><field name="codigo">10502</field></record>
+<record id="svfe_actividad_10502" model="sv_fe.actividad"><field name="name">Fabricación de sorbetes y helados</field><field name="codigo">10502</field></record>
 <record id="svfe_actividad_10503" model="sv_fe.actividad"><field name="name">Fabricación de quesos</field><field name="codigo">10503</field></record>
 <record id="svfe_actividad_10611" model="sv_fe.actividad"><field name="name">Molienda de cereales</field><field name="codigo">10611</field></record>
 <record id="svfe_actividad_10612" model="sv_fe.actividad"><field name="name">Elaboración de cereales para el desayuno y similares</field><field name="codigo">10612</field></record>
-<record id="svfe_actividad_10613" model="sv_fe.actividad"><field name="name">Servicios de beneficiado de productos agrícolas ncp (excluye Beneficio de azúcar  rama 1072  y beneficio de café rama 0163)</field><field name="codigo">10613</field></record>
-<record id="svfe_actividad_10619" model="sv_fe.actividad"><field name="name">Elaboración de otras harinas n.c.p.</field><field name="codigo">10619</field></record>
+<record id="svfe_actividad_10613" model="sv_fe.actividad"><field name="name">Servicios de beneficiado de productos agrícolas ncp (excluye Beneficio de azúcar rama 1072  y beneficio de café rama 0163)</field><field name="codigo">10613</field></record>
 <record id="svfe_actividad_10621" model="sv_fe.actividad"><field name="name">Fabricación de almidón</field><field name="codigo">10621</field></record>
 <record id="svfe_actividad_10628" model="sv_fe.actividad"><field name="name">Servicio de molienda de maíz húmedo molino para nixtamal</field><field name="codigo">10628</field></record>
 <record id="svfe_actividad_10711" model="sv_fe.actividad"><field name="name">Elaboración de tortillas</field><field name="codigo">10711</field></record>
@@ -810,36 +809,35 @@
 <record id="svfe_actividad_11042" model="sv_fe.actividad"><field name="name">Fabricación y envasado  de agua</field><field name="codigo">11042</field></record>
 <record id="svfe_actividad_11043" model="sv_fe.actividad"><field name="name">Elaboración de refrescos</field><field name="codigo">11043</field></record>
 <record id="svfe_actividad_11048" model="sv_fe.actividad"><field name="name">Maquilado de aguas gaseosas</field><field name="codigo">11048</field></record>
+<record id="svfe_actividad_11049" model="sv_fe.actividad"><field name="name">Elaboración de bebidas no alcohólicas</field><field name="codigo">11049</field></record>
 <record id="svfe_actividad_12000" model="sv_fe.actividad"><field name="name">Elaboración de productos de tabaco</field><field name="codigo">12000</field></record>
 <record id="svfe_actividad_13111" model="sv_fe.actividad"><field name="name">Preparación de fibras textiles</field><field name="codigo">13111</field></record>
 <record id="svfe_actividad_13112" model="sv_fe.actividad"><field name="name">Fabricación de hilados</field><field name="codigo">13112</field></record>
-<record id="svfe_actividad_13118" model="sv_fe.actividad"><field name="name">Maquilado de hilos</field><field name="codigo">13118</field></record>
 <record id="svfe_actividad_13120" model="sv_fe.actividad"><field name="name">Fabricación de telas</field><field name="codigo">13120</field></record>
-<record id="svfe_actividad_13128" model="sv_fe.actividad"><field name="name">Maquilado de telas</field><field name="codigo">13128</field></record>
 <record id="svfe_actividad_13130" model="sv_fe.actividad"><field name="name">Acabado de productos textiles</field><field name="codigo">13130</field></record>
-<record id="svfe_actividad_13910" model="sv_fe.actividad"><field name="name">Fabricación de tejidos de punto y  ganchillo </field><field name="codigo">13910</field></record>
+<record id="svfe_actividad_13910" model="sv_fe.actividad"><field name="name">Fabricación de tejidos de punto y  ganchillo</field><field name="codigo">13910</field></record>
 <record id="svfe_actividad_13921" model="sv_fe.actividad"><field name="name">Fabricación de productos textiles para el hogar</field><field name="codigo">13921</field></record>
 <record id="svfe_actividad_13922" model="sv_fe.actividad"><field name="name">Sacos, bolsas y otros artículos textiles</field><field name="codigo">13922</field></record>
 <record id="svfe_actividad_13929" model="sv_fe.actividad"><field name="name">Fabricación de artículos confeccionados con materiales textiles, excepto prendas de vestir n.c.p</field><field name="codigo">13929</field></record>
 <record id="svfe_actividad_13930" model="sv_fe.actividad"><field name="name">Fabricación de tapices y alfombras</field><field name="codigo">13930</field></record>
-<record id="svfe_actividad_13941" model="sv_fe.actividad"><field name="name">Fabricación de cuerdas de henequén y otras fibras naturales.( lazos, pitas)</field><field name="codigo">13941</field></record>
+<record id="svfe_actividad_13941" model="sv_fe.actividad"><field name="name">Fabricación de cuerdas de henequén y otras fibras naturales (lazos, pitas)</field><field name="codigo">13941</field></record>
 <record id="svfe_actividad_13942" model="sv_fe.actividad"><field name="name">Fabricación de redes de diversos materiales</field><field name="codigo">13942</field></record>
 <record id="svfe_actividad_13948" model="sv_fe.actividad"><field name="name">Maquilado de productos trenzables de cualquier material (petates, sillas, etc.)</field><field name="codigo">13948</field></record>
 <record id="svfe_actividad_13991" model="sv_fe.actividad"><field name="name">Fabricación de adornos, etiquetas y otros artículos para prendas de vestir</field><field name="codigo">13991</field></record>
 <record id="svfe_actividad_13992" model="sv_fe.actividad"><field name="name">Servicio de bordados en artículos y prendas de tela</field><field name="codigo">13992</field></record>
-<record id="svfe_actividad_13999" model="sv_fe.actividad"><field name="name">Fabricación de productos textiles n.c.p.</field><field name="codigo">13999</field></record>
+<record id="svfe_actividad_13999" model="sv_fe.actividad"><field name="name">Fabricación de productos textiles ncp</field><field name="codigo">13999</field></record>
 <record id="svfe_actividad_14101" model="sv_fe.actividad"><field name="name">Fabricación de ropa  interior, para dormir y similares</field><field name="codigo">14101</field></record>
 <record id="svfe_actividad_14102" model="sv_fe.actividad"><field name="name">Fabricación de ropa para niños</field><field name="codigo">14102</field></record>
-<record id="svfe_actividad_14103" model="sv_fe.actividad"><field name="name">Fabricación de prendas de vestir para ambos sexos </field><field name="codigo">14103</field></record>
+<record id="svfe_actividad_14103" model="sv_fe.actividad"><field name="name">Fabricación de prendas de vestir para ambos sexos</field><field name="codigo">14103</field></record>
 <record id="svfe_actividad_14104" model="sv_fe.actividad"><field name="name">Confección de prendas a medida</field><field name="codigo">14104</field></record>
 <record id="svfe_actividad_14105" model="sv_fe.actividad"><field name="name">Fabricación de prendas de vestir para deportes</field><field name="codigo">14105</field></record>
 <record id="svfe_actividad_14106" model="sv_fe.actividad"><field name="name">Elaboración de artesanías de uso personal confeccionadas especialmente de materiales textiles</field><field name="codigo">14106</field></record>
 <record id="svfe_actividad_14108" model="sv_fe.actividad"><field name="name">Maquilado  de prendas de vestir, accesorios y otros</field><field name="codigo">14108</field></record>
-<record id="svfe_actividad_14109" model="sv_fe.actividad"><field name="name">Fabricación de prendas  y accesorios de vestir n.c.p.</field><field name="codigo">14109</field></record>
-<record id="svfe_actividad_14200" model="sv_fe.actividad"><field name="name">Fabricación de Artículos de piel</field><field name="codigo">14200</field></record>
+<record id="svfe_actividad_14109" model="sv_fe.actividad"><field name="name">Fabricación de prendas y accesorios de vestir n.c.p.</field><field name="codigo">14109</field></record>
+<record id="svfe_actividad_14200" model="sv_fe.actividad"><field name="name">Fabricación de artículos de piel</field><field name="codigo">14200</field></record>
 <record id="svfe_actividad_14301" model="sv_fe.actividad"><field name="name">Fabricación de calcetines, calcetas, medias (panty house) y otros similares</field><field name="codigo">14301</field></record>
 <record id="svfe_actividad_14302" model="sv_fe.actividad"><field name="name">Fabricación de ropa interior de tejido de punto</field><field name="codigo">14302</field></record>
-<record id="svfe_actividad_14309" model="sv_fe.actividad"><field name="name">Fabricación de prendas de vestir de tejido de punto n.c.p.</field><field name="codigo">14309</field></record>
+<record id="svfe_actividad_14309" model="sv_fe.actividad"><field name="name">Fabricación de prendas de vestir de tejido de punto ncp</field><field name="codigo">14309</field></record>
 <record id="svfe_actividad_15110" model="sv_fe.actividad"><field name="name">Curtido y adobo de cueros; adobo y teñido de pieles</field><field name="codigo">15110</field></record>
 <record id="svfe_actividad_15121" model="sv_fe.actividad"><field name="name">Fabricación de maletas, bolsos de mano y otros artículos de marroquinería</field><field name="codigo">15121</field></record>
 <record id="svfe_actividad_15122" model="sv_fe.actividad"><field name="name">Fabricación de monturas, accesorios y vainas  talabartería</field><field name="codigo">15122</field></record>
@@ -847,19 +845,18 @@
 <record id="svfe_actividad_15128" model="sv_fe.actividad"><field name="name">Maquilado de artículos de cuero natural, sintético y de otros materiales</field><field name="codigo">15128</field></record>
 <record id="svfe_actividad_15201" model="sv_fe.actividad"><field name="name">Fabricación de calzado</field><field name="codigo">15201</field></record>
 <record id="svfe_actividad_15202" model="sv_fe.actividad"><field name="name">Fabricación de partes y accesorios de calzado</field><field name="codigo">15202</field></record>
-<record id="svfe_actividad_15208" model="sv_fe.actividad"><field name="name">Maquilado  de calzado y partes de calzado</field><field name="codigo">15208</field></record>
+<record id="svfe_actividad_15208" model="sv_fe.actividad"><field name="name">Maquilado de partes y accesorios de calzado</field><field name="codigo">15208</field></record>
 <record id="svfe_actividad_16100" model="sv_fe.actividad"><field name="name">Aserradero y acepilladura de madera</field><field name="codigo">16100</field></record>
-<record id="svfe_actividad_16210" model="sv_fe.actividad"><field name="name">Fabricación de madera laminada, terciada, enchapada y contrachapada , paneles para la construcción</field><field name="codigo">16210</field></record>
+<record id="svfe_actividad_16210" model="sv_fe.actividad"><field name="name">Fabricación de madera laminada, terciada, enchapada y contrachapada, paneles para la construcción</field><field name="codigo">16210</field></record>
 <record id="svfe_actividad_16220" model="sv_fe.actividad"><field name="name">Fabricación de partes y piezas de carpintería para edificios y construcciones</field><field name="codigo">16220</field></record>
 <record id="svfe_actividad_16230" model="sv_fe.actividad"><field name="name">Fabricación de envases y recipientes de madera</field><field name="codigo">16230</field></record>
-<record id="svfe_actividad_16291" model="sv_fe.actividad"><field name="name">Suprimido</field><field name="codigo">16291</field></record>
 <record id="svfe_actividad_16292" model="sv_fe.actividad"><field name="name">Fabricación de artesanías de madera, semillas,  materiales trenzables</field><field name="codigo">16292</field></record>
-<record id="svfe_actividad_16299" model="sv_fe.actividad"><field name="name">Fabricación de productos de madera, corcho, paja y materiales trenzables n.c.p.</field><field name="codigo">16299</field></record>
+<record id="svfe_actividad_16299" model="sv_fe.actividad"><field name="name">Fabricación de productos de madera, corcho, paja y materiales trenzables ncp</field><field name="codigo">16299</field></record>
 <record id="svfe_actividad_17010" model="sv_fe.actividad"><field name="name">Fabricación de pasta de madera, papel y cartón</field><field name="codigo">17010</field></record>
 <record id="svfe_actividad_17020" model="sv_fe.actividad"><field name="name">Fabricación de papel y cartón ondulado y envases de papel y cartón</field><field name="codigo">17020</field></record>
 <record id="svfe_actividad_17091" model="sv_fe.actividad"><field name="name">Fabricación de artículos de papel y cartón de uso personal y doméstico</field><field name="codigo">17091</field></record>
-<record id="svfe_actividad_17092" model="sv_fe.actividad"><field name="name">Fabricación de productos de papel n.c.p.</field><field name="codigo">17092</field></record>
-<record id="svfe_actividad_18110" model="sv_fe.actividad"><field name="name">Impresión </field><field name="codigo">18110</field></record>
+<record id="svfe_actividad_17092" model="sv_fe.actividad"><field name="name">Fabricación de productos de papel ncp</field><field name="codigo">17092</field></record>
+<record id="svfe_actividad_18110" model="sv_fe.actividad"><field name="name">Impresión</field><field name="codigo">18110</field></record>
 <record id="svfe_actividad_18120" model="sv_fe.actividad"><field name="name">Servicios relacionados con la impresión</field><field name="codigo">18120</field></record>
 <record id="svfe_actividad_18200" model="sv_fe.actividad"><field name="name">Reproducción de grabaciones</field><field name="codigo">18200</field></record>
 <record id="svfe_actividad_19100" model="sv_fe.actividad"><field name="name">Fabricación de productos de hornos de coque</field><field name="codigo">19100</field></record>
@@ -879,7 +876,7 @@
 <record id="svfe_actividad_20291" model="sv_fe.actividad"><field name="name">Fabricación de tintas y colores para escribir y pintar; fabricación de cintas para impresoras</field><field name="codigo">20291</field></record>
 <record id="svfe_actividad_20292" model="sv_fe.actividad"><field name="name">Fabricación de productos pirotécnicos, explosivos y municiones</field><field name="codigo">20292</field></record>
 <record id="svfe_actividad_20299" model="sv_fe.actividad"><field name="name">Fabricación de productos químicos n.c.p.</field><field name="codigo">20299</field></record>
-<record id="svfe_actividad_20300" model="sv_fe.actividad"><field name="name">Fabricación de fibras artificiales </field><field name="codigo">20300</field></record>
+<record id="svfe_actividad_20300" model="sv_fe.actividad"><field name="name">Fabricación de fibras artificiales</field><field name="codigo">20300</field></record>
 <record id="svfe_actividad_21001" model="sv_fe.actividad"><field name="name">Manufactura de productos farmacéuticos, sustancias químicas y productos botánicos</field><field name="codigo">21001</field></record>
 <record id="svfe_actividad_21008" model="sv_fe.actividad"><field name="name">Maquilado de medicamentos</field><field name="codigo">21008</field></record>
 <record id="svfe_actividad_22110" model="sv_fe.actividad"><field name="name">Fabricación de cubiertas y cámaras; renovación y recauchutado de cubiertas</field><field name="codigo">22110</field></record>
@@ -891,17 +888,17 @@
 <record id="svfe_actividad_23101" model="sv_fe.actividad"><field name="name">Fabricación de vidrio</field><field name="codigo">23101</field></record>
 <record id="svfe_actividad_23102" model="sv_fe.actividad"><field name="name">Fabricación de recipientes y envases de vidrio</field><field name="codigo">23102</field></record>
 <record id="svfe_actividad_23108" model="sv_fe.actividad"><field name="name">Servicio de maquilado</field><field name="codigo">23108</field></record>
-<record id="svfe_actividad_23109" model="sv_fe.actividad"><field name="name">Fabricación de productos de vidrio n.c.p.</field><field name="codigo">23109</field></record>
+<record id="svfe_actividad_23109" model="sv_fe.actividad"><field name="name">Fabricación de productos de vidrio ncp</field><field name="codigo">23109</field></record>
 <record id="svfe_actividad_23910" model="sv_fe.actividad"><field name="name">Fabricación de productos refractarios</field><field name="codigo">23910</field></record>
 <record id="svfe_actividad_23920" model="sv_fe.actividad"><field name="name">Fabricación de productos de arcilla para la construcción</field><field name="codigo">23920</field></record>
 <record id="svfe_actividad_23931" model="sv_fe.actividad"><field name="name">Fabricación de productos de cerámica y porcelana no refractaria</field><field name="codigo">23931</field></record>
-<record id="svfe_actividad_23932" model="sv_fe.actividad"><field name="name">Fabricación de productos de cerámica y porcelana n.c.p.</field><field name="codigo">23932</field></record>
+<record id="svfe_actividad_23932" model="sv_fe.actividad"><field name="name">Fabricación de productos de cerámica y porcelana ncp</field><field name="codigo">23932</field></record>
 <record id="svfe_actividad_23940" model="sv_fe.actividad"><field name="name">Fabricación de cemento, cal y yeso</field><field name="codigo">23940</field></record>
 <record id="svfe_actividad_23950" model="sv_fe.actividad"><field name="name">Fabricación de artículos de hormigón, cemento y yeso</field><field name="codigo">23950</field></record>
 <record id="svfe_actividad_23960" model="sv_fe.actividad"><field name="name">Corte, tallado y acabado de la piedra</field><field name="codigo">23960</field></record>
-<record id="svfe_actividad_23990" model="sv_fe.actividad"><field name="name">Fabricación de productos minerales no metálicos n.c.p.</field><field name="codigo">23990</field></record>
-<record id="svfe_actividad_24100" model="sv_fe.actividad"><field name="name">Industria básicas de hierro y acero</field><field name="codigo">24100</field></record>
-<record id="svfe_actividad_24200" model="sv_fe.actividad"><field name="name">Industria básicas de metales no ferrosos</field><field name="codigo">24200</field></record>
+<record id="svfe_actividad_23990" model="sv_fe.actividad"><field name="name">Fabricación de productos minerales no metálicos ncp</field><field name="codigo">23990</field></record>
+<record id="svfe_actividad_24100" model="sv_fe.actividad"><field name="name">Industrias básicas de hierro y acero</field><field name="codigo">24100</field></record>
+<record id="svfe_actividad_24200" model="sv_fe.actividad"><field name="name">Fabricación de productos primarios de metales preciosos y metales no ferrosos</field><field name="codigo">24200</field></record>
 <record id="svfe_actividad_24310" model="sv_fe.actividad"><field name="name">Fundición de hierro y acero</field><field name="codigo">24310</field></record>
 <record id="svfe_actividad_24320" model="sv_fe.actividad"><field name="name">Fundición de metales no ferrosos</field><field name="codigo">24320</field></record>
 <record id="svfe_actividad_25111" model="sv_fe.actividad"><field name="name">Fabricación de productos metálicos para uso estructural</field><field name="codigo">25111</field></record>
@@ -914,32 +911,32 @@
 <record id="svfe_actividad_25930" model="sv_fe.actividad"><field name="name">Fabricación de artículos de cuchillería, herramientas de mano y artículos de ferretería</field><field name="codigo">25930</field></record>
 <record id="svfe_actividad_25991" model="sv_fe.actividad"><field name="name">Fabricación de envases y artículos conexos de metal</field><field name="codigo">25991</field></record>
 <record id="svfe_actividad_25992" model="sv_fe.actividad"><field name="name">Fabricación de artículos metálicos de uso personal y/o doméstico</field><field name="codigo">25992</field></record>
-<record id="svfe_actividad_25999" model="sv_fe.actividad"><field name="name">Fabricación de productos elaborados de metal n.c.p.</field><field name="codigo">25999</field></record>
+<record id="svfe_actividad_25999" model="sv_fe.actividad"><field name="name">Fabricación de productos elaborados de metal ncp</field><field name="codigo">25999</field></record>
 <record id="svfe_actividad_26100" model="sv_fe.actividad"><field name="name">Fabricación de componentes electrónicos</field><field name="codigo">26100</field></record>
 <record id="svfe_actividad_26200" model="sv_fe.actividad"><field name="name">Fabricación de computadoras y equipo conexo</field><field name="codigo">26200</field></record>
 <record id="svfe_actividad_26300" model="sv_fe.actividad"><field name="name">Fabricación de equipo de comunicaciones</field><field name="codigo">26300</field></record>
-<record id="svfe_actividad_26400" model="sv_fe.actividad"><field name="name">Fabricación de aparatos  electrónicos de consumo para audio, video radio y televisión </field><field name="codigo">26400</field></record>
+<record id="svfe_actividad_26400" model="sv_fe.actividad"><field name="name">Fabricación de aparatos  electrónicos de consumo para audio, video radio y televisión</field><field name="codigo">26400</field></record>
 <record id="svfe_actividad_26510" model="sv_fe.actividad"><field name="name">Fabricación de instrumentos y aparatos para medir, verificar, ensayar, navegar y de control de procesos industriales</field><field name="codigo">26510</field></record>
 <record id="svfe_actividad_26520" model="sv_fe.actividad"><field name="name">Fabricación de relojes y piezas de relojes</field><field name="codigo">26520</field></record>
-<record id="svfe_actividad_26600" model="sv_fe.actividad"><field name="name">Fabricación de equipo medico de irradiación y equipo electrónico de uso medico y terapéutico</field><field name="codigo">26600</field></record>
+<record id="svfe_actividad_26600" model="sv_fe.actividad"><field name="name">Fabricación de equipo médico de irradiación y equipo electrónico de uso médico y terapéutico</field><field name="codigo">26600</field></record>
 <record id="svfe_actividad_26700" model="sv_fe.actividad"><field name="name">Fabricación de instrumentos de óptica y equipo fotográfico</field><field name="codigo">26700</field></record>
 <record id="svfe_actividad_26800" model="sv_fe.actividad"><field name="name">Fabricación de medios magnéticos y ópticos</field><field name="codigo">26800</field></record>
 <record id="svfe_actividad_27100" model="sv_fe.actividad"><field name="name">Fabricación de motores, generadores , transformadores eléctricos, aparatos de distribución y control de electricidad</field><field name="codigo">27100</field></record>
 <record id="svfe_actividad_27200" model="sv_fe.actividad"><field name="name">Fabricación de pilas, baterías y acumuladores</field><field name="codigo">27200</field></record>
 <record id="svfe_actividad_27310" model="sv_fe.actividad"><field name="name">Fabricación de cables de fibra óptica</field><field name="codigo">27310</field></record>
-<record id="svfe_actividad_27320" model="sv_fe.actividad"><field name="name">Fabricación de otros  hilos y cables eléctricos </field><field name="codigo">27320</field></record>
-<record id="svfe_actividad_27330" model="sv_fe.actividad"><field name="name">Fabricación  de dispositivos de cableados </field><field name="codigo">27330</field></record>
-<record id="svfe_actividad_27400" model="sv_fe.actividad"><field name="name">Fabricación de equipo eléctrico de iluminación </field><field name="codigo">27400</field></record>
+<record id="svfe_actividad_27320" model="sv_fe.actividad"><field name="name">Fabricación de otros  hilos y cables eléctricos</field><field name="codigo">27320</field></record>
+<record id="svfe_actividad_27330" model="sv_fe.actividad"><field name="name">Fabricación de dispositivos de cableados</field><field name="codigo">27330</field></record>
+<record id="svfe_actividad_27400" model="sv_fe.actividad"><field name="name">Fabricación de equipo eléctrico de iluminación</field><field name="codigo">27400</field></record>
 <record id="svfe_actividad_27500" model="sv_fe.actividad"><field name="name">Fabricación de aparatos de uso doméstico</field><field name="codigo">27500</field></record>
-<record id="svfe_actividad_27900" model="sv_fe.actividad"><field name="name">Fabricación de otros tipos de equipo eléctrico </field><field name="codigo">27900</field></record>
+<record id="svfe_actividad_27900" model="sv_fe.actividad"><field name="name">Fabricación de otros tipos de equipo eléctrico</field><field name="codigo">27900</field></record>
 <record id="svfe_actividad_28110" model="sv_fe.actividad"><field name="name">Fabricación de motores y turbinas, excepto motores para aeronaves, vehículos automotores y motocicletas</field><field name="codigo">28110</field></record>
 <record id="svfe_actividad_28120" model="sv_fe.actividad"><field name="name">Fabricación de equipo hidráulico</field><field name="codigo">28120</field></record>
-<record id="svfe_actividad_28130" model="sv_fe.actividad"><field name="name">FABRICACIÓN DE OTRAS BOMBAS, COMPRESORES, GRIFOS Y VÁLVULAS  </field><field name="codigo">28130</field></record>
+<record id="svfe_actividad_28130" model="sv_fe.actividad"><field name="name">Fabricación de otras bombas, compresores, grifos y válvulas</field><field name="codigo">28130</field></record>
 <record id="svfe_actividad_28140" model="sv_fe.actividad"><field name="name">Fabricación de cojinetes, engranajes, trenes de engranajes y piezas de transmisión</field><field name="codigo">28140</field></record>
 <record id="svfe_actividad_28150" model="sv_fe.actividad"><field name="name">Fabricación de hornos y quemadores</field><field name="codigo">28150</field></record>
 <record id="svfe_actividad_28160" model="sv_fe.actividad"><field name="name">Fabricación de equipo de elevación y manipulación</field><field name="codigo">28160</field></record>
-<record id="svfe_actividad_28170" model="sv_fe.actividad"><field name="name">Fabricación de maquinaria y equipo de oficina </field><field name="codigo">28170</field></record>
-<record id="svfe_actividad_28180" model="sv_fe.actividad"><field name="name">Fabricación de herramientas manuales </field><field name="codigo">28180</field></record>
+<record id="svfe_actividad_28170" model="sv_fe.actividad"><field name="name">Fabricación de maquinaria y equipo de oficina</field><field name="codigo">28170</field></record>
+<record id="svfe_actividad_28180" model="sv_fe.actividad"><field name="name">Fabricación de herramientas manuales</field><field name="codigo">28180</field></record>
 <record id="svfe_actividad_28190" model="sv_fe.actividad"><field name="name">Fabricación de otros tipos de maquinaria de uso general</field><field name="codigo">28190</field></record>
 <record id="svfe_actividad_28210" model="sv_fe.actividad"><field name="name">Fabricación de maquinaria agropecuaria y forestal</field><field name="codigo">28210</field></record>
 <record id="svfe_actividad_28220" model="sv_fe.actividad"><field name="name">Fabricación de máquinas para conformar metales y maquinaria herramienta</field><field name="codigo">28220</field></record>
@@ -948,22 +945,22 @@
 <record id="svfe_actividad_28250" model="sv_fe.actividad"><field name="name">Fabricación de maquinaria para la elaboración de alimentos, bebidas y tabaco</field><field name="codigo">28250</field></record>
 <record id="svfe_actividad_28260" model="sv_fe.actividad"><field name="name">Fabricación de maquinaria para la elaboración de productos textiles, prendas de vestir y cueros</field><field name="codigo">28260</field></record>
 <record id="svfe_actividad_28291" model="sv_fe.actividad"><field name="name">Fabricación de máquinas para imprenta</field><field name="codigo">28291</field></record>
-<record id="svfe_actividad_28299" model="sv_fe.actividad"><field name="name">Fabricación de maquinaria de uso especial n.c.p.</field><field name="codigo">28299</field></record>
+<record id="svfe_actividad_28299" model="sv_fe.actividad"><field name="name">Fabricación de maquinaria de uso especial ncp</field><field name="codigo">28299</field></record>
 <record id="svfe_actividad_29100" model="sv_fe.actividad"><field name="name">Fabricación vehículos automotores</field><field name="codigo">29100</field></record>
-<record id="svfe_actividad_29200" model="sv_fe.actividad"><field name="name">Fabricación de carrocerías para vehículos automotores; fabricación de remolques y semirremolques</field><field name="codigo">29200</field></record>
+<record id="svfe_actividad_29200" model="sv_fe.actividad"><field name="name">Fabricación de carrocerías para vehículos automotores; fabricación de remolques y semiremolques</field><field name="codigo">29200</field></record>
 <record id="svfe_actividad_29300" model="sv_fe.actividad"><field name="name">Fabricación de partes, piezas y accesorios para vehículos automotores</field><field name="codigo">29300</field></record>
 <record id="svfe_actividad_30110" model="sv_fe.actividad"><field name="name">Fabricación de buques</field><field name="codigo">30110</field></record>
 <record id="svfe_actividad_30120" model="sv_fe.actividad"><field name="name">Construcción y reparación de embarcaciones de recreo</field><field name="codigo">30120</field></record>
-<record id="svfe_actividad_30200" model="sv_fe.actividad"><field name="name">Fabricación de locomotoras y de material rodante </field><field name="codigo">30200</field></record>
+<record id="svfe_actividad_30200" model="sv_fe.actividad"><field name="name">Fabricación de locomotoras y de material rodante</field><field name="codigo">30200</field></record>
 <record id="svfe_actividad_30300" model="sv_fe.actividad"><field name="name">Fabricación de aeronaves y naves espaciales</field><field name="codigo">30300</field></record>
-<record id="svfe_actividad_30400" model="sv_fe.actividad"><field name="name">Fabricación de vehículos militares de combate </field><field name="codigo">30400</field></record>
+<record id="svfe_actividad_30400" model="sv_fe.actividad"><field name="name">Fabricación de vehículos militares de combate</field><field name="codigo">30400</field></record>
 <record id="svfe_actividad_30910" model="sv_fe.actividad"><field name="name">Fabricación de motocicletas</field><field name="codigo">30910</field></record>
 <record id="svfe_actividad_30920" model="sv_fe.actividad"><field name="name">Fabricación de bicicletas y sillones de ruedas para inválidos</field><field name="codigo">30920</field></record>
-<record id="svfe_actividad_30990" model="sv_fe.actividad"><field name="name">Fabricación de equipo de transporte n.c.p.</field><field name="codigo">30990</field></record>
+<record id="svfe_actividad_30990" model="sv_fe.actividad"><field name="name">Fabricación de equipo de transporte ncp</field><field name="codigo">30990</field></record>
 <record id="svfe_actividad_31001" model="sv_fe.actividad"><field name="name">Fabricación de colchones y somier</field><field name="codigo">31001</field></record>
 <record id="svfe_actividad_31002" model="sv_fe.actividad"><field name="name">Fabricación de muebles y otros productos de madera a medida</field><field name="codigo">31002</field></record>
 <record id="svfe_actividad_31008" model="sv_fe.actividad"><field name="name">Servicios de maquilado de muebles</field><field name="codigo">31008</field></record>
-<record id="svfe_actividad_31009" model="sv_fe.actividad"><field name="name">Fabricación de muebles n.c.p.</field><field name="codigo">31009</field></record>
+<record id="svfe_actividad_31009" model="sv_fe.actividad"><field name="name">Fabricación de muebles ncp</field><field name="codigo">31009</field></record>
 <record id="svfe_actividad_32110" model="sv_fe.actividad"><field name="name">Fabricación de joyas platerías y joyerías</field><field name="codigo">32110</field></record>
 <record id="svfe_actividad_32120" model="sv_fe.actividad"><field name="name">Fabricación de joyas de imitación (fantasía) y artículos conexos</field><field name="codigo">32120</field></record>
 <record id="svfe_actividad_32200" model="sv_fe.actividad"><field name="name">Fabricación de instrumentos musicales</field><field name="codigo">32200</field></record>
@@ -978,7 +975,7 @@
 <record id="svfe_actividad_32903" model="sv_fe.actividad"><field name="name">Fabricación de artesanías de materiales diversos</field><field name="codigo">32903</field></record>
 <record id="svfe_actividad_32904" model="sv_fe.actividad"><field name="name">Fabricación de artículos de uso personal y domésticos n.c.p.</field><field name="codigo">32904</field></record>
 <record id="svfe_actividad_32905" model="sv_fe.actividad"><field name="name">Fabricación de accesorios para las confecciones y la marroquinería n.c.p.</field><field name="codigo">32905</field></record>
-<record id="svfe_actividad_32908" model="sv_fe.actividad"><field name="name">Servicios de maquila n.c.p.</field><field name="codigo">32908</field></record>
+<record id="svfe_actividad_32908" model="sv_fe.actividad"><field name="name">Servicios de maquila ncp</field><field name="codigo">32908</field></record>
 <record id="svfe_actividad_32909" model="sv_fe.actividad"><field name="name">Fabricación de productos manufacturados n.c.p.</field><field name="codigo">32909</field></record>
 <record id="svfe_actividad_33110" model="sv_fe.actividad"><field name="name">Reparación y mantenimiento de productos elaborados de metal</field><field name="codigo">33110</field></record>
 <record id="svfe_actividad_33120" model="sv_fe.actividad"><field name="name">Reparación y mantenimiento de maquinaria</field><field name="codigo">33120</field></record>
@@ -1004,7 +1001,7 @@
 <record id="svfe_actividad_38304" model="sv_fe.actividad"><field name="name">Reciclaje de desperdicios y desechos de papel y cartón</field><field name="codigo">38304</field></record>
 <record id="svfe_actividad_38305" model="sv_fe.actividad"><field name="name">Reciclaje de desperdicios y desechos metálicos</field><field name="codigo">38305</field></record>
 <record id="svfe_actividad_38309" model="sv_fe.actividad"><field name="name">Reciclaje de desperdicios y desechos no metálicos  n.c.p.</field><field name="codigo">38309</field></record>
-<record id="svfe_actividad_39000" model="sv_fe.actividad"><field name="name">Actividades de saneamiento y otros servicios de gestión de desechos</field><field name="codigo">39000</field></record>
+<record id="svfe_actividad_39000" model="sv_fe.actividad"><field name="name">Actividades de Saneamiento y otros Servicios de Gestión de Desechos</field><field name="codigo">39000</field></record>
 <record id="svfe_actividad_41001" model="sv_fe.actividad"><field name="name">Construcción de edificios residenciales</field><field name="codigo">41001</field></record>
 <record id="svfe_actividad_41002" model="sv_fe.actividad"><field name="name">Construcción de edificios no residenciales</field><field name="codigo">41002</field></record>
 <record id="svfe_actividad_42100" model="sv_fe.actividad"><field name="name">Construcción de carreteras, calles y caminos</field><field name="codigo">42100</field></record>
@@ -1017,18 +1014,20 @@
 <record id="svfe_actividad_43290" model="sv_fe.actividad"><field name="name">Otras instalaciones para obras de construcción</field><field name="codigo">43290</field></record>
 <record id="svfe_actividad_43300" model="sv_fe.actividad"><field name="name">Terminación y acabado de edificios</field><field name="codigo">43300</field></record>
 <record id="svfe_actividad_43900" model="sv_fe.actividad"><field name="name">Otras actividades especializadas de construcción</field><field name="codigo">43900</field></record>
-<record id="svfe_actividad_45100" model="sv_fe.actividad"><field name="name">Venta de vehículos automotores </field><field name="codigo">45100</field></record>
+<record id="svfe_actividad_43901" model="sv_fe.actividad"><field name="name">Fabricación de techos y materiales diversos</field><field name="codigo">43901</field></record>
+<record id="svfe_actividad_45100" model="sv_fe.actividad"><field name="name">Venta de vehículos automotores</field><field name="codigo">45100</field></record>
 <record id="svfe_actividad_45201" model="sv_fe.actividad"><field name="name">Reparación mecánica de vehículos automotores</field><field name="codigo">45201</field></record>
 <record id="svfe_actividad_45202" model="sv_fe.actividad"><field name="name">Reparaciones eléctricas del automotor y recarga de baterías</field><field name="codigo">45202</field></record>
 <record id="svfe_actividad_45203" model="sv_fe.actividad"><field name="name">Enderezado y pintura de vehículos automotores</field><field name="codigo">45203</field></record>
 <record id="svfe_actividad_45204" model="sv_fe.actividad"><field name="name">Reparaciones de radiadores, escapes y silenciadores</field><field name="codigo">45204</field></record>
-<record id="svfe_actividad_45205" model="sv_fe.actividad"><field name="name">Reparación y reconstrucción de vías, stop, bómper y otros artículos de fibra de vidrio</field><field name="codigo">45205</field></record>
+<record id="svfe_actividad_45205" model="sv_fe.actividad"><field name="name">Reparación y reconstrucción de vías, stop y otros artículos de fibra de vidrio</field><field name="codigo">45205</field></record>
 <record id="svfe_actividad_45206" model="sv_fe.actividad"><field name="name">Reparación de llantas de vehículos automotores</field><field name="codigo">45206</field></record>
 <record id="svfe_actividad_45207" model="sv_fe.actividad"><field name="name">Polarizado de vehículos (mediante la adhesión de papel especial a los vidrios)</field><field name="codigo">45207</field></record>
 <record id="svfe_actividad_45208" model="sv_fe.actividad"><field name="name">Lavado y pasteado de vehículos (carwash)</field><field name="codigo">45208</field></record>
 <record id="svfe_actividad_45209" model="sv_fe.actividad"><field name="name">Reparaciones de vehículos n.c.p.</field><field name="codigo">45209</field></record>
+<record id="svfe_actividad_45211" model="sv_fe.actividad"><field name="name">Remolque de vehículos automotores</field><field name="codigo">45211</field></record>
 <record id="svfe_actividad_45301" model="sv_fe.actividad"><field name="name">Venta de partes, piezas y accesorios nuevos para vehículos automotores</field><field name="codigo">45301</field></record>
-<record id="svfe_actividad_45302" model="sv_fe.actividad"><field name="name">Venta de partes, piezas y accesorios usados para vehículos automotores </field><field name="codigo">45302</field></record>
+<record id="svfe_actividad_45302" model="sv_fe.actividad"><field name="name">Venta de partes, piezas y accesorios usados para vehículos automotores</field><field name="codigo">45302</field></record>
 <record id="svfe_actividad_45401" model="sv_fe.actividad"><field name="name">Venta de motocicletas</field><field name="codigo">45401</field></record>
 <record id="svfe_actividad_45402" model="sv_fe.actividad"><field name="name">Venta de repuestos, piezas y accesorios de motocicletas</field><field name="codigo">45402</field></record>
 <record id="svfe_actividad_45403" model="sv_fe.actividad"><field name="name">Mantenimiento y reparación  de motocicletas</field><field name="codigo">45403</field></record>
@@ -1036,9 +1035,34 @@
 <record id="svfe_actividad_46201" model="sv_fe.actividad"><field name="name">Venta al por mayor de materias primas agrícolas</field><field name="codigo">46201</field></record>
 <record id="svfe_actividad_46202" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos de la silvicultura</field><field name="codigo">46202</field></record>
 <record id="svfe_actividad_46203" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos pecuarios y de granja</field><field name="codigo">46203</field></record>
-<record id="svfe_actividad_46301" model="sv_fe.actividad"><field name="name">Venta por mayor de alimentos</field><field name="codigo">46301</field></record>
+<record id="svfe_actividad_46211" model="sv_fe.actividad"><field name="name">Venta de productos para uso agropecuario</field><field name="codigo">46211</field></record>
+<record id="svfe_actividad_46291" model="sv_fe.actividad"><field name="name">Venta al por mayor de granos básicos (cereales, leguminosas)</field><field name="codigo">46291</field></record>
+<record id="svfe_actividad_46292" model="sv_fe.actividad"><field name="name">Venta  al por mayor de semillas mejoradas para cultivo</field><field name="codigo">46292</field></record>
+<record id="svfe_actividad_46293" model="sv_fe.actividad"><field name="name">Venta  al por mayor de café oro y uva</field><field name="codigo">46293</field></record>
+<record id="svfe_actividad_46294" model="sv_fe.actividad"><field name="name">Venta  al por mayor de caña de azúcar</field><field name="codigo">46294</field></record>
+<record id="svfe_actividad_46295" model="sv_fe.actividad"><field name="name">Venta al por mayor de flores, plantas  y otros productos naturales</field><field name="codigo">46295</field></record>
+<record id="svfe_actividad_46296" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos agrícolas</field><field name="codigo">46296</field></record>
+<record id="svfe_actividad_46297" model="sv_fe.actividad"><field name="name">Venta  al por mayor de ganado bovino (vivo)</field><field name="codigo">46297</field></record>
+<record id="svfe_actividad_46298" model="sv_fe.actividad"><field name="name">Venta al por mayor de animales porcinos, ovinos, caprino, canículas, apícolas, avícolas vivos</field><field name="codigo">46298</field></record>
+<record id="svfe_actividad_46299" model="sv_fe.actividad"><field name="name">Venta de otras especies vivas del reino animal</field><field name="codigo">46299</field></record>
+<record id="svfe_actividad_46301" model="sv_fe.actividad"><field name="name">Venta al por mayor de alimentos</field><field name="codigo">46301</field></record>
 <record id="svfe_actividad_46302" model="sv_fe.actividad"><field name="name">Venta al por mayor de bebidas</field><field name="codigo">46302</field></record>
 <record id="svfe_actividad_46303" model="sv_fe.actividad"><field name="name">Venta al por mayor de tabaco</field><field name="codigo">46303</field></record>
+<record id="svfe_actividad_46371" model="sv_fe.actividad"><field name="name">Venta al por mayor de frutas, hortalizas (verduras), legumbres y tubérculos</field><field name="codigo">46371</field></record>
+<record id="svfe_actividad_46372" model="sv_fe.actividad"><field name="name">Venta al por mayor de pollos, gallinas destazadas, pavos y otras aves</field><field name="codigo">46372</field></record>
+<record id="svfe_actividad_46373" model="sv_fe.actividad"><field name="name">Venta al por mayor de carne bovina y porcina, productos de carne y embutidos</field><field name="codigo">46373</field></record>
+<record id="svfe_actividad_46374" model="sv_fe.actividad"><field name="name">Venta  al por mayor de huevos</field><field name="codigo">46374</field></record>
+<record id="svfe_actividad_46375" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos lácteos</field><field name="codigo">46375</field></record>
+<record id="svfe_actividad_46376" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos farináceos de panadería (pan dulce, cakes, respostería, etc.)</field><field name="codigo">46376</field></record>
+<record id="svfe_actividad_46377" model="sv_fe.actividad"><field name="name">Venta al por mayor de pastas alimenticias, aceites y grasas comestibles vegetal y animal</field><field name="codigo">46377</field></record>
+<record id="svfe_actividad_46378" model="sv_fe.actividad"><field name="name">Venta al por mayor de sal comestible</field><field name="codigo">46378</field></record>
+<record id="svfe_actividad_46379" model="sv_fe.actividad"><field name="name">Venta al por mayor de azúcar</field><field name="codigo">46379</field></record>
+<record id="svfe_actividad_46391" model="sv_fe.actividad"><field name="name">Venta al por mayor de abarrotes (vinos, licores, productos alimenticios envasados, etc.)</field><field name="codigo">46391</field></record>
+<record id="svfe_actividad_46392" model="sv_fe.actividad"><field name="name">Venta al por mayor de aguas gaseosas</field><field name="codigo">46392</field></record>
+<record id="svfe_actividad_46393" model="sv_fe.actividad"><field name="name">Venta al por mayor de agua purificada</field><field name="codigo">46393</field></record>
+<record id="svfe_actividad_46394" model="sv_fe.actividad"><field name="name">Venta al por mayor de refrescos y otras bebidas, líquidas o en polvo</field><field name="codigo">46394</field></record>
+<record id="svfe_actividad_46395" model="sv_fe.actividad"><field name="name">Venta al por mayor de cerveza y licores</field><field name="codigo">46395</field></record>
+<record id="svfe_actividad_46396" model="sv_fe.actividad"><field name="name">Venta al por mayor de hielo</field><field name="codigo">46396</field></record>
 <record id="svfe_actividad_46411" model="sv_fe.actividad"><field name="name">Venta al por mayor de hilados, tejidos y productos textiles de mercería</field><field name="codigo">46411</field></record>
 <record id="svfe_actividad_46412" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos textiles excepto confecciones para el hogar</field><field name="codigo">46412</field></record>
 <record id="svfe_actividad_46413" model="sv_fe.actividad"><field name="name">Venta al por mayor de confecciones textiles para el hogar</field><field name="codigo">46413</field></record>
@@ -1048,18 +1072,28 @@
 <record id="svfe_actividad_46417" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos de marroquinería y talabartería</field><field name="codigo">46417</field></record>
 <record id="svfe_actividad_46418" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos de peletería</field><field name="codigo">46418</field></record>
 <record id="svfe_actividad_46419" model="sv_fe.actividad"><field name="name">Venta al por mayor de otros artículos textiles n.c.p.</field><field name="codigo">46419</field></record>
+<record id="svfe_actividad_46471" model="sv_fe.actividad"><field name="name">Venta al por mayor de instrumentos musicales</field><field name="codigo">46471</field></record>
+<record id="svfe_actividad_46472" model="sv_fe.actividad"><field name="name">Venta al por mayor de colchones, almohadas, cojines, etc.</field><field name="codigo">46472</field></record>
+<record id="svfe_actividad_46473" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos de aluminio para el hogar y para otros usos</field><field name="codigo">46473</field></record>
+<record id="svfe_actividad_46474" model="sv_fe.actividad"><field name="name">Venta al por mayor de depósitos y otros artículos plásticos para el hogar y otros usos, incluyendo los desechables de durapax  y no desechables</field><field name="codigo">46474</field></record>
+<record id="svfe_actividad_46475" model="sv_fe.actividad"><field name="name">Venta al por mayor de cámaras fotográficas, accesorios y materiales</field><field name="codigo">46475</field></record>
+<record id="svfe_actividad_46482" model="sv_fe.actividad"><field name="name">Venta al por mayor de medicamentos, artículos y otros productos de uso veterinario</field><field name="codigo">46482</field></record>
+<record id="svfe_actividad_46483" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos y artículos de belleza  y de  uso personal</field><field name="codigo">46483</field></record>
+<record id="svfe_actividad_46484" model="sv_fe.actividad"><field name="name">Venta de productos farmacéuticos y medicinales</field><field name="codigo">46484</field></record>
 <record id="svfe_actividad_46491" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos medicinales, cosméticos, perfumería y productos de limpieza</field><field name="codigo">46491</field></record>
 <record id="svfe_actividad_46492" model="sv_fe.actividad"><field name="name">Venta al por mayor de relojes y artículos de joyería</field><field name="codigo">46492</field></record>
 <record id="svfe_actividad_46493" model="sv_fe.actividad"><field name="name">Venta al por mayor de electrodomésticos y artículos del hogar excepto bazar;  artículos de iluminación</field><field name="codigo">46493</field></record>
 <record id="svfe_actividad_46494" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos de bazar y similares</field><field name="codigo">46494</field></record>
-<record id="svfe_actividad_46495" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos de óptica y fotografía</field><field name="codigo">46495</field></record>
+<record id="svfe_actividad_46495" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos de óptica</field><field name="codigo">46495</field></record>
 <record id="svfe_actividad_46496" model="sv_fe.actividad"><field name="name">Venta al por mayor de revistas, periódicos, libros, artículos de librería y artículos de papel y cartón en general</field><field name="codigo">46496</field></record>
 <record id="svfe_actividad_46497" model="sv_fe.actividad"><field name="name">Venta de artículos deportivos, juguetes y rodados</field><field name="codigo">46497</field></record>
 <record id="svfe_actividad_46498" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos usados para el hogar o el uso personal</field><field name="codigo">46498</field></record>
 <record id="svfe_actividad_46499" model="sv_fe.actividad"><field name="name">Venta al por mayor de enseres domésticos y de uso personal n.c.p.</field><field name="codigo">46499</field></record>
-<record id="svfe_actividad_46510" model="sv_fe.actividad"><field name="name">Venta al por mayor de computadoras, equipo periférico y programas informáticos </field><field name="codigo">46510</field></record>
+<record id="svfe_actividad_46500" model="sv_fe.actividad"><field name="name">Venta al por mayor de bicicletas, partes, accesorios y otros</field><field name="codigo">46500</field></record>
+<record id="svfe_actividad_46510" model="sv_fe.actividad"><field name="name">Venta al por mayor de computadoras, equipo periférico y programas informáticos</field><field name="codigo">46510</field></record>
 <record id="svfe_actividad_46520" model="sv_fe.actividad"><field name="name">Venta al por mayor de equipos de comunicación</field><field name="codigo">46520</field></record>
 <record id="svfe_actividad_46530" model="sv_fe.actividad"><field name="name">Venta al por mayor de maquinaria y equipo agropecuario, accesorios, partes y suministros</field><field name="codigo">46530</field></record>
+<record id="svfe_actividad_46590" model="sv_fe.actividad"><field name="name">Venta de equipos e instrumentos de uso profesional y científico y aparatos de medida y control</field><field name="codigo">46590</field></record>
 <record id="svfe_actividad_46591" model="sv_fe.actividad"><field name="name">Venta al por mayor de maquinaria equipo, accesorios y materiales para la industria de la madera y  sus  productos</field><field name="codigo">46591</field></record>
 <record id="svfe_actividad_46592" model="sv_fe.actividad"><field name="name">Venta al por mayor de maquinaria,  equipo, accesorios y materiales para las industria gráfica y del papel, cartón y productos de papel y cartón</field><field name="codigo">46592</field></record>
 <record id="svfe_actividad_46593" model="sv_fe.actividad"><field name="name">Venta al por mayor de maquinaria, equipo, accesorios y materiales para la  industria de  productos químicos, plástico y caucho</field><field name="codigo">46593</field></record>
@@ -1069,7 +1103,11 @@
 <record id="svfe_actividad_46597" model="sv_fe.actividad"><field name="name">Venta al por mayor de maquinaria, equipo, accesorios y partes para la industria textil, confecciones y cuero</field><field name="codigo">46597</field></record>
 <record id="svfe_actividad_46598" model="sv_fe.actividad"><field name="name">Venta al por mayor de maquinaria, equipo y accesorios para la construcción y explotación de minas y canteras</field><field name="codigo">46598</field></record>
 <record id="svfe_actividad_46599" model="sv_fe.actividad"><field name="name">Venta al por mayor de otro tipo de maquinaria y equipo con sus accesorios y partes</field><field name="codigo">46599</field></record>
-<record id="svfe_actividad_46610" model="sv_fe.actividad"><field name="name">Venta al por mayor  de combustibles  sólidos, líquidos , gaseosos y de productos conexos</field><field name="codigo">46610</field></record>
+<record id="svfe_actividad_46610" model="sv_fe.actividad"><field name="name">Venta al por mayor  de otros combustibles sólidos, líquidos, gaseosos y de productos conexos</field><field name="codigo">46610</field></record>
+<record id="svfe_actividad_46612" model="sv_fe.actividad"><field name="name">Venta al por mayor de combustibles para automotores, aviones, barcos, maquinaria  y otros</field><field name="codigo">46612</field></record>
+<record id="svfe_actividad_46613" model="sv_fe.actividad"><field name="name">Venta al por mayor de lubricantes, grasas y  otros aceites para automotores, maquinaria  industrial, etc.</field><field name="codigo">46613</field></record>
+<record id="svfe_actividad_46614" model="sv_fe.actividad"><field name="name">Venta al por mayor de gas propano</field><field name="codigo">46614</field></record>
+<record id="svfe_actividad_46615" model="sv_fe.actividad"><field name="name">Venta al  por mayor de leña y carbón</field><field name="codigo">46615</field></record>
 <record id="svfe_actividad_46620" model="sv_fe.actividad"><field name="name">Venta al por mayor de metales y minerales metalíferos</field><field name="codigo">46620</field></record>
 <record id="svfe_actividad_46631" model="sv_fe.actividad"><field name="name">Venta al por mayor de puertas, ventanas, vitrinas y similares</field><field name="codigo">46631</field></record>
 <record id="svfe_actividad_46632" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos de ferretería y pinturerías</field><field name="codigo">46632</field></record>
@@ -1084,25 +1122,39 @@
 <record id="svfe_actividad_46696" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos intermedios y desechos de origen plástico</field><field name="codigo">46696</field></record>
 <record id="svfe_actividad_46697" model="sv_fe.actividad"><field name="name">Venta al por mayor de tintas para imprenta, productos curtientes y materias y productos colorantes</field><field name="codigo">46697</field></record>
 <record id="svfe_actividad_46698" model="sv_fe.actividad"><field name="name">Venta de productos intermedios y desechos de origen químico y de caucho</field><field name="codigo">46698</field></record>
-<record id="svfe_actividad_46699" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos intermedios y desechos n.c.p.</field><field name="codigo">46699</field></record>
-<record id="svfe_actividad_46900" model="sv_fe.actividad"><field name="name">Venta al por mayor  de otros productos</field><field name="codigo">46900</field></record>
+<record id="svfe_actividad_46699" model="sv_fe.actividad"><field name="name">Venta al por mayor de productos intermedios y desechos ncp</field><field name="codigo">46699</field></record>
+<record id="svfe_actividad_46701" model="sv_fe.actividad"><field name="name">Venta de algodón en oro</field><field name="codigo">46701</field></record>
+<record id="svfe_actividad_46900" model="sv_fe.actividad"><field name="name">Venta al por mayor de otros productos</field><field name="codigo">46900</field></record>
+<record id="svfe_actividad_46901" model="sv_fe.actividad"><field name="name">Venta al por mayor de cohetes y otros productos pirotécnicos</field><field name="codigo">46901</field></record>
+<record id="svfe_actividad_46902" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos diversos para consumo humano</field><field name="codigo">46902</field></record>
+<record id="svfe_actividad_46903" model="sv_fe.actividad"><field name="name">Venta al por mayor de armas de fuego, municiones y accesorios</field><field name="codigo">46903</field></record>
+<record id="svfe_actividad_46904" model="sv_fe.actividad"><field name="name">Venta al por mayor de toldos y tiendas de campaña de cualquier material</field><field name="codigo">46904</field></record>
+<record id="svfe_actividad_46905" model="sv_fe.actividad"><field name="name">Venta al por mayor de exhibidores publicitarios y rótulos</field><field name="codigo">46905</field></record>
+<record id="svfe_actividad_46906" model="sv_fe.actividad"><field name="name">Venta al por mayor de artículos promocionales  diversos</field><field name="codigo">46906</field></record>
 <record id="svfe_actividad_47111" model="sv_fe.actividad"><field name="name">Venta en supermercados</field><field name="codigo">47111</field></record>
-<record id="svfe_actividad_47112" model="sv_fe.actividad"><field name="name">Venta en tiendas</field><field name="codigo">47112</field></record>
+<record id="svfe_actividad_47112" model="sv_fe.actividad"><field name="name">Venta en tiendas de artículos de primera necesidad</field><field name="codigo">47112</field></record>
+<record id="svfe_actividad_47119" model="sv_fe.actividad"><field name="name">Almacenes (venta de diversos artículos)</field><field name="codigo">47119</field></record>
 <record id="svfe_actividad_47190" model="sv_fe.actividad"><field name="name">Venta al por menor de otros productos en comercios no especializados</field><field name="codigo">47190</field></record>
+<record id="svfe_actividad_47199" model="sv_fe.actividad"><field name="name">Venta de establecimientos no especializados con surtido compuesto principalmente de alimentos, bebidas y tabaco</field><field name="codigo">47199</field></record>
 <record id="svfe_actividad_47211" model="sv_fe.actividad"><field name="name">Venta al por menor  de frutas y hortalizas</field><field name="codigo">47211</field></record>
 <record id="svfe_actividad_47212" model="sv_fe.actividad"><field name="name">Venta al por menor de carnes, embutidos y productos de granja</field><field name="codigo">47212</field></record>
-<record id="svfe_actividad_47213" model="sv_fe.actividad"><field name="name">Venta al por menor de pescado y mariscos </field><field name="codigo">47213</field></record>
-<record id="svfe_actividad_47214" model="sv_fe.actividad"><field name="name">Venta al por menor de productos  lácteos </field><field name="codigo">47214</field></record>
-<record id="svfe_actividad_47215" model="sv_fe.actividad"><field name="name">Venta al por menor de productos de panadería, repostería y galletas </field><field name="codigo">47215</field></record>
+<record id="svfe_actividad_47213" model="sv_fe.actividad"><field name="name">Venta al por menor de pescado y mariscos</field><field name="codigo">47213</field></record>
+<record id="svfe_actividad_47214" model="sv_fe.actividad"><field name="name">Venta al por menor de productos  lácteos</field><field name="codigo">47214</field></record>
+<record id="svfe_actividad_47215" model="sv_fe.actividad"><field name="name">Venta al por menor de productos de panadería, repostería y galletas</field><field name="codigo">47215</field></record>
+<record id="svfe_actividad_47216" model="sv_fe.actividad"><field name="name">Venta al por menor de huevos</field><field name="codigo">47216</field></record>
+<record id="svfe_actividad_47217" model="sv_fe.actividad"><field name="name">Venta al por menor de carnes y productos cárnicos</field><field name="codigo">47217</field></record>
+<record id="svfe_actividad_47218" model="sv_fe.actividad"><field name="name">Venta al por menor  de granos básicos y otros</field><field name="codigo">47218</field></record>
 <record id="svfe_actividad_47219" model="sv_fe.actividad"><field name="name">Venta al por menor de alimentos n.c.p.</field><field name="codigo">47219</field></record>
 <record id="svfe_actividad_47221" model="sv_fe.actividad"><field name="name">Venta al por menor de hielo</field><field name="codigo">47221</field></record>
-<record id="svfe_actividad_47222" model="sv_fe.actividad"><field name="name">Venta al por menor de bebidas (no para el consumo en el lugar de venta)</field><field name="codigo">47222</field></record>
+<record id="svfe_actividad_47223" model="sv_fe.actividad"><field name="name">Venta de bebidas no alcohólicas, para su consumo fuera del establecimiento</field><field name="codigo">47223</field></record>
+<record id="svfe_actividad_47224" model="sv_fe.actividad"><field name="name">Venta de bebidas alcohólicas, para su consumo fuera del establecimiento</field><field name="codigo">47224</field></record>
+<record id="svfe_actividad_47225" model="sv_fe.actividad"><field name="name">Venta de bebidas alcohólicas para su consumo dentro del establecimiento</field><field name="codigo">47225</field></record>
 <record id="svfe_actividad_47230" model="sv_fe.actividad"><field name="name">Venta al por menor de tabaco</field><field name="codigo">47230</field></record>
-<record id="svfe_actividad_47300" model="sv_fe.actividad"><field name="name">Venta de combustibles, lubricantes y otros</field><field name="codigo">47300</field></record>
-<record id="svfe_actividad_47411" model="sv_fe.actividad"><field name="name">Venta al por menor de computadoras y equipo periférico </field><field name="codigo">47411</field></record>
+<record id="svfe_actividad_47300" model="sv_fe.actividad"><field name="name">Venta de combustibles, lubricantes y otros (gasolineras)</field><field name="codigo">47300</field></record>
+<record id="svfe_actividad_47411" model="sv_fe.actividad"><field name="name">Venta al por menor de computadoras y equipo periférico</field><field name="codigo">47411</field></record>
 <record id="svfe_actividad_47412" model="sv_fe.actividad"><field name="name">Venta de equipo y accesorios de telecomunicación</field><field name="codigo">47412</field></record>
 <record id="svfe_actividad_47420" model="sv_fe.actividad"><field name="name">Venta al por menor de equipo de audio y video</field><field name="codigo">47420</field></record>
-<record id="svfe_actividad_47510" model="sv_fe.actividad"><field name="name">Venta al por menor de hilados, tejidos y productos textiles de mercería ; confecciones para el hogar y textiles n.c.p.</field><field name="codigo">47510</field></record>
+<record id="svfe_actividad_47510" model="sv_fe.actividad"><field name="name">Venta al por menor de hilados, tejidos y productos textiles de mercería; confecciones para el hogar y textiles n.c.p.</field><field name="codigo">47510</field></record>
 <record id="svfe_actividad_47521" model="sv_fe.actividad"><field name="name">Venta al por menor de productos de madera</field><field name="codigo">47521</field></record>
 <record id="svfe_actividad_47522" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos de ferretería</field><field name="codigo">47522</field></record>
 <record id="svfe_actividad_47523" model="sv_fe.actividad"><field name="name">Venta al por menor de productos de pinturerías</field><field name="codigo">47523</field></record>
@@ -1111,36 +1163,37 @@
 <record id="svfe_actividad_47530" model="sv_fe.actividad"><field name="name">Venta al por menor de tapices, alfombras y revestimientos de paredes y pisos en comercios  especializados</field><field name="codigo">47530</field></record>
 <record id="svfe_actividad_47591" model="sv_fe.actividad"><field name="name">Venta al por menor de muebles</field><field name="codigo">47591</field></record>
 <record id="svfe_actividad_47592" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos de bazar</field><field name="codigo">47592</field></record>
-<record id="svfe_actividad_47593" model="sv_fe.actividad"><field name="name">Venta al por menor de electrodomésticos, instrumentos musicales y similares de uso personal o doméstico</field><field name="codigo">47593</field></record>
+<record id="svfe_actividad_47593" model="sv_fe.actividad"><field name="name">Venta al por menor de aparatos electrodomésticos, repuestos y accesorios</field><field name="codigo">47593</field></record>
 <record id="svfe_actividad_47594" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos eléctricos y de iluminación</field><field name="codigo">47594</field></record>
-<record id="svfe_actividad_47610" model="sv_fe.actividad"><field name="name">Venta al por menor de libros, periódicos y artículos de papelería en comercios especializados </field><field name="codigo">47610</field></record>
+<record id="svfe_actividad_47598" model="sv_fe.actividad"><field name="name">Venta al por menor de instrumentos musicales</field><field name="codigo">47598</field></record>
+<record id="svfe_actividad_47610" model="sv_fe.actividad"><field name="name">Venta al por menor de libros, periódicos y artículos de papelería en comercios especializados</field><field name="codigo">47610</field></record>
 <record id="svfe_actividad_47620" model="sv_fe.actividad"><field name="name">Venta al por menor de discos láser, cassettes, cintas de video y otros</field><field name="codigo">47620</field></record>
 <record id="svfe_actividad_47630" model="sv_fe.actividad"><field name="name">Venta al por menor de productos y equipos de deporte</field><field name="codigo">47630</field></record>
+<record id="svfe_actividad_47631" model="sv_fe.actividad"><field name="name">Venta al por menor de bicicletas, accesorios y repuestos</field><field name="codigo">47631</field></record>
 <record id="svfe_actividad_47640" model="sv_fe.actividad"><field name="name">Venta al por menor de juegos y juguetes  en comercios especializados</field><field name="codigo">47640</field></record>
 <record id="svfe_actividad_47711" model="sv_fe.actividad"><field name="name">Venta al por menor de prendas de vestir y accesorios de vestir</field><field name="codigo">47711</field></record>
 <record id="svfe_actividad_47712" model="sv_fe.actividad"><field name="name">Venta al por menor de calzado</field><field name="codigo">47712</field></record>
-<record id="svfe_actividad_47713" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos de marroquinería y talabartería</field><field name="codigo">47713</field></record>
+<record id="svfe_actividad_47713" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos de peletería, marroquinería y talabartería</field><field name="codigo">47713</field></record>
 <record id="svfe_actividad_47721" model="sv_fe.actividad"><field name="name">Venta al por menor de medicamentos farmacéuticos y otros materiales y artículos de uso médico, odontológico y veterinario</field><field name="codigo">47721</field></record>
 <record id="svfe_actividad_47722" model="sv_fe.actividad"><field name="name">Venta al por menor de productos cosméticos y de tocador</field><field name="codigo">47722</field></record>
 <record id="svfe_actividad_47731" model="sv_fe.actividad"><field name="name">Venta al por menor de productos de joyería, bisutería, óptica, relojería</field><field name="codigo">47731</field></record>
 <record id="svfe_actividad_47732" model="sv_fe.actividad"><field name="name">Venta al por menor de plantas, semillas, animales y artículos conexos</field><field name="codigo">47732</field></record>
-<record id="svfe_actividad_47733" model="sv_fe.actividad"><field name="name">Venta al por menor de combustibles de uso doméstico</field><field name="codigo">47733</field></record>
+<record id="svfe_actividad_47733" model="sv_fe.actividad"><field name="name">Venta al por menor de combustibles de uso doméstico (gas propano y gas licuado)</field><field name="codigo">47733</field></record>
 <record id="svfe_actividad_47734" model="sv_fe.actividad"><field name="name">Venta al por menor de artesanías, artículos cerámicos y recuerdos en general</field><field name="codigo">47734</field></record>
 <record id="svfe_actividad_47735" model="sv_fe.actividad"><field name="name">Venta al por menor de ataúdes, lápidas y cruces, trofeos, artículos religiosos en general</field><field name="codigo">47735</field></record>
+<record id="svfe_actividad_47736" model="sv_fe.actividad"><field name="name">Venta al por menor de armas de fuego, municiones y accesorios</field><field name="codigo">47736</field></record>
+<record id="svfe_actividad_47737" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos de cohetería y pirotécnicos</field><field name="codigo">47737</field></record>
+<record id="svfe_actividad_47738" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos desechables de uso personal y doméstico (servilletas, papel higiénico, pañales, toallas sanitarias, etc.)</field><field name="codigo">47738</field></record>
 <record id="svfe_actividad_47739" model="sv_fe.actividad"><field name="name">Venta al por menor de otros productos  n.c.p.</field><field name="codigo">47739</field></record>
-<record id="svfe_actividad_47741" model="sv_fe.actividad"><field name="name">Venta al por menor  de artículos usados</field><field name="codigo">47741</field></record>
-<record id="svfe_actividad_47742" model="sv_fe.actividad"><field name="name">Venta al por menor de prendas de vestir, calzado y otros articulos confeccionados usados</field><field name="codigo">47742</field></record>
+<record id="svfe_actividad_47741" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos usados</field><field name="codigo">47741</field></record>
+<record id="svfe_actividad_47742" model="sv_fe.actividad"><field name="name">Venta al por menor de textiles y confecciones usados</field><field name="codigo">47742</field></record>
 <record id="svfe_actividad_47743" model="sv_fe.actividad"><field name="name">Venta al por menor de libros, revistas, papel y cartón usados</field><field name="codigo">47743</field></record>
 <record id="svfe_actividad_47749" model="sv_fe.actividad"><field name="name">Venta al por menor de productos usados n.c.p.</field><field name="codigo">47749</field></record>
-<record id="svfe_actividad_47811" model="sv_fe.actividad"><field name="name">Venta al por menor de frutas, verduras y hortalizas </field><field name="codigo">47811</field></record>
-<record id="svfe_actividad_47812" model="sv_fe.actividad"><field name="name">Venta al por menor de carnes, embutidos y productos de granja</field><field name="codigo">47812</field></record>
-<record id="svfe_actividad_47813" model="sv_fe.actividad"><field name="name">Venta al por menor de pescado y mariscos </field><field name="codigo">47813</field></record>
+<record id="svfe_actividad_47811" model="sv_fe.actividad"><field name="name">Venta al por menor de frutas, verduras y hortalizas</field><field name="codigo">47811</field></record>
 <record id="svfe_actividad_47814" model="sv_fe.actividad"><field name="name">Venta al por menor de productos lácteos</field><field name="codigo">47814</field></record>
 <record id="svfe_actividad_47815" model="sv_fe.actividad"><field name="name">Venta al por menor de productos de panadería, galletas y similares</field><field name="codigo">47815</field></record>
 <record id="svfe_actividad_47816" model="sv_fe.actividad"><field name="name">Venta al por menor de bebidas</field><field name="codigo">47816</field></record>
-<record id="svfe_actividad_47817" model="sv_fe.actividad"><field name="name">Venta al por menor de tabaco</field><field name="codigo">47817</field></record>
 <record id="svfe_actividad_47818" model="sv_fe.actividad"><field name="name">Venta al por menor en tiendas de mercado y puestos</field><field name="codigo">47818</field></record>
-<record id="svfe_actividad_47819" model="sv_fe.actividad"><field name="name">Venta al por menor de alimentos n.c.p.</field><field name="codigo">47819</field></record>
 <record id="svfe_actividad_47821" model="sv_fe.actividad"><field name="name">Venta al por menor de hilados, tejidos y productos textiles de mercería en puestos de mercados y ferias</field><field name="codigo">47821</field></record>
 <record id="svfe_actividad_47822" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos textiles excepto confecciones para el hogar en puestos de mercados y ferias</field><field name="codigo">47822</field></record>
 <record id="svfe_actividad_47823" model="sv_fe.actividad"><field name="name">Venta al por menor de confecciones textiles para el hogar en puestos de mercados y ferias</field><field name="codigo">47823</field></record>
@@ -1148,7 +1201,7 @@
 <record id="svfe_actividad_47825" model="sv_fe.actividad"><field name="name">Venta al por menor de ropa usada</field><field name="codigo">47825</field></record>
 <record id="svfe_actividad_47826" model="sv_fe.actividad"><field name="name">Venta al por menor de calzado, artículos de marroquinería y talabartería en puestos de mercados y ferias</field><field name="codigo">47826</field></record>
 <record id="svfe_actividad_47827" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos de marroquinería y talabartería en puestos de mercados y ferias</field><field name="codigo">47827</field></record>
-<record id="svfe_actividad_47829" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos textiles n.c.p. en puestos de mercados y ferias</field><field name="codigo">47829</field></record>
+<record id="svfe_actividad_47829" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos textiles ncp en puestos de mercados y ferias</field><field name="codigo">47829</field></record>
 <record id="svfe_actividad_47891" model="sv_fe.actividad"><field name="name">Venta al por menor de animales, flores y productos conexos en puestos de feria y mercados</field><field name="codigo">47891</field></record>
 <record id="svfe_actividad_47892" model="sv_fe.actividad"><field name="name">Venta al por menor de productos medicinales, cosméticos, de tocador y de limpieza en puestos de ferias y mercados</field><field name="codigo">47892</field></record>
 <record id="svfe_actividad_47893" model="sv_fe.actividad"><field name="name">Venta al por menor de artículos de bazar en puestos de ferias y mercados</field><field name="codigo">47893</field></record>
@@ -1160,11 +1213,16 @@
 <record id="svfe_actividad_47990" model="sv_fe.actividad"><field name="name">Otros tipos de venta al por menor no realizada, en almacenes, puestos de venta o mercado</field><field name="codigo">47990</field></record>
 <record id="svfe_actividad_49110" model="sv_fe.actividad"><field name="name">Transporte interurbano de pasajeros  por ferrocarril</field><field name="codigo">49110</field></record>
 <record id="svfe_actividad_49120" model="sv_fe.actividad"><field name="name">Transporte de carga por ferrocarril</field><field name="codigo">49120</field></record>
-<record id="svfe_actividad_49211" model="sv_fe.actividad"><field name="name">Transporte de pasajeros urbano e interurbano mediante buses, microbuses y otros</field><field name="codigo">49211</field></record>
-<record id="svfe_actividad_49212" model="sv_fe.actividad"><field name="name">Transporte de pasajeros interdepartamental mediante buses y microbuses</field><field name="codigo">49212</field></record>
+<record id="svfe_actividad_49211" model="sv_fe.actividad"><field name="name">Transporte de pasajeros urbanos e interurbano mediante buses</field><field name="codigo">49211</field></record>
+<record id="svfe_actividad_49212" model="sv_fe.actividad"><field name="name">Transporte de pasajeros interdepartamental mediante microbuses</field><field name="codigo">49212</field></record>
+<record id="svfe_actividad_49213" model="sv_fe.actividad"><field name="name">Transporte de pasajeros urbanos e interurbano mediante microbuses</field><field name="codigo">49213</field></record>
+<record id="svfe_actividad_49214" model="sv_fe.actividad"><field name="name">Transporte de pasajeros interdepartamental mediante buses</field><field name="codigo">49214</field></record>
 <record id="svfe_actividad_49221" model="sv_fe.actividad"><field name="name">Transporte internacional de pasajeros</field><field name="codigo">49221</field></record>
 <record id="svfe_actividad_49222" model="sv_fe.actividad"><field name="name">Transporte de pasajeros mediante taxis y autos con chofer</field><field name="codigo">49222</field></record>
-<record id="svfe_actividad_49229" model="sv_fe.actividad"><field name="name">Transporte de pasajeros por vía terrestre n.c.p.</field><field name="codigo">49229</field></record>
+<record id="svfe_actividad_49223" model="sv_fe.actividad"><field name="name">Transporte escolar</field><field name="codigo">49223</field></record>
+<record id="svfe_actividad_49225" model="sv_fe.actividad"><field name="name">Transporte de pasajeros para excursiones</field><field name="codigo">49225</field></record>
+<record id="svfe_actividad_49226" model="sv_fe.actividad"><field name="name">Servicios de transporte de personal</field><field name="codigo">49226</field></record>
+<record id="svfe_actividad_49229" model="sv_fe.actividad"><field name="name">Transporte de pasajeros por vía terrestre ncp</field><field name="codigo">49229</field></record>
 <record id="svfe_actividad_49231" model="sv_fe.actividad"><field name="name">Transporte de carga urbano</field><field name="codigo">49231</field></record>
 <record id="svfe_actividad_49232" model="sv_fe.actividad"><field name="name">Transporte nacional de carga</field><field name="codigo">49232</field></record>
 <record id="svfe_actividad_49233" model="sv_fe.actividad"><field name="name">Transporte de carga  internacional</field><field name="codigo">49233</field></record>
@@ -1189,126 +1247,138 @@
 <record id="svfe_actividad_52220" model="sv_fe.actividad"><field name="name">Servicios para el transporte acuático</field><field name="codigo">52220</field></record>
 <record id="svfe_actividad_52230" model="sv_fe.actividad"><field name="name">Servicios para el transporte aéreo</field><field name="codigo">52230</field></record>
 <record id="svfe_actividad_52240" model="sv_fe.actividad"><field name="name">Manipulación de carga</field><field name="codigo">52240</field></record>
-<record id="svfe_actividad_52290" model="sv_fe.actividad"><field name="name">Servicios para el transporte n.c.p.</field><field name="codigo">52290</field></record>
+<record id="svfe_actividad_52290" model="sv_fe.actividad"><field name="name">Servicios para el transporte ncp</field><field name="codigo">52290</field></record>
+<record id="svfe_actividad_52291" model="sv_fe.actividad"><field name="name">Agencias de tramitaciones aduanales</field><field name="codigo">52291</field></record>
 <record id="svfe_actividad_53100" model="sv_fe.actividad"><field name="name">Servicios de  correo nacional</field><field name="codigo">53100</field></record>
 <record id="svfe_actividad_53200" model="sv_fe.actividad"><field name="name">Actividades de correo distintas a las actividades postales nacionales</field><field name="codigo">53200</field></record>
-<record id="svfe_actividad_55100" model="sv_fe.actividad"><field name="name">Actividades de alojamiento para estancias cortas</field><field name="codigo">55100</field></record>
-<record id="svfe_actividad_55200" model="sv_fe.actividad"><field name="name">Actividades de campamentos, parques de vehículos de recreo y parques de caravanas.</field><field name="codigo">55200</field></record>
+<record id="svfe_actividad_53201" model="sv_fe.actividad"><field name="name">Agencia privada de correo y encomiendas</field><field name="codigo">53201</field></record>
+<record id="svfe_actividad_55101" model="sv_fe.actividad"><field name="name">Actividades de alojamiento para estancias cortas</field><field name="codigo">55101</field></record>
+<record id="svfe_actividad_55102" model="sv_fe.actividad"><field name="name">Hoteles</field><field name="codigo">55102</field></record>
+<record id="svfe_actividad_55200" model="sv_fe.actividad"><field name="name">Actividades de campamentos, parques de vehículos de recreo y parques de caravanas</field><field name="codigo">55200</field></record>
 <record id="svfe_actividad_55900" model="sv_fe.actividad"><field name="name">Alojamiento n.c.p.</field><field name="codigo">55900</field></record>
-
 <record id="svfe_actividad_56101" model="sv_fe.actividad"><field name="name">Restaurantes</field><field name="codigo">56101</field></record>
 <record id="svfe_actividad_56106" model="sv_fe.actividad"><field name="name">Pupusería</field><field name="codigo">56106</field></record>
 <record id="svfe_actividad_56107" model="sv_fe.actividad"><field name="name">Actividades varias de restaurantes</field><field name="codigo">56107</field></record>
 <record id="svfe_actividad_56108" model="sv_fe.actividad"><field name="name">Comedores</field><field name="codigo">56108</field></record>
 <record id="svfe_actividad_56109" model="sv_fe.actividad"><field name="name">Merenderos ambulantes</field><field name="codigo">56109</field></record>
-
 <record id="svfe_actividad_56210" model="sv_fe.actividad"><field name="name">Preparación de comida para eventos especiales</field><field name="codigo">56210</field></record>
-<record id="svfe_actividad_56291" model="sv_fe.actividad"><field name="name">Servicios de provisión de comidas por contrato </field><field name="codigo">56291</field></record>
-<record id="svfe_actividad_56292" model="sv_fe.actividad"><field name="name">Servicios de concesión de cafetines y chalet en empresas e instituciones </field><field name="codigo">56292</field></record>
-<record id="svfe_actividad_56299" model="sv_fe.actividad"><field name="name">Servicios de preparación de comidas n.c.p.</field><field name="codigo">56299</field></record>
-<record id="svfe_actividad_56301" model="sv_fe.actividad"><field name="name">Servicio de expendio de bebidas alcohólicas</field><field name="codigo">56301</field></record>
-<record id="svfe_actividad_56302" model="sv_fe.actividad"><field name="name">Servicio de expendio de bebidas no alcohólicas</field><field name="codigo">56302</field></record>
-<record id="svfe_actividad_58110" model="sv_fe.actividad"><field name="name">Edición  de libros, folletos, partituras y otras ediciones distintas a estas</field><field name="codigo">58110</field></record>
+<record id="svfe_actividad_56291" model="sv_fe.actividad"><field name="name">Servicios de provisión de comidas por contrato</field><field name="codigo">56291</field></record>
+<record id="svfe_actividad_56292" model="sv_fe.actividad"><field name="name">Servicios de concesión de cafetines y chalet en empresas e instituciones</field><field name="codigo">56292</field></record>
+<record id="svfe_actividad_56299" model="sv_fe.actividad"><field name="name">Servicios de preparación de comidas ncp</field><field name="codigo">56299</field></record>
+<record id="svfe_actividad_56301" model="sv_fe.actividad"><field name="name">Servicio de expendio de bebidas en salones y bares</field><field name="codigo">56301</field></record>
+<record id="svfe_actividad_56302" model="sv_fe.actividad"><field name="name">Servicio de expendio de bebidas en puestos callejeros, mercados y ferias</field><field name="codigo">56302</field></record>
+<record id="svfe_actividad_58110" model="sv_fe.actividad"><field name="name">Edición de libros, folletos, partituras y otras ediciones distintas a estas</field><field name="codigo">58110</field></record>
 <record id="svfe_actividad_58120" model="sv_fe.actividad"><field name="name">Edición de directorios y listas de correos</field><field name="codigo">58120</field></record>
 <record id="svfe_actividad_58130" model="sv_fe.actividad"><field name="name">Edición de periódicos, revistas y otras publicaciones periódicas</field><field name="codigo">58130</field></record>
 <record id="svfe_actividad_58190" model="sv_fe.actividad"><field name="name">Otras actividades de edición</field><field name="codigo">58190</field></record>
 <record id="svfe_actividad_58200" model="sv_fe.actividad"><field name="name">Edición de programas informáticos (software)</field><field name="codigo">58200</field></record>
 <record id="svfe_actividad_59110" model="sv_fe.actividad"><field name="name">Actividades de producción cinematográfica</field><field name="codigo">59110</field></record>
-<record id="svfe_actividad_59120" model="sv_fe.actividad"><field name="name">Actividades de post producción de películas, videos y programas  de televisión </field><field name="codigo">59120</field></record>
+<record id="svfe_actividad_59120" model="sv_fe.actividad"><field name="name">Actividades de post producción de películas, videos y programas  de televisión</field><field name="codigo">59120</field></record>
 <record id="svfe_actividad_59130" model="sv_fe.actividad"><field name="name">Actividades de distribución de películas cinematográficas, videos y programas de televisión</field><field name="codigo">59130</field></record>
 <record id="svfe_actividad_59140" model="sv_fe.actividad"><field name="name">Actividades de exhibición de películas cinematográficas y cintas de vídeo</field><field name="codigo">59140</field></record>
-<record id="svfe_actividad_59200" model="sv_fe.actividad"><field name="name">Actividades de edición y grabación de música  </field><field name="codigo">59200</field></record>
+<record id="svfe_actividad_59200" model="sv_fe.actividad"><field name="name">Actividades de edición y grabación de música</field><field name="codigo">59200</field></record>
 <record id="svfe_actividad_60100" model="sv_fe.actividad"><field name="name">Servicios de difusiones de radio</field><field name="codigo">60100</field></record>
 <record id="svfe_actividad_60201" model="sv_fe.actividad"><field name="name">Actividades de programación y difusión de televisión abierta</field><field name="codigo">60201</field></record>
 <record id="svfe_actividad_60202" model="sv_fe.actividad"><field name="name">Actividades de suscripción y difusión de televisión por cable y/o suscripción</field><field name="codigo">60202</field></record>
-<record id="svfe_actividad_61101" model="sv_fe.actividad"><field name="name">Servicio de telefonía fija</field><field name="codigo">61101</field></record>
-<record id="svfe_actividad_61102" model="sv_fe.actividad"><field name="name">SERVICIO DE INTERNET</field><field name="codigo">61102</field></record>
+<record id="svfe_actividad_60299" model="sv_fe.actividad"><field name="name">Servicios de televisión, incluye televisión por cable</field><field name="codigo">60299</field></record>
+<record id="svfe_actividad_60900" model="sv_fe.actividad"><field name="name">Programación y transmisión de radio y televisión</field><field name="codigo">60900</field></record>
+<record id="svfe_actividad_61101" model="sv_fe.actividad"><field name="name">Servicio de telefonía</field><field name="codigo">61101</field></record>
+<record id="svfe_actividad_61102" model="sv_fe.actividad"><field name="name">Servicio de Internet </field><field name="codigo">61102</field></record>
+<record id="svfe_actividad_61103" model="sv_fe.actividad"><field name="name">Servicio de telefonía fija</field><field name="codigo">61103</field></record>
 <record id="svfe_actividad_61109" model="sv_fe.actividad"><field name="name">Servicio de Internet n.c.p.</field><field name="codigo">61109</field></record>
 <record id="svfe_actividad_61201" model="sv_fe.actividad"><field name="name">Servicios de telefonía celular</field><field name="codigo">61201</field></record>
-<record id="svfe_actividad_61202" model="sv_fe.actividad"><field name="name">Servicios de Internet inalámbrico </field><field name="codigo">61202</field></record>
-<record id="svfe_actividad_61209" model="sv_fe.actividad"><field name="name">Servicios de telecomunicaciones  inalámbrico n.c.p.</field><field name="codigo">61209</field></record>
-<record id="svfe_actividad_61301" model="sv_fe.actividad"><field name="name">Telecomunicaciones  satelitales</field><field name="codigo">61301</field></record>
+<record id="svfe_actividad_61202" model="sv_fe.actividad"><field name="name">Servicios de Internet inalámbrico</field><field name="codigo">61202</field></record>
+<record id="svfe_actividad_61209" model="sv_fe.actividad"><field name="name">Servicios de telecomunicaciones inalámbrico n.c.p.</field><field name="codigo">61209</field></record>
+<record id="svfe_actividad_61301" model="sv_fe.actividad"><field name="name">Telecomunicaciones satelitales</field><field name="codigo">61301</field></record>
 <record id="svfe_actividad_61309" model="sv_fe.actividad"><field name="name">Comunicación vía satélite n.c.p.</field><field name="codigo">61309</field></record>
 <record id="svfe_actividad_61900" model="sv_fe.actividad"><field name="name">Actividades de telecomunicación n.c.p.</field><field name="codigo">61900</field></record>
 <record id="svfe_actividad_62010" model="sv_fe.actividad"><field name="name">Programación Informática</field><field name="codigo">62010</field></record>
 <record id="svfe_actividad_62020" model="sv_fe.actividad"><field name="name">Consultorías y gestión de servicios informáticos</field><field name="codigo">62020</field></record>
-<record id="svfe_actividad_62090" model="sv_fe.actividad"><field name="name">Otras actividades  de tecnología  de información y servicios  de computadora </field><field name="codigo">62090</field></record>
-<record id="svfe_actividad_63110" model="sv_fe.actividad"><field name="name">Procesamiento de datos, hospedajes y actividades relacionadas</field><field name="codigo">63110</field></record>
+<record id="svfe_actividad_62090" model="sv_fe.actividad"><field name="name">Otras actividades de tecnología de información y servicios de computadora</field><field name="codigo">62090</field></record>
+<record id="svfe_actividad_63110" model="sv_fe.actividad"><field name="name">Procesamiento de datos y actividades relacionadas</field><field name="codigo">63110</field></record>
 <record id="svfe_actividad_63120" model="sv_fe.actividad"><field name="name">Portales WEB</field><field name="codigo">63120</field></record>
-<record id="svfe_actividad_63910" model="sv_fe.actividad"><field name="name">Servicios de agencias de noticias</field><field name="codigo">63910</field></record>
-<record id="svfe_actividad_63990" model="sv_fe.actividad"><field name="name">Otros servicios de  información  n.c.p. </field><field name="codigo">63990</field></record>
-<record id="svfe_actividad_64110" model="sv_fe.actividad"><field name="name">Servicios provistos por el Banco Central  de El salvador </field><field name="codigo">64110</field></record>
-<record id="svfe_actividad_64190" model="sv_fe.actividad"><field name="name">Servicio de bancos comerciales e intermediarios monetarios autorizados a recibir depósitos</field><field name="codigo">64190</field></record>
+<record id="svfe_actividad_63910" model="sv_fe.actividad"><field name="name">Servicios de Agencias de Noticias</field><field name="codigo">63910</field></record>
+<record id="svfe_actividad_63990" model="sv_fe.actividad"><field name="name">Otros servicios de información  n.c.p.</field><field name="codigo">63990</field></record>
+<record id="svfe_actividad_64110" model="sv_fe.actividad"><field name="name">Servicios provistos por el Banco Central de El salvador</field><field name="codigo">64110</field></record>
+<record id="svfe_actividad_64190" model="sv_fe.actividad"><field name="name">Bancos</field><field name="codigo">64190</field></record>
+<record id="svfe_actividad_64192" model="sv_fe.actividad"><field name="name">Entidades dedicadas al envío de remesas</field><field name="codigo">64192</field></record>
+<record id="svfe_actividad_64199" model="sv_fe.actividad"><field name="name">Otras entidades financieras</field><field name="codigo">64199</field></record>
 <record id="svfe_actividad_64200" model="sv_fe.actividad"><field name="name">Actividades de sociedades de cartera</field><field name="codigo">64200</field></record>
 <record id="svfe_actividad_64300" model="sv_fe.actividad"><field name="name">Fideicomisos, fondos y otras fuentes de financiamiento</field><field name="codigo">64300</field></record>
 <record id="svfe_actividad_64910" model="sv_fe.actividad"><field name="name">Arrendamiento financieros</field><field name="codigo">64910</field></record>
-<record id="svfe_actividad_64920" model="sv_fe.actividad"><field name="name">Tipos de crédito n.c.p.</field><field name="codigo">64920</field></record>
+<record id="svfe_actividad_64920" model="sv_fe.actividad"><field name="name">Asociaciones cooperativas de ahorro y crédito dedicadas a la intermediación financiera</field><field name="codigo">64920</field></record>
+<record id="svfe_actividad_64921" model="sv_fe.actividad"><field name="name">Instituciones emisoras de tarjetas de crédito y otros</field><field name="codigo">64921</field></record>
+<record id="svfe_actividad_64922" model="sv_fe.actividad"><field name="name">Tipos de crédito ncp</field><field name="codigo">64922</field></record>
+<record id="svfe_actividad_64928" model="sv_fe.actividad"><field name="name">Prestamistas y casas de empeño</field><field name="codigo">64928</field></record>
 <record id="svfe_actividad_64990" model="sv_fe.actividad"><field name="name">Actividades de servicios financieros, excepto la financiación de planes de seguros y de pensiones n.c.p.</field><field name="codigo">64990</field></record>
-<record id="svfe_actividad_65110" model="sv_fe.actividad"><field name="name">Planes de seguros de vida </field><field name="codigo">65110</field></record>
+<record id="svfe_actividad_65110" model="sv_fe.actividad"><field name="name">Planes de seguros de vida</field><field name="codigo">65110</field></record>
 <record id="svfe_actividad_65120" model="sv_fe.actividad"><field name="name">Planes de seguro excepto de vida</field><field name="codigo">65120</field></record>
+<record id="svfe_actividad_65199" model="sv_fe.actividad"><field name="name">Seguros generales de todo tipo</field><field name="codigo">65199</field></record>
 <record id="svfe_actividad_65200" model="sv_fe.actividad"><field name="name">Planes se seguro</field><field name="codigo">65200</field></record>
 <record id="svfe_actividad_65300" model="sv_fe.actividad"><field name="name">Planes de pensiones</field><field name="codigo">65300</field></record>
-<record id="svfe_actividad_66110" model="sv_fe.actividad"><field name="name">Administración de mercados financieros</field><field name="codigo">66110</field></record>
-<record id="svfe_actividad_66120" model="sv_fe.actividad"><field name="name">Actividades bursátiles</field><field name="codigo">66120</field></record>
-<record id="svfe_actividad_66190" model="sv_fe.actividad"><field name="name">Actividades auxiliares  de la intermediación financiera ncp</field><field name="codigo">66190</field></record>
+<record id="svfe_actividad_66110" model="sv_fe.actividad"><field name="name">Administración de mercados financieros (Bolsa de Valores)</field><field name="codigo">66110</field></record>
+<record id="svfe_actividad_66120" model="sv_fe.actividad"><field name="name">Actividades bursátiles (Corredores de Bolsa)</field><field name="codigo">66120</field></record>
+<record id="svfe_actividad_66190" model="sv_fe.actividad"><field name="name">Actividades auxiliares de la intermediación financiera ncp</field><field name="codigo">66190</field></record>
 <record id="svfe_actividad_66210" model="sv_fe.actividad"><field name="name">Evaluación de riesgos y daños</field><field name="codigo">66210</field></record>
-<record id="svfe_actividad_66220" model="sv_fe.actividad"><field name="name">Actividades  de agentes  y corredores de seguros  </field><field name="codigo">66220</field></record>
-<record id="svfe_actividad_66290" model="sv_fe.actividad"><field name="name">Otras Actividades auxiliares  de seguros y  fondos de pensiones </field><field name="codigo">66290</field></record>
+<record id="svfe_actividad_66220" model="sv_fe.actividad"><field name="name">Actividades de agentes y corredores de seguros</field><field name="codigo">66220</field></record>
+<record id="svfe_actividad_66290" model="sv_fe.actividad"><field name="name">Otras actividades auxiliares de seguros y fondos de pensiones</field><field name="codigo">66290</field></record>
 <record id="svfe_actividad_66300" model="sv_fe.actividad"><field name="name">Actividades de administración de fondos</field><field name="codigo">66300</field></record>
 <record id="svfe_actividad_68101" model="sv_fe.actividad"><field name="name">Servicio de alquiler y venta de lotes en cementerios</field><field name="codigo">68101</field></record>
 <record id="svfe_actividad_68109" model="sv_fe.actividad"><field name="name">Actividades inmobiliarias realizadas con bienes propios o arrendados n.c.p.</field><field name="codigo">68109</field></record>
-<record id="svfe_actividad_68200" model="sv_fe.actividad"><field name="name">Actividades inmobiliarias realizadas a cambio de una retribución o por contrata</field><field name="codigo">68200</field></record>
+<record id="svfe_actividad_68200" model="sv_fe.actividad"><field name="name">Actividades Inmobiliarias Realizadas a Cambio de una Retribución o por Contrata</field><field name="codigo">68200</field></record>
 <record id="svfe_actividad_69100" model="sv_fe.actividad"><field name="name">Actividades jurídicas</field><field name="codigo">69100</field></record>
-<record id="svfe_actividad_69200" model="sv_fe.actividad"><field name="name">Actividades de contabilidad, teneduría de libros y auditoria; asesoramiento en materia de impuestos</field><field name="codigo">69200</field></record>
+<record id="svfe_actividad_69200" model="sv_fe.actividad"><field name="name">Actividades de contabilidad, teneduría de libros y auditoría; asesoramiento en materia de impuestos</field><field name="codigo">69200</field></record>
 <record id="svfe_actividad_70100" model="sv_fe.actividad"><field name="name">Actividades de oficinas centrales de sociedades de cartera</field><field name="codigo">70100</field></record>
-<record id="svfe_actividad_70200" model="sv_fe.actividad"><field name="name">Actividades de consultoría en gestión empresarial </field><field name="codigo">70200</field></record>
+<record id="svfe_actividad_70200" model="sv_fe.actividad"><field name="name">Actividades de consultoría en gestión empresarial</field><field name="codigo">70200</field></record>
 <record id="svfe_actividad_71101" model="sv_fe.actividad"><field name="name">Servicios de arquitectura y planificación urbana y servicios conexos</field><field name="codigo">71101</field></record>
 <record id="svfe_actividad_71102" model="sv_fe.actividad"><field name="name">Servicios de ingeniería</field><field name="codigo">71102</field></record>
 <record id="svfe_actividad_71103" model="sv_fe.actividad"><field name="name">Servicios de agrimensura, topografía, cartografía, prospección y geofísica y servicios conexos</field><field name="codigo">71103</field></record>
 <record id="svfe_actividad_71200" model="sv_fe.actividad"><field name="name">Ensayos y análisis técnicos</field><field name="codigo">71200</field></record>
 <record id="svfe_actividad_72100" model="sv_fe.actividad"><field name="name">Investigaciones y desarrollo experimental en el campo de las ciencias naturales y la ingeniería</field><field name="codigo">72100</field></record>
-<record id="svfe_actividad_72200" model="sv_fe.actividad"><field name="name">Investigaciones y desarrollo experimental en el campo de las ciencias sociales y las humanidades  científica y desarrollo </field><field name="codigo">72200</field></record>
+<record id="svfe_actividad_72199" model="sv_fe.actividad"><field name="name">Investigaciones científicas</field><field name="codigo">72199</field></record>
+<record id="svfe_actividad_72200" model="sv_fe.actividad"><field name="name">Investigaciones y desarrollo experimental en el campo de las ciencias sociales y las humanidades científica y desarrollo</field><field name="codigo">72200</field></record>
 <record id="svfe_actividad_73100" model="sv_fe.actividad"><field name="name">Publicidad</field><field name="codigo">73100</field></record>
 <record id="svfe_actividad_73200" model="sv_fe.actividad"><field name="name">Investigación de mercados y realización de encuestas de opinión pública</field><field name="codigo">73200</field></record>
 <record id="svfe_actividad_74100" model="sv_fe.actividad"><field name="name">Actividades de diseño especializado</field><field name="codigo">74100</field></record>
 <record id="svfe_actividad_74200" model="sv_fe.actividad"><field name="name">Actividades de fotografía</field><field name="codigo">74200</field></record>
-<record id="svfe_actividad_74900" model="sv_fe.actividad"><field name="name">Servicios profesionales y científicos n.c.p.</field><field name="codigo">74900</field></record>
+<record id="svfe_actividad_74900" model="sv_fe.actividad"><field name="name">Servicios profesionales y científicos ncp</field><field name="codigo">74900</field></record>
 <record id="svfe_actividad_75000" model="sv_fe.actividad"><field name="name">Actividades veterinarias</field><field name="codigo">75000</field></record>
 <record id="svfe_actividad_77101" model="sv_fe.actividad"><field name="name">Alquiler de equipo de transporte terrestre</field><field name="codigo">77101</field></record>
 <record id="svfe_actividad_77102" model="sv_fe.actividad"><field name="name">Alquiler de equipo de transporte acuático</field><field name="codigo">77102</field></record>
 <record id="svfe_actividad_77103" model="sv_fe.actividad"><field name="name">Alquiler de equipo de transporte  por vía aérea</field><field name="codigo">77103</field></record>
 <record id="svfe_actividad_77210" model="sv_fe.actividad"><field name="name">Alquiler y arrendamiento de equipo de recreo y deportivo</field><field name="codigo">77210</field></record>
 <record id="svfe_actividad_77220" model="sv_fe.actividad"><field name="name">Alquiler de cintas de video y discos</field><field name="codigo">77220</field></record>
-<record id="svfe_actividad_77290" model="sv_fe.actividad"><field name="name">Alquiler de otros efectos personales y enseres domésticos </field><field name="codigo">77290</field></record>
+<record id="svfe_actividad_77290" model="sv_fe.actividad"><field name="name">Alquiler de otros efectos personales y enseres domésticos</field><field name="codigo">77290</field></record>
 <record id="svfe_actividad_77300" model="sv_fe.actividad"><field name="name">Alquiler de maquinaria y equipo</field><field name="codigo">77300</field></record>
-<record id="svfe_actividad_77400" model="sv_fe.actividad"><field name="name">Arrendamiento de productos de propiedad intelectual </field><field name="codigo">77400</field></record>
+<record id="svfe_actividad_77400" model="sv_fe.actividad"><field name="name">Arrendamiento de productos de propiedad intelectual</field><field name="codigo">77400</field></record>
 <record id="svfe_actividad_78100" model="sv_fe.actividad"><field name="name">Obtención y dotación de personal</field><field name="codigo">78100</field></record>
-<record id="svfe_actividad_78200" model="sv_fe.actividad"><field name="name">Actividades de las agencias  de trabajo temporal</field><field name="codigo">78200</field></record>
+<record id="svfe_actividad_78200" model="sv_fe.actividad"><field name="name">Actividades de las agencias de trabajo temporal</field><field name="codigo">78200</field></record>
 <record id="svfe_actividad_78300" model="sv_fe.actividad"><field name="name">Dotación de recursos humanos y gestión; gestión de las funciones de recursos humanos</field><field name="codigo">78300</field></record>
-<record id="svfe_actividad_79110" model="sv_fe.actividad"><field name="name">Actividades de agencias de viajes y organizadores de viajes ; actividades de asistencia a turistas</field><field name="codigo">79110</field></record>
+<record id="svfe_actividad_79110" model="sv_fe.actividad"><field name="name">Actividades de agencias de viajes y organizadores de viajes; actividades de asistencia a turistas</field><field name="codigo">79110</field></record>
 <record id="svfe_actividad_79120" model="sv_fe.actividad"><field name="name">Actividades de los operadores turísticos</field><field name="codigo">79120</field></record>
-<record id="svfe_actividad_79900" model="sv_fe.actividad"><field name="name">Otros servicios de reservas  y actividades relacionadas </field><field name="codigo">79900</field></record>
+<record id="svfe_actividad_79900" model="sv_fe.actividad"><field name="name">Otros servicios de reservas y actividades relacionadas</field><field name="codigo">79900</field></record>
 <record id="svfe_actividad_80100" model="sv_fe.actividad"><field name="name">Servicios de seguridad privados</field><field name="codigo">80100</field></record>
 <record id="svfe_actividad_80201" model="sv_fe.actividad"><field name="name">Actividades de servicios de sistemas de seguridad</field><field name="codigo">80201</field></record>
 <record id="svfe_actividad_80202" model="sv_fe.actividad"><field name="name">Actividades para la prestación de sistemas de seguridad</field><field name="codigo">80202</field></record>
 <record id="svfe_actividad_80300" model="sv_fe.actividad"><field name="name">Actividades de investigación</field><field name="codigo">80300</field></record>
-<record id="svfe_actividad_81100" model="sv_fe.actividad"><field name="name">Actividades combinadas de mantenimiento de edificios  e instalaciones</field><field name="codigo">81100</field></record>
+<record id="svfe_actividad_81100" model="sv_fe.actividad"><field name="name">Actividades combinadas de mantenimiento de edificios e instalaciones</field><field name="codigo">81100</field></record>
 <record id="svfe_actividad_81210" model="sv_fe.actividad"><field name="name">Limpieza general de edificios</field><field name="codigo">81210</field></record>
-<record id="svfe_actividad_81290" model="sv_fe.actividad"><field name="name">Otras actividades de limpieza de edificios e instalaciones </field><field name="codigo">81290</field></record>
+<record id="svfe_actividad_81290" model="sv_fe.actividad"><field name="name">Otras actividades combinadas de mantenimiento de edificios e instalaciones ncp</field><field name="codigo">81290</field></record>
 <record id="svfe_actividad_81300" model="sv_fe.actividad"><field name="name">Servicio de jardinería</field><field name="codigo">81300</field></record>
-<record id="svfe_actividad_82110" model="sv_fe.actividad"><field name="name">Servicios administrativos  de oficinas</field><field name="codigo">82110</field></record>
+<record id="svfe_actividad_82110" model="sv_fe.actividad"><field name="name">Servicios administrativos de oficinas</field><field name="codigo">82110</field></record>
 <record id="svfe_actividad_82190" model="sv_fe.actividad"><field name="name">Servicio de fotocopiado y similares, excepto en imprentas</field><field name="codigo">82190</field></record>
 <record id="svfe_actividad_82200" model="sv_fe.actividad"><field name="name">Actividades de las centrales de llamadas (call center)</field><field name="codigo">82200</field></record>
 <record id="svfe_actividad_82300" model="sv_fe.actividad"><field name="name">Organización de convenciones y ferias de negocios</field><field name="codigo">82300</field></record>
 <record id="svfe_actividad_82910" model="sv_fe.actividad"><field name="name">Actividades de agencias de cobro y oficinas de crédito</field><field name="codigo">82910</field></record>
 <record id="svfe_actividad_82921" model="sv_fe.actividad"><field name="name">Servicios de envase y empaque de productos alimenticios</field><field name="codigo">82921</field></record>
 <record id="svfe_actividad_82922" model="sv_fe.actividad"><field name="name">Servicios de envase y empaque de productos medicinales</field><field name="codigo">82922</field></record>
-<record id="svfe_actividad_82929" model="sv_fe.actividad"><field name="name">Servicio de envase y empaque n.c.p.</field><field name="codigo">82929</field></record>
-<record id="svfe_actividad_82990" model="sv_fe.actividad"><field name="name">Actividades de apoyo empresariales n.c.p.</field><field name="codigo">82990</field></record>
-<record id="svfe_actividad_84110" model="sv_fe.actividad"><field name="name">Actividades de la administración pública en general</field><field name="codigo">84110</field></record>
+<record id="svfe_actividad_82929" model="sv_fe.actividad"><field name="name">Servicio de envase y empaque ncp</field><field name="codigo">82929</field></record>
+<record id="svfe_actividad_82990" model="sv_fe.actividad"><field name="name">Actividades de apoyo empresariales ncp</field><field name="codigo">82990</field></record>
+<record id="svfe_actividad_84110" model="sv_fe.actividad"><field name="name">Actividades de la Administración Pública en general</field><field name="codigo">84110</field></record>
+<record id="svfe_actividad_84111" model="sv_fe.actividad"><field name="name">Alcaldías Municipales</field><field name="codigo">84111</field></record>
 <record id="svfe_actividad_84120" model="sv_fe.actividad"><field name="name">Regulación de las actividades de prestación de servicios sanitarios, educativos, culturales y otros servicios sociales, excepto seguridad social</field><field name="codigo">84120</field></record>
 <record id="svfe_actividad_84130" model="sv_fe.actividad"><field name="name">Regulación y facilitación de la actividad económica</field><field name="codigo">84130</field></record>
-<record id="svfe_actividad_84210" model="sv_fe.actividad"><field name="name">Relaciones exteriores</field><field name="codigo">84210</field></record>
+<record id="svfe_actividad_84210" model="sv_fe.actividad"><field name="name">Actividades de administración y funcionamiento del Ministerio de Relaciones Exteriores</field><field name="codigo">84210</field></record>
 <record id="svfe_actividad_84220" model="sv_fe.actividad"><field name="name">Actividades de defensa</field><field name="codigo">84220</field></record>
 <record id="svfe_actividad_84230" model="sv_fe.actividad"><field name="name">Actividades de mantenimiento del orden público y de seguridad</field><field name="codigo">84230</field></record>
 <record id="svfe_actividad_84300" model="sv_fe.actividad"><field name="name">Actividades de planes de seguridad social de afiliación obligatoria</field><field name="codigo">84300</field></record>
@@ -1317,7 +1387,7 @@
 <record id="svfe_actividad_85103" model="sv_fe.actividad"><field name="name">Enseñanza primaria</field><field name="codigo">85103</field></record>
 <record id="svfe_actividad_85104" model="sv_fe.actividad"><field name="name">Servicio de educación preescolar y primaria integrada</field><field name="codigo">85104</field></record>
 <record id="svfe_actividad_85211" model="sv_fe.actividad"><field name="name">Enseñanza secundaria tercer ciclo (7°, 8° y 9° )</field><field name="codigo">85211</field></record>
-<record id="svfe_actividad_85212" model="sv_fe.actividad"><field name="name">Enseñanza secundaria  de formación general  bachillerato </field><field name="codigo">85212</field></record>
+<record id="svfe_actividad_85212" model="sv_fe.actividad"><field name="name">Enseñanza secundaria  de formación general  bachillerato</field><field name="codigo">85212</field></record>
 <record id="svfe_actividad_85221" model="sv_fe.actividad"><field name="name">Enseñanza secundaria de formación técnica y profesional</field><field name="codigo">85221</field></record>
 <record id="svfe_actividad_85222" model="sv_fe.actividad"><field name="name">Enseñanza secundaria de formación técnica y profesional integrada con enseñanza primaria</field><field name="codigo">85222</field></record>
 <record id="svfe_actividad_85301" model="sv_fe.actividad"><field name="name">Enseñanza superior universitaria</field><field name="codigo">85301</field></record>
@@ -1326,30 +1396,34 @@
 <record id="svfe_actividad_85410" model="sv_fe.actividad"><field name="name">Educación deportiva y recreativa</field><field name="codigo">85410</field></record>
 <record id="svfe_actividad_85420" model="sv_fe.actividad"><field name="name">Educación cultural</field><field name="codigo">85420</field></record>
 <record id="svfe_actividad_85490" model="sv_fe.actividad"><field name="name">Otros tipos de enseñanza n.c.p.</field><field name="codigo">85490</field></record>
+<record id="svfe_actividad_85499" model="sv_fe.actividad"><field name="name">Enseñanza formal</field><field name="codigo">85499</field></record>
 <record id="svfe_actividad_85500" model="sv_fe.actividad"><field name="name">Servicios de apoyo a la enseñanza</field><field name="codigo">85500</field></record>
 <record id="svfe_actividad_86100" model="sv_fe.actividad"><field name="name">Actividades de hospitales</field><field name="codigo">86100</field></record>
 <record id="svfe_actividad_86201" model="sv_fe.actividad"><field name="name">Clínicas médicas</field><field name="codigo">86201</field></record>
 <record id="svfe_actividad_86202" model="sv_fe.actividad"><field name="name">Servicios de Odontología</field><field name="codigo">86202</field></record>
+<record id="svfe_actividad_86203" model="sv_fe.actividad"><field name="name">Servicios médicos</field><field name="codigo">86203</field></record>
 <record id="svfe_actividad_86901" model="sv_fe.actividad"><field name="name">Servicios de análisis y estudios de diagnóstico</field><field name="codigo">86901</field></record>
 <record id="svfe_actividad_86902" model="sv_fe.actividad"><field name="name">Actividades de atención de la salud humana</field><field name="codigo">86902</field></record>
-<record id="svfe_actividad_86909" model="sv_fe.actividad"><field name="name">Otros Servicio relacionados con la salud n.c.p.</field><field name="codigo">86909</field></record>
+<record id="svfe_actividad_86909" model="sv_fe.actividad"><field name="name">Otros Servicio relacionados con la salud ncp</field><field name="codigo">86909</field></record>
 <record id="svfe_actividad_87100" model="sv_fe.actividad"><field name="name">Residencias de ancianos con atención de enfermería</field><field name="codigo">87100</field></record>
 <record id="svfe_actividad_87200" model="sv_fe.actividad"><field name="name">Instituciones dedicadas al tratamiento del retraso mental, problemas de salud mental y el uso indebido de sustancias nocivas</field><field name="codigo">87200</field></record>
 <record id="svfe_actividad_87300" model="sv_fe.actividad"><field name="name">Instituciones dedicadas al cuidado de ancianos y discapacitados</field><field name="codigo">87300</field></record>
-<record id="svfe_actividad_87900" model="sv_fe.actividad"><field name="name">Actividades  de asistencia a niños y jóvenes</field><field name="codigo">87900</field></record>
-<record id="svfe_actividad_88100" model="sv_fe.actividad"><field name="name">Actividades  de asistencia sociales sin alojamiento para ancianos y discapacitados</field><field name="codigo">88100</field></record>
-<record id="svfe_actividad_88900" model="sv_fe.actividad"><field name="name">Servicios sociales sin alojamiento n.c.p.</field><field name="codigo">88900</field></record>
+<record id="svfe_actividad_87900" model="sv_fe.actividad"><field name="name">Actividades de asistencia a niños y jóvenes</field><field name="codigo">87900</field></record>
+<record id="svfe_actividad_87901" model="sv_fe.actividad"><field name="name">Otras actividades de atención en instituciones</field><field name="codigo">87901</field></record>
+<record id="svfe_actividad_88100" model="sv_fe.actividad"><field name="name">Actividades de asistencia sociales sin alojamiento para ancianos y discapacitados</field><field name="codigo">88100</field></record>
+<record id="svfe_actividad_88900" model="sv_fe.actividad"><field name="name">servicios sociales sin alojamiento ncp</field><field name="codigo">88900</field></record>
 <record id="svfe_actividad_90000" model="sv_fe.actividad"><field name="name">Actividades creativas artísticas y de esparcimiento</field><field name="codigo">90000</field></record>
 <record id="svfe_actividad_91010" model="sv_fe.actividad"><field name="name">Actividades de bibliotecas y archivos</field><field name="codigo">91010</field></record>
 <record id="svfe_actividad_91020" model="sv_fe.actividad"><field name="name">Actividades de museos y preservación de lugares y edificios históricos</field><field name="codigo">91020</field></record>
-<record id="svfe_actividad_91030" model="sv_fe.actividad"><field name="name">Actividades de jardines botánicos, zoológicos y de reservas  naturales</field><field name="codigo">91030</field></record>
+<record id="svfe_actividad_91030" model="sv_fe.actividad"><field name="name">Actividades de jardines botánicos, zoológicos y de reservas naturales</field><field name="codigo">91030</field></record>
 <record id="svfe_actividad_92000" model="sv_fe.actividad"><field name="name">Actividades de juegos y apuestas</field><field name="codigo">92000</field></record>
 <record id="svfe_actividad_93110" model="sv_fe.actividad"><field name="name">Gestión de instalaciones deportivas</field><field name="codigo">93110</field></record>
 <record id="svfe_actividad_93120" model="sv_fe.actividad"><field name="name">Actividades de clubes deportivos</field><field name="codigo">93120</field></record>
-<record id="svfe_actividad_93190" model="sv_fe.actividad"><field name="name">Otras Actividades deportivas</field><field name="codigo">93190</field></record>
+<record id="svfe_actividad_93190" model="sv_fe.actividad"><field name="name">Otras actividades deportivas</field><field name="codigo">93190</field></record>
 <record id="svfe_actividad_93210" model="sv_fe.actividad"><field name="name">Actividades de parques de atracciones y parques temáticos</field><field name="codigo">93210</field></record>
 <record id="svfe_actividad_93291" model="sv_fe.actividad"><field name="name">Discotecas y salas de baile</field><field name="codigo">93291</field></record>
-<record id="svfe_actividad_93299" model="sv_fe.actividad"><field name="name">Servicios sociales sin alojamiento n.c.p.</field><field name="codigo">93299</field></record>
+<record id="svfe_actividad_93298" model="sv_fe.actividad"><field name="name">Centros vacacionales</field><field name="codigo">93298</field></record>
+<record id="svfe_actividad_93299" model="sv_fe.actividad"><field name="name">Actividades de esparcimiento ncp</field><field name="codigo">93299</field></record>
 <record id="svfe_actividad_94110" model="sv_fe.actividad"><field name="name">Actividades de organizaciones empresariales y de empleadores</field><field name="codigo">94110</field></record>
 <record id="svfe_actividad_94120" model="sv_fe.actividad"><field name="name">Actividades de organizaciones profesionales</field><field name="codigo">94120</field></record>
 <record id="svfe_actividad_94200" model="sv_fe.actividad"><field name="name">Actividades de sindicatos</field><field name="codigo">94200</field></record>
@@ -1372,15 +1446,18 @@
 <record id="svfe_actividad_96030" model="sv_fe.actividad"><field name="name">Pompas fúnebres y actividades conexas</field><field name="codigo">96030</field></record>
 <record id="svfe_actividad_96091" model="sv_fe.actividad"><field name="name">Servicios de sauna y otros servicios para la estética corporal n.c.p.</field><field name="codigo">96091</field></record>
 <record id="svfe_actividad_96092" model="sv_fe.actividad"><field name="name">Servicios n.c.p.</field><field name="codigo">96092</field></record>
-<record id="svfe_actividad_97000" model="sv_fe.actividad"><field name="name">Actividad de los hogares en calidad de empleadores de personal domestico</field><field name="codigo">97000</field></record>
+<record id="svfe_actividad_97000" model="sv_fe.actividad"><field name="name">Actividad de los hogares en calidad de empleadores de personal doméstico</field><field name="codigo">97000</field></record>
 <record id="svfe_actividad_98100" model="sv_fe.actividad"><field name="name">Actividades indiferenciadas de producción de bienes de los hogares privados para uso propio</field><field name="codigo">98100</field></record>
-<record id="svfe_actividad_98200" model="sv_fe.actividad"><field name="name">Actividades indiferenciada de producción de servicios de los hogares privados para uso propio</field><field name="codigo">98200</field></record>
-<record id="svfe_actividad_99000" model="sv_fe.actividad"><field name="name">Actividades de organizaciones  y órganos extraterritoriales</field><field name="codigo">99000</field></record>
+<record id="svfe_actividad_98200" model="sv_fe.actividad"><field name="name">Actividades indiferenciadas de producción de servicios de los hogares privados para uso propio</field><field name="codigo">98200</field></record>
+<record id="svfe_actividad_99000" model="sv_fe.actividad"><field name="name">Actividades de organizaciones y órganos extraterritoriales</field><field name="codigo">99000</field></record>
 <record id="svfe_actividad_10001" model="sv_fe.actividad"><field name="name">Empleados</field><field name="codigo">10001</field></record>
-<record id="svfe_actividad_10002" model="sv_fe.actividad"><field name="name">Jubilado</field><field name="codigo">10002</field></record>
+<record id="svfe_actividad_10002" model="sv_fe.actividad"><field name="name">Pensionado</field><field name="codigo">10002</field></record>
 <record id="svfe_actividad_10003" model="sv_fe.actividad"><field name="name">Estudiante</field><field name="codigo">10003</field></record>
 <record id="svfe_actividad_10004" model="sv_fe.actividad"><field name="name">Desempleado</field><field name="codigo">10004</field></record>
 <record id="svfe_actividad_10005" model="sv_fe.actividad"><field name="name">Otros</field><field name="codigo">10005</field></record>
+<record id="svfe_actividad_10006" model="sv_fe.actividad"><field name="name">Comerciante</field><field name="codigo">10006</field></record>
+
+
 
 <record id="svfe_doc_asociado_1" model="sv_fe.docasociado"><field name="name">Emisor</field><field name="codigo">1</field></record>
 <record id="svfe_doc_asociado_2" model="sv_fe.docasociado"><field name="name">Receptor</field><field name="codigo">2</field></record>
