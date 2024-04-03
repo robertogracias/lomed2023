@@ -455,10 +455,10 @@ class sv_fe_move(models.Model):
         f=self
 
         if not contingencia:
-            f.e_transmision_id=self.env.ref('svfe_transmision_1').id
+            f.e_transmision_id=self.env.ref('sv_fe.svfe_transmision_1').id
             f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
         else:
-            f.e_transmision_id=self.env.ref('svfe_transmision_2').id
+            f.e_transmision_id=self.env.ref('sv_fe.svfe_transmision_2').id
 
         #generando el dte
         #dte=str(f.get_factura())
