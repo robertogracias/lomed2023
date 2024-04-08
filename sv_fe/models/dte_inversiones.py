@@ -207,8 +207,6 @@ class sv_fe_contingencia(models.Model):
             f.dte_estado=respuesta['estado']
             if respuesta['estado']=='RECIBIDO':
                 f.sello=respuesta['selloRecibido']
-            else:
-                f.dte_error=respuesta['observaciones']
             #raise UserError(result.text)
         #raise UserError(result.text)
 
@@ -315,21 +313,13 @@ class sv_fe_move(models.Model):
     gravadas=fields.Float("Ventas Gravadas",copy=False)
     exentas=fields.Float("Ventas Exentas",copy=False)
     nosujetas=fields.Float("Ventas No Sujetas",copy=False)
-    
     gravadas_des=fields.Float("Descuento Gravado ",copy=False)
     exentas_des=fields.Float("Descuento Exento",copy=False)
     nosujetas_des=fields.Float("Descuento Exento",copy=False)
-
-    gravadas_linea_des=fields.Float("Descuento lineas Gravado ",copy=False)
-    exentas_linea_des=fields.Float("Descuento lineas Exento",copy=False)
-    nosujetas_linea_des=fields.Float("Descuento lineas Exento",copy=False)
-    
     retencion=fields.Float("Retencion",copy=False)
     percepcion=fields.Float("Percepcion",copy=False)
     isr=fields.Float("ISR",copy=False)
     iva=fields.Float("IVA",copy=False)
-    iva_des=fields.Float("IVA Desc.",copy=False)
-
     entrega=fields.Char("Entrega",copy=False)
     doc_entrega=fields.Char("Doc. Entrega",copy=False)
     recibe=fields.Char("Recibe",copy=False)
@@ -364,21 +354,10 @@ class sv_fe_move(models.Model):
     reversion_solicita_tipo_id=fields.Many2one(comodel_name='sv_fe.doc_identificacion',string='Tipo documento')
     doc_relacionado=fields.Many2one(comodel_name='account.move',string='Documento relacionado',copy=False)
     dte_estado=fields.Char("Estado del DTE",copy=False)
-    dte_error=fields.Char("Error del DTE",copy=False)
     dte_qr=fields.Char(string='QR',compute='get_qr',store=False)
     fe_tipo_doc_id=fields.Many2one(comodel_name='sv_fe.tipo_doc',related='tipo_documento_id.fe_tipo_doc_id',store=True,string="Tipo de documento")
     fe_codigo=fields.Char(string='Codigo tipo doc',related='fe_tipo_doc_id.codigo',store=True)
-    fe_transmision_id=fields.Many2one(comodel_name='sv_fe.transmision',string='Modelo de Transmision')
-    fe_ambiente_id=fields.Many2one(comodel_name='sv_fe.ambiente',string='Ambiente')
 
-
-    def button_draft(self):
-        res=super(sv_fe_move,self).button_draft()
-        for r in self:
-            if r.sello:
-                raise UserError("EL DTE YA FUE TRANSMITIDO Y SELLADO")
-
-        
 
     def get_json(self):
         for r in self:
@@ -388,13 +367,8 @@ class sv_fe_move(models.Model):
     def get_qr(self):
         for r in self:
             res=''
-            if r.move_type in ('out_invoice','out_refund','in_invoice','in_refound'):
-                ambiente='00'
-                if r.fe_ambiente_id:
-                    ambiente=r.fe_ambiente_id.codigo
-                else:
-                    ambiente=r.company_id.fe_ambiente_id.codigo
-                res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            if r.move_type in ('out_invoice','out_refund','in_invoice','in_refound') and r.sello!=False:
+                res='https://admin.factura.gob.sv/consultaPublica%3Fambiente=01%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
                 #res='https://admin.factura.gob.sv/consultaPublica?ambiente=01&codGen='+r.uuid+'&echaEmi='+(r.date_confirm).strftime('%Y-%m-%d')
             r.dte_qr=res
 
@@ -402,10 +376,6 @@ class sv_fe_move(models.Model):
         self.env['sv_fe.contingencia_ocurrencia'].contingencia_fe()
 
 
-    def solo_imprimir(self):
-        self.ensure_one()
-        self.generar_solo_fe()
-        return self.env.ref('sv_fe.dte_report').report_action(self)
 
     def generar_solo_fe(self):
         self.ensure_one()
@@ -449,17 +419,13 @@ class sv_fe_move(models.Model):
         json_datos_cliente=json_datos_cliente.replace('False','null')
         json_datos_cliente=json_datos_cliente.replace('false','null')
         f.doc_json=json_datos_cliente
-        
-    def generar_fe(self,contingencia=False):
+
+
+
+    def generar_fe(self):
         self.ensure_one()
         f=self
-
-        if not contingencia:
-            f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_1').id
-            f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
-        else:
-            f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_2').id
-
+        
         #generando el dte
         #dte=str(f.get_factura())
         #dte=dte.replace('None','null')
@@ -471,6 +437,7 @@ class sv_fe_move(models.Model):
         firma={}
         firma['nit']=f.company_id.partner_id.nit.replace('-','')
         firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
+        firma['autoEnvio']=True
         if f.tipo_documento_id.fe_tipo_doc_id.codigo=='01':
             firma['dteJson']=f.get_factura()
         elif f.tipo_documento_id.fe_tipo_doc_id.codigo=='03':
@@ -488,7 +455,7 @@ class sv_fe_move(models.Model):
         else:
             raise UserError('No ha configurado el tipo de documento para que pueda emitir una factura electrónica.')
         f.doc_numero=f.control
-        encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
+        encabezado = {"content-type": "application/json"}
         json_datos = json.dumps(firma)
         json_datos=json_datos.replace('None','null')
         json_datos=json_datos.replace('False','null')
@@ -498,47 +465,41 @@ class sv_fe_move(models.Model):
         json_datos_cliente=json_datos_cliente.replace('False','null')
         json_datos_cliente=json_datos_cliente.replace('false','null')
         f.doc_json=json_datos_cliente
-        #raise UserError(json_datos)
+
+
+        if not f.company_id.fe_ambiente_id.token or not f.company_id.fe_ambiente_id.token_vencimiento or f.company_id.fe_ambiente_id.token_vencimiento<datetime.now():
+            dic_aut={}
+            dic_aut['username']='leonelgracias@gmail.com'
+            dic_aut['password']='Pruebas2024$'
+            json_aut=json.dumps(dic_aut)
+            #raise UserError(json_aut)
+            result = requests.post('https://fel.tevalida.com/api/auth/login',data=json_aut,headers=encabezado)
+            res_aut=json.loads(result.text)
+            f.company_id.fe_ambiente_id.token=res_aut['body']['token']
+            f.company_id.fe_ambiente_id.token_vencimiento=datetime.now()+timedelta(hours=1)
+        token=f.company_id.fe_ambiente_id.token
+                
+
+        encabezado['Authorization']='Bearer '+token
+
+        #raise UserError('encabezado:'+str(encabezado)+'   body'+str(json_datos))
         result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
+        #raise UserError(str(result))
         respuesta=json.loads(result.text)
-        #raise UserError(result.text)
-        if respuesta['status']=="OK":
-            body=respuesta["body"]
-            f.doc_firmado=body
-            encabezado={}
-            encabezado['Authorization']=f.company_id.fe_ambiente_id.get_token()
-            encabezado['User-Agent']="Odoo/16"
-            encabezado['content-type']="application/JSON"
-            dic={}
-            dic['ambiente']=f.company_id.fe_ambiente_id.codigo
-            dic['idEnvio']=f.id
-            dic['version']=f.tipo_documento_id.version
-            dic['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
-            dic['documento']=body
-            dic['codigoGeneracion']=f.uuid
-            json_datos = json.dumps(dic)
-            json_datos=json_datos.replace('None','null')
-            json_datos=json_datos.replace('False','null')
-            #raise UserError(str(encabezado)+'------'+json_datos)
-            print('---------------------------------------------------------------------------------------------------------')
-            print(str(encabezado))
-            print('------------------------------')
-            print(str(json_datos))
-            print('----------------------------------------------------------------------------------------------------------')
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/recepciondte',data=json_datos, headers=encabezado)
-            print(str(result))
-            f.doc_respuesta=result.text
+        #raise UserError(str(respuesta))
+        if 'hacienda' in respuesta:
+            body=respuesta['hacienda']["body"]
+            f.doc_firmado=respuesta['firma']
+            f.doc_respuesta=respuesta['hacienda']
             try:
-                respuesta=json.loads(result.text)
-                f.dte_estado=respuesta['estado']
-                if respuesta['estado']=='PROCESADO':
-                    f.sello=respuesta['selloRecibido']
-                else:
-                    f.dte_error=respuesta['observaciones']
+                f.dte_estado=body['estado']
+                if body['estado']=='PROCESADO':
+                    f.sello=body['selloRecibido']
             except:
                 print('Error')
-            #raise UserError(result.text)
-        #raise UserError(result.text)
+        else:
+            f.doc_respuesta=result.text
+
 
     def test_fe(self):
         self.ensure_one()
@@ -562,46 +523,26 @@ class sv_fe_move(models.Model):
         json_datos_cliente=json_datos_cliente.replace('false','null')
         #f.doc_json=json_datos_cliente
         #raise UserError(json_datos)
+        dic={}
+        dic['dteJson']=json_datos
+        dic['autoEnvio']=False
+        jsonDTE = json.dumps(dic)
+        jsonDTE=json_datos.replace('None','null')
+        jsonDTE=json_datos.replace('False','null')
+        
+        
+        
+        
         result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
         respuesta=json.loads(result.text)
         #raise UserError(result.text)
-        if respuesta['status']=="OK":
-            body=respuesta["body"]
-            f.doc_firmado=body
-            encabezado={}
-            encabezado['Authorization']=f.company_id.fe_ambiente_id.get_token()
-            encabezado['User-Agent']="Odoo/16"
-            encabezado['content-type']="application/JSON"
-            dic={}
-            dic['ambiente']=f.company_id.fe_ambiente_id.codigo
-            dic['idEnvio']=f.id
-            dic['version']=f.tipo_documento_id.version
-            dic['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
-            dic['documento']=body
-            dic['codigoGeneracion']=f.uuid
-            json_datos = json.dumps(dic)
-            json_datos=json_datos.replace('None','null')
-            json_datos=json_datos.replace('False','null')
-            #raise UserError(str(encabezado)+'------'+json_datos)
-            print('---------------------------------------------------------------------------------------------------------')
-            print(str(encabezado))
-            print('------------------------------')
-            print(str(json_datos))
-            print('----------------------------------------------------------------------------------------------------------')
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/recepciondte',data=json_datos, headers=encabezado)
-            print(str(result))
-            f.doc_respuesta=result.text
-            try:
-                respuesta=json.loads(result.text)
-                f.dte_estado=respuesta['estado']
-                if respuesta['estado']=='PROCESADO':
-                    f.sello=respuesta['selloRecibido']
-                else:
-                    f.dte_error=respuesta['observaciones']
-            except:
-                print('Error')
-            #raise UserError(result.text)
-        #raise UserError(result.text)
+        if respuesta['hacienda']['status']=="200":
+            f.doc_respuesta=respuesta['hacienda']['body']
+            f.sello=respuesta['hacienda']['selloRecibido']
+        else:
+            f.doc_respuesta=respuesta['hacienda']['body']
+
+            
 
     def revertir_fe(self):
         self.ensure_one()
@@ -836,7 +777,7 @@ class sv_fe_move(models.Model):
         dic['otrosDocumentos']=f.get_otros()
         dic['ventaTercero']=f.get_terceros()
         dic['cuerpoDocumento']=f.get_cuerpo_fac()
-        dic['resumen']=f.get_resumen_fac()
+        dic['resumen']=f.get_resumen()
         dic['extension']=f.get_extension()
         dic['apendice']=None
         return dic
@@ -846,10 +787,7 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -884,47 +822,17 @@ class sv_fe_move(models.Model):
                     receptor['numDocumento']=f.partner_id.dui.replace('-','')
                     if f.partner_id.nrc:
                         receptor['nrc']=f.partner_id.nrc
-                else:
-                    receptor['tipoDocumento']=None
-                    receptor['numDocumento']=None
-                    receptor['nrc']=None
             
                 
             receptor['nombre']=f.partner_id.name
-            if f.partner_id.fe_actividad_id:
-                receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
-                receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            else:
-                receptor['codActividad']=None
-                receptor['descActividad']=None
-            receptor['direccion']=f.get_direccion_fact(f.partner_id)
-            if f.partner_id.phone:
-                receptor['telefono']=f.partner_id.phone
-            if f.partner_id.email:
-                receptor['correo']=f.partner_id.email
-            else:
-                receptor['correo']=None
+            receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
+            receptor['descActividad']=f.partner_id.fe_actividad_id.name
+            receptor['direccion']=f.get_direccion(f.partner_id)
+            receptor['telefono']=f.partner_id.phone
+            receptor['correo']=f.partner_id.email
             return receptor
         else:
             return None
-    
-    def get_direccion_fact(self,partner):
-        self.ensure_one()
-        f=self
-        direccion={}
-        if partner.state_id:
-            direccion['departamento']=partner.state_id.code
-        else:
-           return None
-        if partner.fe_municipio_id:
-            direccion['municipio']=partner.fe_municipio_id.codigo
-        else:
-            return None
-        if partner.street:
-            direccion['complemento']=partner.street
-        else:
-            return None
-        return direccion
 
     def get_cuerpo_fac(self):
         self.ensure_one()
@@ -935,143 +843,108 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
-        f.gravadas_linea_des=0
-        f.exentas_linea_des=0
-        f.nosujetas_linea_des=0
         f.retencion=0
         f.percepcion=0
         f.isr=0
         f.iva=0
-        f.iva_des=0
         lista=[]
         i=1
         incluido=False
-        descuento_global=0.0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
-                dic={}
-                dic['numItem']=i
-                if l.product_id and l.product_id.fe_tipo_item_id:
-                    dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-                else:
-                    dic['tipoItem']=1
-                dic['numeroDocumento']=None
-                dic['cantidad']=l.quantity
-                dic['codigo']=l.product_id.default_code
-                dic['codTributo']=None
-                if l.product_uom_id.fe_unidad_id:
-                    dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
-                else:
-                    dic['uniMedida']=59
-                dic['descripcion']=l.name
-                dic['precioUni']=round(l.price_unit,2)
-                
-                descuento=l.discount/100
-                valor_con_descuento=1-descuento
-                
-                dic['montoDescu']=0
-                iva=False
-                ivap=0
-                ivaitem=0
-                price_unit_notax=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                price_unit=l.price_unit
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-((l.price_unit*valor_con_descuento)/(1+ivap))
-                        #raise UserError(str(ivaitem)+" price_unit:"+str(l.price_unit)+" valor descuento:"+str(valor_con_descuento)+"  ivap:"+str(ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-
-                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
-                    if t.fe_tributo_id:
-                        if  t.fe_tributo_id.codigo!='20':
-                            tributos.append(t.fe_tributo_id.codigo)
-                dic['precioUni']=round(price_unit,6)
-                if iva or retencion or persepcion:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento),6)                    
-                    dic['montoDescu']= round(price_unit*l.quantity*descuento,6)
-                    f.gravadas_linea_des+=dic['montoDescu']
-                elif exento:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=round((price_unit*l.quantity*valor_con_descuento),6)
-                    dic['ventaGravada']=0
-                    dic['montoDescu']=  round(price_unit*l.quantity*descuento,6)
-                    f.exentas_linea_des+=dic['montoDescu']
-                elif nosujeto:
-                    dic['ventaNoSuj']=round((price_unit*l.quantity*valor_con_descuento),6)
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                    dic['montoDescu']=  round(price_unit*l.quantity*descuento,6)
-                    f.nosujetas_linea_des+=dic['montoDescu']
-                else:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                f.gravadas+=dic['ventaGravada']
-                f.exentas+=dic['ventaExenta']
-                f.nosujetas+=dic['ventaNoSuj']
-                if len(tributos)>0:
-                    dic['tributos']=tributos
-                else:
-                    dic['tributos']=None
-                dic['psv']=0
-                dic['noGravado']=0                
-                dic['ivaItem']=round(ivaitem*l.quantity,6)
-                f.iva+=dic['ivaItem']
-                #f.iva+=round(ivaitem*l.quantity,2)
-                lista.append(dic)
+            dic={}
+            dic['numItem']=i
+            if l.product_id and l.product_id.fe_tipo_item_id:
+                dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
             else:
-                descuento_global+=(l.price_total*-1)
-                iva=False
-                exento=True
-                nosujeto=False
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                if iva or retencion or persepcion:
-                    f.gravadas_des+=(l.price_total*-1)
-                elif exento:
-                    f.exentas_des+=(l.price_total*-1)
-                elif nosujeto:
-                    f.nosujetas_des+=(l.price_total*-1)
-                iva=False
-                ivap=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                f.iva+=(round((l.price_unit*l.quantity)*(ivap),6))
-                f.iva_des+=(round((l.price_unit*l.quantity*-1)*(ivap),6))
+                dic['tipoItem']=1
+            dic['numeroDocumento']=None
+            dic['cantidad']=l.quantity
+            dic['codigo']=l.product_id.default_code
+            dic['codTributo']=None
+            if l.product_uom_id.fe_unidad_id:
+                dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
+            else:
+                dic['uniMedida']=59
+            dic['descripcion']=l.name
+            dic['precioUni']=round(l.price_unit,2)
+            
+            descuento=l.discount/100
+            valor_con_descuento=1-descuento
+            
+            dic['montoDescu']=0
+            iva=False
+            ivap=0
+            ivaitem=0
+            price_unit_notax=0
+            exento=True
+            nosujeto=False
+            retencion=False
+            persepcion=False
+            isr=False
+            tributos=[]
+            price_unit=l.price_unit
+            for t in l.tax_ids:
+                iva=True if t.tax_group_id.code=='iva' else False
+                ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                if iva==True:
+                    incluido=t.price_include
+                    price_unit=price_unit/(1+ivap)
+                if incluido:
+                    price_unit=l.price_unit
+                    price_unit_notax=l.price_unit/(1+ivap)
+                    ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
+                else:
+                    price_unit=l.price_unit*(1+ivap)
+                    price_unit_notax=l.price_unit
+                    ivaitem=(l.price_unit*valor_con_descuento)*ivap
+                exento=True if t.tax_group_id.code=='exento' else False
+                nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                retencion=True if t.tax_group_id.code=='retencion' else False
+                persepcion=True if t.tax_group_id.code=='persepcion' else False
+                isr=True if t.tax_group_id.code=='isr' else False
+
+                f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                if t.fe_tributo_id:
+                    if  t.fe_tributo_id.codigo!='20':
+                        tributos.append(t.fe_tributo_id.codigo)
+            if iva or retencion or persepcion:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento),2)
+                dic['precioUni']=round(price_unit,2)
+                dic['montoDescu']= round(price_unit*l.quantity*descuento,2)
+                f.gravadas_des+=dic['montoDescu']
+            elif exento:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=round((price_unit*l.quantityvalor_con_descuento),2)
+                dic['ventaGravada']=0
+                dic['montoDescu']=  round(price_unit*l.quantity*descuento,2)
+                f.exentas_des+=dic['montoDescu']
+            elif nosujeto:
+                dic['ventaNoSuj']=round((price_unit*l.quantityvalor_con_descuento),2)
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+                dic['montoDescu']=  round(price_unit*l.quantity*descuento,2)
+                f.nosujetas_des+=dic['montoDescu']
+            else:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+            f.gravadas+=dic['ventaGravada']
+            f.exentas+=dic['ventaExenta']
+            f.nosujetas+=dic['ventaNoSuj']
+            if len(tributos)>0:
+                dic['tributos']=tributos
+            else:
+                dic['tributos']=None
+            dic['psv']=0
+            dic['noGravado']=0
+            dic['ivaItem']=round(ivaitem*l.quantity,2)
+            f.iva+=dic['ivaItem']
+            #f.iva+=round(ivaitem*l.quantity,2)
+            lista.append(dic)
             i+=1
         return lista
 
@@ -1083,10 +956,14 @@ class sv_fe_move(models.Model):
         resumen['totalExenta']=round(f.exentas,2)
         resumen['totalGravada']=round(f.gravadas,2)
         resumen['subTotalVentas']=round(f.nosujetas+f.exentas+f.gravadas,2)
-        resumen['descuNoSuj']=round(f.nosujetas_des,2)
-        resumen['descuExenta']=round(f.exentas_des,2)
-        resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
+        #resumen['descuNoSuj']=round(f.nosujetas_des,2)
+        #resumen['descuExenta']=round(f.exentas_des,2)
+        #resumen['descuGravada']=round(f.gravadas_des,2)
+        #resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        resumen['descuNoSuj']=0
+        resumen['descuExenta']=0
+        resumen['descuGravada']=0
+        resumen['totalDescu']=0
         resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
@@ -1097,8 +974,8 @@ class sv_fe_move(models.Model):
                             tributos.append(t.fe_tributo_id.codigo)
 
         resumen['tributos']=tributos
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
-        #resumen['subTotal']=round(resumen['subTotalVentas'],2)
+        #resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
+        resumen['subTotal']=round(resumen['subTotalVentas'],2)
         resumen['ivaRete1']=round(f.retencion*-1,2)
         resumen['reteRenta']=round(f.isr*-1,2)
         resumen['montoTotalOperacion']=round(resumen['subTotal'],2)
@@ -1122,41 +999,17 @@ class sv_fe_move(models.Model):
         self.ensure_one()
         f=self
         dic={}
-        dic['identificacion']=f.get_identificacion_ccf()
+        dic['identificacion']=f.get_identificacion_fac()
         dic['documentoRelacionado']=None
         dic['emisor']=f.get_emisor()
         dic['receptor']=f.get_receptor_ccf()
         dic['otrosDocumentos']=f.get_otros()
         dic['ventaTercero']=f.get_terceros()
-        dic['cuerpoDocumento']=f.get_cuerpo_ccf()
-        dic['resumen']=f.get_resumen_ccf()
+        dic['cuerpoDocumento']=f.get_cuerpo()
+        dic['resumen']=f.get_resumen()
         dic['extension']=f.get_extension()
         dic['apendice']=None
         return dic
-    
-    def get_identificacion_ccf(self):        
-        self.ensure_one()
-        f=self
-        if not f.uuid:
-            f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
-        identificacion={}
-        identificacion['version']=f.tipo_documento_id.version
-        identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
-        identificacion['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
-        identificacion['numeroControl']=f.control
-        identificacion['codigoGeneracion']=f.uuid
-        identificacion['tipoModelo']=1
-        identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
-        identificacion['tipoMoneda']='USD'        
-        return identificacion
 
     def get_receptor_ccf(self):
         self.ensure_one()
@@ -1185,145 +1038,89 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
-        f.gravadas_linea_des=0
-        f.exentas_linea_des=0
-        f.nosujetas_linea_des=0
-
         f.retencion=0
         f.percepcion=0
         f.isr=0
         f.iva=0
-        f.iva_des=0
         lista=[]
         i=1
-        descuento_global=0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
-                dic={}
-                dic['numItem']=i
-                if l.product_id and l.product_id.fe_tipo_item_id:
-                    dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-                else:
-                    dic['tipoItem']=1
-                dic['numeroDocumento']=None
-                dic['cantidad']=l.quantity
-                dic['codigo']=l.product_id.default_code
-                dic['codTributo']=None
-                if l.product_uom_id.fe_unidad_id:
-                    dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
-                else:
-                    dic['uniMedida']=59
-                dic['descripcion']=l.name
-                
-
-                descuento=l.discount/100
-                valor_con_descuento=1-descuento
-                
-                dic['montoDescu']=0
-                iva=False
-                ivap=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=l.price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-
-                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
-                    if t.fe_tributo_id:
-                        tributos.append(t.fe_tributo_id.codigo)
-                dic['precioUni']=round(price_unit_notax,6)
-                if iva or retencion or persepcion:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.gravadas_linea_des+=dic['montoDescu']
-                elif exento:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['ventaGravada']=0
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.exentas_linea_des+=dic['montoDescu']
-                elif nosujeto:
-                    dic['ventaNoSuj']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.nosujetas_linea_des+=dic['montoDescu']
-                else:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                f.gravadas+=dic['ventaGravada']
-                f.exentas+=dic['ventaExenta']
-                f.nosujetas+=dic['ventaNoSuj']
-                if len(tributos)>0:
-                    dic['tributos']=tributos
-                else:
-                    dic['tributos']=None
-                dic['psv']=0
-                dic['noGravado']=0
-                f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
-                lista.append(dic)
+            dic={}
+            dic['numItem']=i
+            if l.product_id and l.product_id.fe_tipo_item_id:
+                dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
             else:
-                descuento_global+=(l.price_total*-1)
-                iva=False
-                exento=True
-                nosujeto=False
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                if iva or retencion or persepcion:
-                    f.gravadas_des+=(l.price_subtotal*-1)
-                elif exento:
-                    f.exentas_des+=(l.price_subtotal*-1)
-                elif nosujeto:
-                    f.nosujetas_des+=(l.price_subtotal*-1)
-                iva=False
-                ivap=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
-                f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
+                dic['tipoItem']=1
+            dic['numeroDocumento']=None
+            dic['cantidad']=l.quantity
+            dic['codigo']=l.product_id.default_code
+            dic['codTributo']=None
+            if l.product_uom_id.fe_unidad_id:
+                dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
+            else:
+                dic['uniMedida']=59
+            dic['descripcion']=l.name
+            dic['precioUni']=round(l.price_unit,2)
+
+            descuento=l.discount/100
+            valor_con_descuento=1-descuento
+            
+            dic['montoDescu']=0
+            iva=False
+            ivap=0
+            exento=True
+            nosujeto=False
+            retencion=False
+            persepcion=False
+            isr=False
+            tributos=[]
+            for t in l.tax_ids:
+                iva=True if t.tax_group_id.code=='iva' else False
+                ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                exento=True if t.tax_group_id.code=='exento' else False
+                nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                retencion=True if t.tax_group_id.code=='retencion' else False
+                persepcion=True if t.tax_group_id.code=='persepcion' else False
+                isr=True if t.tax_group_id.code=='isr' else False
+
+                f.retencion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                f.percepcion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                f.isr+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                if t.fe_tributo_id:
+                    tributos.append(t.fe_tributo_id.codigo)
+            if iva or retencion or persepcion:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                dic['montoDescu']= round(l.price_unit*l.quantity*descuento,2)
+                f.gravadas_des+=dic['montoDescu']
+            elif exento:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                dic['ventaGravada']=0
+                dic['montoDescu']= round(l.price_unit*l.quantity*descuento,2)
+                f.exentas_des+=dic['montoDescu']
+            elif nosujeto:
+                dic['ventaNoSuj']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+                dic['montoDescu']= round(l.price_unit*l.quantity*descuento,2)
+                f.nosujetas_des+=dic['montoDescu']
+            else:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+            f.gravadas+=dic['ventaGravada']
+            f.exentas+=dic['ventaExenta']
+            f.nosujetas+=dic['ventaNoSuj']
+            if len(tributos)>0:
+                dic['tributos']=tributos
+            else:
+                dic['tributos']=None
+            dic['psv']=0
+            dic['noGravado']=0
+            f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),2))
+            lista.append(dic)
             i+=1
         return lista
 
@@ -1336,19 +1133,18 @@ class sv_fe_move(models.Model):
         resumen['totalGravada']=round(f.gravadas,2)
         resumen['subTotalVentas']=round(f.nosujetas+f.exentas+f.gravadas,2)
         total=resumen['subTotalVentas']+f.iva
-        resumen['descuNoSuj']=round(f.nosujetas_des,2)
-        resumen['descuExenta']=round(f.exentas_des,2)
-        resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
+        resumen['descuNoSuj']=0
+        resumen['descuExenta']=0
+        resumen['descuGravada']=0
+        resumen['totalDescu']=0
         resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
-            if l.price_total>0:
-                for t in l.tax_ids:
-                    if t.fe_tributo_id:
-                        if  t.fe_tributo_id.codigo!='0':
-                            if not t.id in tributos:                            
-                                tributos.append(t.id)
+            for t in l.tax_ids:
+                if t.fe_tributo_id:
+                    if  t.fe_tributo_id.codigo!='0':
+                        if not t.id in tributos:                            
+                            tributos.append(t.id)
         if len(tributos)>0:
             tributosmh=[]
             for t in tributos:
@@ -1365,7 +1161,7 @@ class sv_fe_move(models.Model):
             resumen['tributos']=tributosmh
         else:
             resumen['tributos']=None
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
+        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
         resumen['ivaPerci1']=round(f.percepcion*-1,2)
         resumen['ivaRete1']=round(f.retencion*-1,2)
         resumen['reteRenta']=round(f.isr,2)
@@ -1443,10 +1239,7 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -1468,7 +1261,7 @@ class sv_fe_move(models.Model):
         f=self
         if f.partner_id.nit!="NA":
             receptor={}
-            if f.partner_id.nit:
+            if f.partner_id.nrc:
                 receptor['tipoDocumento']='36'
                 receptor['numDocumento']=f.partner_id.nit.replace('-','')
             else:
@@ -1479,7 +1272,7 @@ class sv_fe_move(models.Model):
             receptor['nombre']=f.partner_id.name
             receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
             receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            receptor['nombreComercial']=f.partner_id.comercial
+            receptor['nombreComercial']=f.partner_id.x_comercial
             #receptor['tipoEstablecimiento']=f.fe_establecimiento_id.codigo
             receptor['direccion']=f.get_direccion(f.partner_id)
             receptor['telefono']=f.partner_id.phone
@@ -1645,10 +1438,7 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -1677,7 +1467,7 @@ class sv_fe_move(models.Model):
             receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
             receptor['descActividad']=f.partner_id.fe_actividad_id.name
             
-            receptor['nombreComercial']=f.partner_id.comercial if f.partner_id.comercial else f.partner_id.name
+            receptor['nombreComercial']=f.partner_id.x_comercial if f.partner_id.x_comercial else f.partner_id.name
             #receptor['tipoEstablecimiento']=f.fe_establecimiento_id.codigo
             receptor['direccion']=f.get_direccion(f.partner_id)
             receptor['telefono']=f.partner_id.phone
@@ -1699,141 +1489,85 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
-        f.gravadas_linea_des=0
-        f.exentas_linea_des=0
-        f.nosujetas_linea_des=0
         f.retencion=0
         f.percepcion=0
         f.isr=0
         f.iva=0
         lista=[]
         i=1
-        descuento_global=0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
-                dic={}
-                dic['numItem']=i
-                if l.product_id and l.product_id.fe_tipo_item_id:
-                    dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-                else:
-                    dic['tipoItem']=1
-                dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-                dic['cantidad']=l.quantity
-                dic['codigo']=l.product_id.default_code
-                dic['codTributo']=None
-                if l.product_uom_id.fe_unidad_id:
-                    dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
-                else:
-                    dic['uniMedida']=59
-                dic['descripcion']=l.name
-                dic['precioUni']=l.price_unit
-
-                descuento=l.discount/100
-                valor_con_descuento=1-descuento
-
-                dic['montoDescu']=(l.price_unit*l.quantity*descuento)
-                iva=False
-                ivap=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=l.price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-
-                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
-                    if t.fe_tributo_id:
-                        tributos.append(t.fe_tributo_id.codigo)
-                dic['precioUni']=round(price_unit_notax,6)
-                if iva or retencion or persepcion:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.gravadas_linea_des+=dic['montoDescu']
-                elif exento:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['ventaGravada']=0
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.exentas_linea_des+=dic['montoDescu']
-                elif nosujeto:
-                    dic['ventaNoSuj']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.nosujetas_linea_des+=dic['montoDescu']
-                else:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                f.gravadas+=dic['ventaGravada']
-                f.exentas+=dic['ventaExenta']
-                f.nosujetas+=dic['ventaNoSuj']
-                if len(tributos)>0:
-                    dic['tributos']=tributos
-                else:
-                    dic['tributos']=None
-                f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
-                lista.append(dic)
+            dic={}
+            dic['numItem']=i
+            if l.product_id and l.product_id.fe_tipo_item_id:
+                dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
             else:
-                descuento_global+=(l.price_total*-1)
-                iva=False
-                exento=True
-                nosujeto=False
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                if iva or retencion or persepcion:
-                    f.gravadas_des+=(l.price_subtotal*-1)
-                elif exento:
-                    f.exentas_des+=(l.price_subtotal*-1)
-                elif nosujeto:
-                    f.nosujetas_des+=(l.price_subtotal*-1)
-                iva=False
-                ivap=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
-                f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
+                dic['tipoItem']=1
+            dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
+            dic['cantidad']=l.quantity
+            dic['codigo']=l.product_id.default_code
+            dic['codTributo']=None
+            if l.product_uom_id.fe_unidad_id:
+                dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
+            else:
+                dic['uniMedida']=59
+            dic['descripcion']=l.name
+            dic['precioUni']=l.price_unit
+
+            descuento=l.discount/100
+            valor_con_descuento=1-descuento
+
+            dic['montoDescu']=(l.price_unit*l.quantity*descuento)
+            iva=False
+            ivap=0
+            exento=True
+            nosujeto=False
+            retencion=False
+            persepcion=False
+            isr=False
+            tributos=[]
+            for t in l.tax_ids:
+                iva=True if t.tax_group_id.code=='iva' else False
+                ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                exento=True if t.tax_group_id.code=='exento' else False
+                nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                retencion=True if t.tax_group_id.code=='retencion' else False
+                persepcion=True if t.tax_group_id.code=='persepcion' else False
+                isr=True if t.tax_group_id.code=='isr' else False
+
+                f.retencion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                f.percepcion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                f.isr+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                if t.fe_tributo_id:
+                    tributos.append(t.fe_tributo_id.codigo)
+            if iva or retencion or persepcion:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                #dic['precioUni']=round(l.price_unit*(1+ivap),2)
+                f.gravadas_des+=dic['montoDescu']
+            elif exento:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                dic['ventaGravada']=0
+                f.exentas_des+=dic['montoDescu']
+            elif nosujeto:
+                dic['ventaNoSuj']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+                f.nosujetas_des+=dic['montoDescu']
+            else:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+            f.gravadas+=dic['ventaGravada']
+            f.exentas+=dic['ventaExenta']
+            f.nosujetas+=dic['ventaNoSuj']
+            if len(tributos)>0:
+                dic['tributos']=tributos
+            else:
+                dic['tributos']=None
+            f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),2))
+            lista.append(dic)
             i+=1
         return lista
 
@@ -1849,7 +1583,7 @@ class sv_fe_move(models.Model):
         resumen['descuNoSuj']=round(f.nosujetas_des,2)
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
+        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
         #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
@@ -1874,11 +1608,11 @@ class sv_fe_move(models.Model):
             resumen['tributos']=tributosmh
         else:
             resumen['tributos']=None
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
-        resumen['ivaPerci1']=round(f.percepcion*-1,2)
-        resumen['ivaRete1']=round(f.retencion*-1,2)
+        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
+        resumen['ivaPerci1']=round(f.percepcion,2)
+        resumen['ivaRete1']=round(f.retencion,2)
         resumen['reteRenta']=round(f.isr,2)
-        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
+        resumen['montoTotalOperacion']=round(resumen['subTotal']-resumen['ivaRete1']-resumen['reteRenta']+f.iva,2)
         #resumen['totalNoGravado']=0
         #resumen['totalPagar']=round(resumen['montoTotalOperacion'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['montoTotalOperacion'],2))
@@ -1951,10 +1685,7 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -2081,12 +1812,12 @@ class sv_fe_move(models.Model):
         resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
         #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         
-        resumen['subTotal']=round(f.nosujetas,2)
+        resumen['subTotal']=f.nosujetas
         #resumen['ivaPerci1']=round(f.percepcion,2)
         resumen['ivaRete1']=round(f.retencion,2)
         resumen['reteRenta']=round(abs(f.isr),2)
         #resumen['montoTotalOperacion']=round(resumen['subTotal']-resumen['reteRenta']+f.iva,2)
-        resumen['totalCompra']=round(f.nosujetas,2)
+        resumen['totalCompra']=f.nosujetas
         resumen['totalPagar']=round(resumen['totalCompra']-resumen['reteRenta'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
         ##resumen['totalIva']=round(f.iva,2)
@@ -2159,10 +1890,7 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -2191,7 +1919,7 @@ class sv_fe_move(models.Model):
             receptor['nombre']=f.partner_id.name
             receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
             receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            receptor['nombreComercial']=f.partner_id.comercial
+            receptor['nombreComercial']=f.partner_id.x_comercial
             receptor['direccion']=f.get_direccion(f.partner_id)
             receptor['telefono']=f.partner_id.phone
             receptor['correo']=f.partner_id.email
@@ -2215,132 +1943,79 @@ class sv_fe_move(models.Model):
         lista=[]
         i=1
         for l in f.invoice_line_ids:
-            if l.price_total>0:
-                dic={}
-                dic['numItem']=i
-                if l.product_id and l.product_id.fe_tipo_item_id:
-                    dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-                else:
-                    dic['tipoItem']=1
-                dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-                dic['cantidad']=l.quantity
-                dic['codigo']=l.product_id.default_code
-                dic['codTributo']=None
-                if l.product_uom_id.fe_unidad_id:
-                    dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
-                else:
-                    dic['uniMedida']=59
-                dic['descripcion']=l.name
-                
-
-                descuento=l.discount/100
-                valor_con_descuento=1-descuento
-                
-                dic['montoDescu']=0
-                iva=False
-                ivap=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=l.price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-
-                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
-                    if t.fe_tributo_id:
-                        tributos.append(t.fe_tributo_id.codigo)
-                dic['precioUni']=round(price_unit_notax,6)
-                if iva or retencion or persepcion:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.gravadas_linea_des+=dic['montoDescu']
-                elif exento:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['ventaGravada']=0
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.exentas_linea_des+=dic['montoDescu']
-                elif nosujeto:
-                    dic['ventaNoSuj']=round((price_unit_notax*l.quantity*valor_con_descuento),6)
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                    dic['montoDescu']= round(price_unit_notax*l.quantity*descuento,6)
-                    f.nosujetas_linea_des+=dic['montoDescu']
-                else:
-                    dic['ventaNoSuj']=0
-                    dic['ventaExenta']=0
-                    dic['ventaGravada']=0
-                f.gravadas+=dic['ventaGravada']
-                f.exentas+=dic['ventaExenta']
-                f.nosujetas+=dic['ventaNoSuj']
-                if len(tributos)>0:
-                    dic['tributos']=tributos
-                else:
-                    dic['tributos']=None
-                #dic['psv']=0
-                #dic['noGravado']=0
-                f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
-                lista.append(dic)
+            dic={}
+            dic['numItem']=i
+            if l.product_id and l.product_id.fe_tipo_item_id:
+                dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
             else:
-                descuento_global+=(l.price_total*-1)
-                iva=False
-                exento=True
-                nosujeto=False
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                if iva or retencion or persepcion:
-                    f.gravadas_des+=(l.price_subtotal*-1)
-                elif exento:
-                    f.exentas_des+=(l.price_subtotal*-1)
-                elif nosujeto:
-                    f.nosujetas_des+=(l.price_subtotal*-1)
-                iva=False
-                ivap=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
-                f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
+                dic['tipoItem']=1
+            dic['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
+            dic['cantidad']=l.quantity
+            dic['codigo']=l.product_id.default_code
+            dic['codTributo']=None
+            if l.product_uom_id.fe_unidad_id:
+                dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
+            else:
+                dic['uniMedida']=59
+            dic['descripcion']=l.name
+            dic['precioUni']=l.price_unit
+
+
+            descuento=l.discount/100
+            valor_con_descuento=1-descuento
+            
+            dic['montoDescu']=(l.price_unit*l.quantity*descuento)
+            iva=False
+            ivap=0
+            exento=True
+            nosujeto=False
+            retencion=False
+            persepcion=False
+            isr=False
+            tributos=[]
+            for t in l.tax_ids:
+                iva=True if t.tax_group_id.code=='iva' else False
+                ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                exento=True if t.tax_group_id.code=='exento' else False
+                nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                retencion=True if t.tax_group_id.code=='retencion' else False
+                persepcion=True if t.tax_group_id.code=='persepcion' else False
+                isr=True if t.tax_group_id.code=='isr' else False
+
+                f.retencion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                f.percepcion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                f.isr+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                if t.fe_tributo_id:
+                    tributos.append(t.fe_tributo_id.codigo)
+            if iva or retencion or persepcion:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                #dic['precioUni']=round(l.price_unit*(1+ivap),2)
+                f.gravadas_des+=dic['montoDescu']
+            elif exento:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                dic['ventaGravada']=0
+                f.exentas_des+=dic['montoDescu']
+            elif nosujeto:
+                dic['ventaNoSuj']=round((l.price_unit*l.quantity*valor_con_descuento),2)
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+                f.nosujetas_des+=dic['montoDescu']
+            else:
+                dic['ventaNoSuj']=0
+                dic['ventaExenta']=0
+                dic['ventaGravada']=0
+            f.gravadas+=dic['ventaGravada']
+            f.exentas+=dic['ventaExenta']
+            f.nosujetas+=dic['ventaNoSuj']
+            if len(tributos)>0:
+                dic['tributos']=tributos
+            else:
+                dic['tributos']=None
+            f.iva+=(round((l.price_unit*l.quantity*valor_con_descuento)*(ivap),2))
+            lista.append(dic)
             i+=1
         return lista
 
@@ -2356,16 +2031,16 @@ class sv_fe_move(models.Model):
         resumen['descuNoSuj']=round(f.nosujetas_des,2)
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
-        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
-        #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         resumen['numPagoElectronico']=None
+        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
             for t in l.tax_ids:
                 if t.fe_tributo_id:
                     if  t.fe_tributo_id.codigo!='0':
-                            if not t.id in tributos:                            
-                                tributos.append(t.id)
+                        if not t.id in tributos:                            
+                            tributos.append(t.id)
         if len(tributos)>0:
             tributosmh=[]
             for t in tributos:
@@ -2377,16 +2052,16 @@ class sv_fe_move(models.Model):
                 for l in f.line_ids:
                    if l.tax_line_id and l.tax_line_id.id==t:
                       valor=l.credit-l.debit if l.credit>l.debit else l.debit-l.credit
-                tmh['valor']=round(valor,2)
+                tmh['valor']=round(valor)
                 tributosmh.append(tmh)
             resumen['tributos']=tributosmh
         else:
             resumen['tributos']=None
-        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
-        resumen['ivaPerci1']=round(f.percepcion*-1,2)
-        resumen['ivaRete1']=round(f.retencion*-1,2)
+        resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
+        resumen['ivaPerci1']=round(f.percepcion,2)
+        resumen['ivaRete1']=round(f.retencion,2)
         resumen['reteRenta']=round(f.isr,2)
-        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
+        resumen['montoTotalOperacion']=round(resumen['subTotal']-resumen['ivaRete1']-resumen['reteRenta']+f.iva,2)
         #resumen['totalNoGravado']=0
         #resumen['totalPagar']=round(resumen['montoTotalOperacion'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['montoTotalOperacion'],2))
@@ -2562,10 +2237,7 @@ class sv_fe_move(models.Model):
         f=self
         if not f.uuid:
             f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
         identificacion={}
         identificacion['version']=f.tipo_documento_id.version
         identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
@@ -2601,8 +2273,8 @@ class sv_fe_move(models.Model):
                     receptor['tipoDocumento']='13'
                     receptor['numDocumento']=f.partner_id.dui.replace('-','')
             #receptor['nit']=f.partner_id.x_nit.replace('-','')
-            if f.partner_id.comercial:
-                 receptor['nombreComercial']=f.partner_id.comercial
+            if f.partner_id.x_comercial:
+                 receptor['nombreComercial']=f.partner_id.x_comercial
             else:
                  receptor['nombreComercial'] = None
             receptor['nombrePais'] = f.partner_id.country_id.name
@@ -2638,9 +2310,6 @@ class sv_fe_move(models.Model):
         f.gravadas_des=0
         f.exentas_des=0
         f.nosujetas_des=0
-        f.gravadas_linea_des=0
-        f.exentas_linea_des=0
-        f.nosujetas_linea_des=0
         f.retencion=0
         f.percepcion=0
         f.isr=0
@@ -2649,103 +2318,83 @@ class sv_fe_move(models.Model):
         exportacion = 0
         i=1
         incluido=False
-        descuento_global=0.0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
-                dic={}
-                dic['numItem']=i
-                #if l.product_id and l.product_id.fe_tipo_item_id:
-                    #dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-                #else:
-                    #dic['tipoItem']=1
-                #dic['numeroDocumento']=None
-                dic['cantidad']=l.quantity
-                dic['codigo']=l.product_id.default_code
-                #dic['codTributo']=None
-                if l.product_uom_id.fe_unidad_id:
-                    dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
-                else:
-                    dic['uniMedida']=59
-                dic['descripcion']=l.name
-                dic['precioUni']=l.price_unit
-
-                descuento=l.discount/100
-                valor_con_descuento=1-descuento
-                
-                dic['montoDescu']=(l.price_unit*l.quantity*descuento)
-                iva=False
-                ivap=0
-                ivaitem=0
-                price_unit_notax=0
-                exento=True
-                nosujeto=False
-                retencion=False
-                persepcion=False
-                isr=False
-                tributos=[]
-                price_unit=l.price_unit
-                
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-
-                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
-                    if t.fe_tributo_id:
-                        if  t.fe_tributo_id.codigo!='20':
-                            tributos.append(t.fe_tributo_id.codigo)
-        
-                    #dic['ventaNoSuj']=0
-                    #dic['ventaExenta']=0
-                    dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento)*(1),2)
-                    dic['precioUni']=round(price_unit,2)
-                    f.gravadas_linea_des+=dic['montoDescu']
-                    f.gravadas+=dic['ventaGravada']
-                
-            
-                #f.nosujetas+=dic['ventaNoSuj']
-                if len(tributos)>0:
-                    dic['tributos']=tributos
-                else:
-                    dic['tributos']=None
-                #dic['psv']=0
-                dic['noGravado']=0
-
-                lista.append(dic)
+            dic={}
+            dic['numItem']=i
+            #if l.product_id and l.product_id.fe_tipo_item_id:
+                #dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
+            #else:
+                #dic['tipoItem']=1
+            #dic['numeroDocumento']=None
+            dic['cantidad']=l.quantity
+            dic['codigo']=l.product_id.default_code
+            #dic['codTributo']=None
+            if l.product_uom_id.fe_unidad_id:
+                dic['uniMedida']=int(l.product_uom_id.fe_unidad_id.codigo)
             else:
-                descuento_global+=l.price_subtotal
-                iva=False
-                exento=True
-                nosujeto=False
-                for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                if iva or retencion or persepcion:
-                    f.gravadas_des+=(l.price_total*-1)
-                elif exento:
-                    f.gravadas_des+=(l.price_total*-1)
-                elif nosujeto:
-                    f.gravadas_des+=(l.price_total*-1)
+                dic['uniMedida']=59
+            dic['descripcion']=l.name
+            dic['precioUni']=l.price_unit
+
+            descuento=l.discount/100
+            valor_con_descuento=1-descuento
+            
+            dic['montoDescu']=(l.price_unit*l.quantity*descuento)
+            iva=False
+            ivap=0
+            ivaitem=0
+            price_unit_notax=0
+            exento=True
+            nosujeto=False
+            retencion=False
+            persepcion=False
+            isr=False
+            tributos=[]
+            price_unit=l.price_unit
+            
+            for t in l.tax_ids:
+                iva=True if t.tax_group_id.code=='iva' else False
+                ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
+                if iva==True:
+                    incluido=t.price_include
+                    price_unit=price_unit/(1+ivap)
+                if incluido:
+                    price_unit=l.price_unit
+                    price_unit_notax=l.price_unit/(1+ivap)
+                    ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
                 else:
-                    f.gravadas_des+=(l.price_total*-1)
+                    price_unit=l.price_unit*(1+ivap)
+                    price_unit_notax=l.price_unit
+                    ivaitem=(l.price_unit*valor_con_descuento)*ivap
+                exento=True if t.tax_group_id.code=='exento' else False
+                nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                retencion=True if t.tax_group_id.code=='retencion' else False
+                persepcion=True if t.tax_group_id.code=='persepcion' else False
+                isr=True if t.tax_group_id.code=='isr' else False
+
+                f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
+                f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
+                f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                if t.fe_tributo_id:
+                    if  t.fe_tributo_id.codigo!='20':
+                        tributos.append(t.fe_tributo_id.codigo)
+     
+                #dic['ventaNoSuj']=0
+                #dic['ventaExenta']=0
+                dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento)*(1),2)
+                dic['precioUni']=round(price_unit,2)
+                f.gravadas_des+=dic['montoDescu']
+               
+           
+            #f.nosujetas+=dic['ventaNoSuj']
+            if len(tributos)>0:
+                dic['tributos']=tributos
+            else:
+                dic['tributos']=None
+            #dic['psv']=0
+            dic['noGravado']=0
+
+            lista.append(dic)
             i+=1
         return lista
     
@@ -2776,15 +2425,14 @@ class sv_fe_move(models.Model):
         resumen={}
         #resumen['totalNoSuj']=round(f.nosujetas,2)
         #resumen['totalExenta']=round(f.exentas,2)
-        resumen['totalGravada']=round(f.gravadas,2)
+        resumen['totalGravada']=round(f.amount_total,2)
         #resumen['subTotalVentas']=round(f.nosujetas+f.exentas+f.gravadas,2)
         #resumen['descuNoSuj']=round(f.nosujetas_des,2)
         #resumen['descuExenta']=round(f.exentas_des,2)
         #resumen['descuGravada']=round(f.gravadas_des,2)
         resumen['porcentajeDescuento'] = 0
-        resumen['totalDescu']=round(f.gravadas_des+f.gravadas_linea_des,2)
-        #resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
-        resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['totalGravada'])*100,2)
+        resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
             for t in l.tax_ids:
@@ -2799,7 +2447,7 @@ class sv_fe_move(models.Model):
         #resumen['ivaRete1']=round(f.retencion,2)
         #resumen['reteRenta']=round(f.isr,2)
         resumen['observaciones']=f.observaciones
-        
+        resumen['montoTotalOperacion']=round(f.amount_total,2)
         resumen['totalNoGravado']=0
        
        
@@ -2814,632 +2462,11 @@ class sv_fe_move(models.Model):
         resumen['pagos']=f.get_pagos()
         resumen['numPagoElectronico']=None
         resumen['flete']= f.flete
-        resumen['descuento']=f.gravadas_des
+        resumen['descuento']=round(f.gravadas_des,2)
         resumen['seguro']= f.sv_fe_seguro
-        resumen['montoTotalOperacion']=round(resumen['totalGravada']-resumen['descuento'],2)
         resumen['descIncoterms'] = f.invoice_incoterm_id.name
         resumen['totalPagar']=round(resumen['montoTotalOperacion']+f.flete+f.sv_fe_seguro,2)
         resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
         #resumen['codIncoterms']= f.
-        #raise UserError(str(f.gravadas_des))
+        
         return resumen        
-
-
-
-
-
-
-
-
-class sv_fe_move_picking(models.Model):
-    _inherit='stock.picking'
-    uuid=fields.Char("Codigo de Generacion",copy=False)
-    sello=fields.Char("Sello",copy=False)
-    control=fields.Char("Numero de control",copy=False)
-    reversion_sello=fields.Char("Sello",copy=False)
-    reversion_uuid=fields.Char("UUID",copy=False)
-    date_confirm=fields.Datetime('Fecha de confirmacion',copy=False)
-
-
-    entrega=fields.Char("Entrega",copy=False)
-    doc_entrega=fields.Char("Doc. Entrega",copy=False)
-    recibe=fields.Char("Recibe",copy=False)
-    doc_recibe=fields.Char("Doc. Recibe",copy=False)
-    observaciones=fields.Char("Observaciones",copy=False)
-
-    doc_json=fields.Text("Doc JSON",copy=False)
-    doc_firmado=fields.Text("Doc. Firmado",copy=False)
-    doc_sellado=fields.Text("Doc. Sellado",copy=False)
-    doc_respuesta=fields.Text("Respuesta",copy=False)
-
-    reversion_json=fields.Text("Doc JSON",copy=False)
-    reversion_firmado=fields.Text("Doc. Firmado",copy=False)
-    reversion_sellado=fields.Text("Doc. Sellado",copy=False)
-    reversion_respuesta=fields.Text("Reversión respuesta",copy=False)
-    reversion_motivo=fields.Char("Motivo",copy=False)
-    reversion_responsable=fields.Char("Responsable",copy=False)
-   
-    reversion_responsable_tipo=fields.Char('Tipo de documento Responsable',copy=False)
-    reversion_responsable_doc=fields.Char("Doc del Responsable",copy=False)
-    reversion_solicita=fields.Char("Nombre solicitante",copy=False)
-    reversion_solicita_tipo=fields.Char("Tipo Doc solicitante",copy=False)    
-    reversion_solicita_doc=fields.Char("Doc solicitante",copy=False)
-    reversion_responsable_tipo_id=fields.Many2one(comodel_name='sv_fe.doc_identificacion',string='Tipo documento')
-    reversion_solicita_tipo_id=fields.Many2one(comodel_name='sv_fe.doc_identificacion',string='Tipo documento')
-    
-    dte_estado=fields.Char("Estado del DTE",copy=False)
-    dte_error=fields.Char("Error del DTE",copy=False)
-    dte_qr=fields.Char(string='QR',compute='get_qr',store=False)
-    tipo_documento_id=fields.Many2one(comodel_name='odoosv.fiscal.document',store=True,string="Tipo de documento")
-    fe_tipo_doc_id=fields.Many2one(comodel_name='sv_fe.tipo_doc',related='tipo_documento_id.fe_tipo_doc_id',store=True,string="Tipo de documento")
-    fe_codigo=fields.Char(string='Codigo tipo doc',related='fe_tipo_doc_id.codigo',store=True)
-    fe_transmision_id=fields.Many2one(comodel_name='sv_fe.transmision',string='Modelo de Transmision')
-    fe_ambiente_id=fields.Many2one(comodel_name='sv_fe.ambiente',string='Ambiente')
-    fe_remision_id=fields.Many2one(comodel_name='sv_fe.remision',string="Remision por")
-    monto_total=fields.Float("Monto total")
-    currency_id=fields.Many2one(comodel_name='res.currency',related='company_id.currency_id',string="Moneda")
-
-
-    
-
-    def get_json(self):
-        for r in self:
-            return json.loads(r.doc_json)
-
-    @api.depends('sello','dte_estado')
-    def get_qr(self):
-        for r in self:
-            res=''
-            if r.move_type in ('out_invoice','out_refund','in_invoice','in_refound'):
-                ambiente='00'
-                if r.fe_ambiente_id:
-                    ambiente=r.fe_ambiente_id.codigo
-                else:
-                    ambiente=r.company_id.fe_ambiente_id.codigo
-                res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-                #res='https://admin.factura.gob.sv/consultaPublica?ambiente=01&codGen='+r.uuid+'&echaEmi='+(r.date_confirm).strftime('%Y-%m-%d')
-            r.dte_qr=res
-
-    
-    def solo_imprimir(self):
-        self.ensure_one()
-        self.generar_solo_fe()
-        return self.env.ref('sv_fe.dte_report_picking').report_action(self)
-
-    def generar_solo_fe(self):
-        self.ensure_one()
-        f=self
-        if not f.date_confirm:
-            f.date_confirm=datetime.now()
-        firma={}
-        firma['nit']=f.company_id.partner_id.nit.replace('-','')
-        firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
-        firma['dteJson']=f.get_nr()
-        f.doc_numero=f.control
-        encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
-        json_datos = json.dumps(firma)
-        json_datos=json_datos.replace('None','null')
-        json_datos=json_datos.replace('False','null')
-        json_datos=json_datos.replace('false','null')
-        json_datos_cliente=json.dumps( firma['dteJson'])
-        json_datos_cliente=json_datos_cliente.replace('None','null')
-        json_datos_cliente=json_datos_cliente.replace('False','null')
-        json_datos_cliente=json_datos_cliente.replace('false','null')
-        f.doc_json=json_datos_cliente
-        
-    def generar_fe(self,contingencia=False):
-        self.ensure_one()
-        f=self
-
-        if not contingencia:
-            f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_1').id
-            f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
-        else:
-            f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_2').id
-        if not f.date_confirm:
-            f.date_confirm=datetime.now()
-        if not f.partner_id:
-            f.partner_id=f.company_id.partner_id.id
-
-        firma={}
-        firma['nit']=f.company_id.partner_id.nit.replace('-','')
-        firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
-        firma['dteJson']=f.get_nr()
-        #f.doc_numero=f.control
-        encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
-        json_datos = json.dumps(firma)
-        json_datos=json_datos.replace('None','null')
-        json_datos=json_datos.replace('False','null')
-        json_datos=json_datos.replace('false','null')
-        json_datos_cliente=json.dumps( firma['dteJson'])
-        json_datos_cliente=json_datos_cliente.replace('None','null')
-        json_datos_cliente=json_datos_cliente.replace('False','null')
-        json_datos_cliente=json_datos_cliente.replace('false','null')
-        f.doc_json=json_datos_cliente
-        result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
-        respuesta=json.loads(result.text)
-        if respuesta['status']=="OK":
-            body=respuesta["body"]
-            f.doc_firmado=body
-            encabezado={}
-            encabezado['Authorization']=f.company_id.fe_ambiente_id.get_token()
-            encabezado['User-Agent']="Odoo/16"
-            encabezado['content-type']="application/JSON"
-            dic={}
-            dic['ambiente']=f.company_id.fe_ambiente_id.codigo
-            dic['idEnvio']=f.id
-            dic['version']=f.tipo_documento_id.version
-            dic['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
-            dic['documento']=body
-            dic['codigoGeneracion']=f.uuid
-            json_datos = json.dumps(dic)
-            json_datos=json_datos.replace('None','null')
-            json_datos=json_datos.replace('False','null')
-            #raise UserError(str(encabezado)+'------'+json_datos)
-            print('---------------------------------------------------------------------------------------------------------')
-            print(str(encabezado))
-            print('------------------------------')
-            print(str(json_datos))
-            print('----------------------------------------------------------------------------------------------------------')
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/recepciondte',data=json_datos, headers=encabezado)
-            print(str(result))
-            f.doc_respuesta=result.text
-            try:
-                respuesta=json.loads(result.text)
-                f.dte_estado=respuesta['estado']
-                if respuesta['estado']=='PROCESADO':
-                    f.sello=respuesta['selloRecibido']
-                else:
-                    f.dte_error=respuesta['observaciones']
-            except:
-                print('Error')
-  
-
-    def revertir_fe(self):
-        self.ensure_one()
-        f=self
-        firma={}
-        firma['nit']=f.company_id.partner_id.nit.replace('-','')
-        firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
-        firma['dteJson']=f.get_reversion()       
-        f.reversion_json=firma['dteJson']
-        encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
-        json_datos = json.dumps(firma)
-        json_datos=json_datos.replace('None','null')
-        json_datos=json_datos.replace('False','null')
-        #raise UserError(json_datos)
-        result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
-        respuesta=json.loads(result.text)
-        #raise UserError(result.text)
-        if respuesta['status']=="OK":
-            body=respuesta["body"]
-            f.reversion_firmado=body
-            encabezado={}
-            encabezado['Authorization']=f.company_id.fe_ambiente_id.get_token()
-            encabezado['User-Agent']="Odoo/16"
-            encabezado['content-type']="application/JSON"
-            dic={}
-            dic['ambiente']=f.company_id.fe_ambiente_id.codigo
-            dic['idEnvio']=f.id+100000
-            dic['version']=2
-            dic['documento']=body
-            dic['codigoGeneracion']=f.uuid
-            json_datos = json.dumps(dic)
-            json_datos=json_datos.replace('None','null')
-            json_datos=json_datos.replace('False','null')
-            print('---------------------------------------------------------------------------------------------------------')
-            print(str(encabezado))
-            print('------------------------------')
-            print(str(json_datos))
-            print('----------------------------------------------------------------------------------------------------------')
-            #raise UserError(str(encabezado)+'------'+json_datos)
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/anulardte',data=json_datos, headers=encabezado)
-            print(str(result))
-            f.reversion_respuesta=result.text
-            try:
-                respuesta=json.loads(result.text)
-                if respuesta['estado']=='PROCESADO':
-                    f.reversion_sello=respuesta['selloRecibido']
-            except:
-                print('Error')
-        else:
-            raise UserError(respuesta['status'])
-
-    
-
-
-##-----------------------------------------------------------------------------------------------------------------------------------------------------------
-##   Reversion
-##-----------------------------------------------------------------------------------------------------------------------------------------------------------
-    def get_reversion(self):
-        self.ensure_one()
-        f=self
-        dic={}
-        dic['identificacion']=f.get_identificacion_reve()
-        dic['emisor']=f.get_emisor_reve()
-        dic['documento']=f.get_documento_reve()
-        dic['motivo']=f.get_motivo_reve()
-        return dic
-
-
-    def get_emisor_reve(self):
-        self.ensure_one()
-        f=self
-        emisor={}
-        emisor['nit']=f.company_id.partner_id.nit.replace('-','')
-        emisor['nombre']=f.company_id.partner_id.name
-        emisor['tipoEstablecimiento']=f.company_id.fe_establecimiento_id.codigo
-        emisor['nomEstablecimiento']=f.company_id.name
-        emisor['telefono']=f.company_id.partner_id.phone
-        emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
-        return emisor
-
-    def get_identificacion_reve(self):        
-        self.ensure_one()
-        f=self
-        if not f.reversion_uuid:
-            f.reversion_uuid=str(uuid.uuid4()).upper()
-        identificacion={}
-        identificacion['version']=2
-        identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
-        identificacion['codigoGeneracion']=f.reversion_uuid
-        fecha=datetime.now()+timedelta(hours=-6)
-        identificacion['fecAnula']=fecha.strftime('%Y-%m-%d')
-        identificacion['horAnula']=fecha.strftime('%H:%M:%S')
-        return identificacion
-
-    def get_receptor_reve(self):
-        self.ensure_one()
-        f=self
-        if f.partner_id.nit!="NA":
-            receptor={}
-            if f.partner_id.nrc and f.partner_id.nrc=='NA':
-                receptor['tipoDocumento']='37'
-                receptor['numDocumento']=f.partner_id.nit.replace('-','')
-                receptor['nrc']=None
-            else:
-                if f.partner_id.nit and f.tipo_documento_id.codigo != 14:
-                    receptor['tipoDocumento']='36'
-                    receptor['numDocumento']=f.partner_id.nit.replace('-','')
-                elif f.partner_id.dui:
-                    receptor['tipoDocumento']='13'
-                    receptor['numDocumento']=f.partner_id.dui.replace('-','')
-                if f.partner_id.nrc:
-                    receptor['nrc']=f.partner_id.nrc
-            receptor['nombre']=f.partner_id.name
-            receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
-            receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            receptor['direccion']=f.get_direccion(f.partner_id)
-            receptor['telefono']=f.partner_id.phone
-            receptor['correo']=f.partner_id.email
-            return receptor
-        else:
-            return None
-
-    def get_documento_reve(self):
-        self.ensure_one()
-        f=self
-        dic={}
-        dic['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
-        dic['codigoGeneracion']=f.uuid
-        dic['selloRecibido']=f.sello
-        dic['numeroControl']=f.control
-        dic['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        dic['montoIva']=0
-        dic['codigoGeneracionR']=None
-        if f.partner_id.nrc and f.partner_id.nrc=='NA' or f.tipo_documento_id.fe_tipo_doc_id.codigo == '11':
-                if  f.tipo_documento_id.fe_tipo_doc_id.codigo == '11':
-                    dic['tipoDocumento']='37'
-                    dic['numDocumento']=f.partner_id.nrc.replace('-','')
-        else:
-            if f.partner_id.nit:
-                dic['tipoDocumento']='36'
-                dic['numDocumento']=f.partner_id.nit.replace('-','')
-            elif f.partner_id.dui:
-                dic['tipoDocumento']='13'
-                dic['numDocumento']=f.partner_id.dui.replace('-','')
-            else:
-                dic['tipoDocumento']=''
-                dic['numDocumento']=''
-        dic['nombre']=f.partner_id.name
-        dic['telefono']=f.partner_id.phone
-        dic['correo']=f.partner_id.email
-        
-        return dic
-    
-
-    def get_motivo_reve(self):
-        self.ensure_one()
-        f=self
-        dic={}
-        dic['tipoAnulacion']=2
-        dic['motivoAnulacion']=f.reversion_motivo
-        dic['nombreResponsable']=f.reversion_responsable 
-        dic['tipDocResponsable']=f.reversion_responsable_tipo_id.codigo 
-        dic['numDocResponsable']=f.reversion_responsable_doc.replace('-','') if f.reversion_responsable_doc != False else None 
-        dic['nombreSolicita']=f.reversion_solicita
-        dic['tipDocSolicita']=f.reversion_solicita_tipo_id.codigo
-        dic['numDocSolicita']=f.reversion_solicita_doc.replace('-','') if f.reversion_solicita_doc != False else None
-        return dic
-
-    def get_resumen_reve(self):
-        self.ensure_one()
-        f=self
-        resumen={}
-        #resumen['totalNoSuj']=round(f.nosujetas,2)
-        #resumen['totalExenta']=round(f.exentas,2)
-        #resumen['totalGravada']=round(f.gravadas,2)
-        #resumen['subTotalVentas']=round(f.nosujetas+f.exentas+f.gravadas,2)
-        #resumen['descuNoSuj']=round(f.nosujetas_des,2)
-        #resumen['descuExenta']=round(f.exentas_des,2)
-        #resumen['descuGravada']=round(f.gravadas_des,2)
-        #resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
-        #resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
-        tributos=[]
-        #resumen['tributos']=tributos
-        #resumen['subTotal']=round(resumen['subTotalVentas']-resumen['totalDescu'],2)
-        #resumen['ivaRete1']=round(f.retencion,2)
-        #resumen['reteRenta']=round(f.isr,2)
-        #resumen['montoTotalOperacion']=round(resumen['subTotal'],2)
-        #resumen['totalNoGravado']=0
-        #resumen['totalPagar']=round(resumen['montoTotalOperacion']-resumen['ivaRete1']-resumen['reteRenta'],2)
-        #resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
-        #resumen['totalIva']=round(f.iva,2)
-        #resumen['saldoFavor']=0
-        #if f.invoice_payment_term_id.fe_condicion_id:
-        #    resumen['condicionOperacion']=int(f.invoice_payment_term_id.fe_condicion_id.codigo)
-        #else:
-        #    resumen['condicionOperacion']=2
-        #resumen['pagos']=f.get_pagos()
-        #resumen['numPagoElectronico']=None
-        return resumen        
-
-
-
-
-##-----------------------------------------------------------------------------------------------------------------------------------------------------------
-##   NOTA DE REMISION
-##-----------------------------------------------------------------------------------------------------------------------------------------------------------        
-    def get_nr(self):
-        self.ensure_one()
-        f=self
-        dic={}
-        dic['identificacion']=f.get_identificacion_nr()
-        dic['emisor']=f.get_emisor_nr()
-        dic['receptor']=f.get_receptor_nr()
-        dic['cuerpoDocumento']=f.get_cuerpo_nr()
-        dic['documentoRelacionado']=None
-        dic['extension']=None
-        dic['resumen']=f.get_resumen_nr()
-        dic['apendice']=None
-        dic['ventaTercero']=None
-        return dic
-
-    def get_emisor_nr(self):
-        self.ensure_one()
-        f=self
-        emisor={}
-        emisor['nit']=f.company_id.partner_id.nit.replace('-','')
-        emisor['nrc']=f.company_id.partner_id.nrc.replace('-','')
-        emisor['nombre']=f.company_id.partner_id.name
-        emisor['codActividad']=f.company_id.partner_id.fe_actividad_id.codigo
-        emisor['descActividad']=f.company_id.partner_id.fe_actividad_id.name
-        emisor['nombreComercial']=None
-        emisor['tipoEstablecimiento']=f.company_id.fe_establecimiento_id.codigo
-        emisor['direccion']=f.get_direccion(f.company_id.partner_id)
-        emisor['telefono']=f.company_id.partner_id.phone
-        emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
-        return emisor
-    
-    def get_identificacion_nr(self):        
-        self.ensure_one()
-        f=self
-        if not f.uuid:
-            f.uuid=str(uuid.uuid4()).upper()
-            if f.tipo_documento_id.sequencia_id:
-                f.control=f.tipo_documento_id.sequencia_id.next_by_id()
-            else:
-                f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
-        identificacion={}
-        identificacion['version']=f.tipo_documento_id.version
-        identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
-        identificacion['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
-        #identificacion['numeroControl']='DTE-'+f.tipo_documento_id.fe_tipo_doc_id.codigo.zfill(2)+'-00000000-'+str(f.id).rjust(15,'0')
-        identificacion['numeroControl']=f.control
-        #f.control=identificacion['numeroControl']
-        identificacion['codigoGeneracion']=f.uuid
-        identificacion['tipoModelo']=1
-        identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
-        identificacion['tipoMoneda']='USD'        
-        return identificacion
-
-    def get_receptor_nr(self):
-        self.ensure_one()
-        f=self
-        if f.partner_id.nit!="NA":
-            receptor={}
-            if f.partner_id.nit:
-                receptor['tipoDocumento']='36'
-                receptor['numDocumento']=f.partner_id.nit.replace('-','')
-            else:
-                receptor['tipoDocumento']='37'
-                receptor['numDocumento']=f.partner_id.nrc.replace('-','')
-            #receptor['nit']=f.partner_id.nit.replace('-','')
-            receptor['nrc']=f.partner_id.nrc.replace('-','')
-            receptor['nombre']=f.partner_id.name
-            receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
-            receptor['descActividad']=f.partner_id.fe_actividad_id.name
-            receptor['nombreComercial']=f.partner_id.name
-            receptor['direccion']=f.get_direccion(f.partner_id)
-            receptor['telefono']=f.partner_id.phone
-            receptor['correo']=f.partner_id.email
-            receptor['bienTitulo']=f.fe_remision_id.codigo
-            return receptor
-        else:
-            return None
-
-    def get_cuerpo_nr(self):
-        self.ensure_one()
-        f=self
-        lista=[]
-        i=1
-        f.monto_total=0
-        for l in f.move_ids_without_package:
-            dic={}
-            dic['numItem']=i
-            if l.product_id and l.product_id.fe_tipo_item_id:
-                dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
-            else:
-                dic['tipoItem']=1
-            dic['cantidad']=l.quantity_done
-            dic['codigo']=l.product_id.default_code if l.product_id.default_code else 'NA'
-            if l.product_uom.fe_unidad_id:
-                dic['uniMedida']=int(l.product_uom.fe_unidad_id.codigo)
-            else:
-                dic['uniMedida']=59
-            dic['numeroDocumento']=None
-            dic['descripcion']=l.name
-            dic['precioUni']=round(l.price_unit,6)
-            dic['tributos']=None
-            dic['ventaNoSuj']=0
-            dic['ventaExenta']=0
-            dic['ventaGravada']=0
-            dic['codTributo']=None
-            dic['montoDescu']= 0
-            f.monto_total+=round(l.price_unit*l.quantity_done,6)
-
-            #descuento=l.discount/100
-            #valor_con_descuento=1-descuento
-            
-            #dic['montoDescu']=(l.price_unit*l.quantity*descuento)
-            iva=False
-            ivap=0
-            exento=True
-            nosujeto=False
-            retencion=False
-            persepcion=False
-            isr=False
-            tributos=[]
-            
-            
-            lista.append(dic)
-            i+=1
-        return lista
-
-    def get_resumen_nr(self):
-        self.ensure_one()
-        f=self
-        resumen={}
-        resumen['totalNoSuj']=0
-        resumen['totalExenta']=0
-        resumen['totalGravada']=0
-        resumen['subTotalVentas']=0
-        #total=resumen['subTotalVentas']+f.iva
-        resumen['descuNoSuj']=0
-        resumen['descuExenta']=0
-        resumen['descuGravada']=0
-        #resumen['descu']=0
-        resumen['totalDescu']=0
-        resumen['porcentajeDescuento']=0
-        
-        resumen['subTotal']=round(f.monto_total,2)
-        #resumen['ivaPerci1']=round(f.percepcion,2)
-        #resumen['ivaRete1']=round(f.retencion,2)
-        #resumen['reteRenta']=round(abs(f.isr),2)
-        resumen['montoTotalOperacion']=round(f.monto_total,2)
-        #resumen['totalCompra']=round(f.nosujetas,2)
-        #resumen['totalPagar']=round(resumen['totalCompra']-resumen['reteRenta'],2)
-        resumen['totalLetras']=numero_to_letras(round(f.monto_total,2))
-        ##resumen['totalIva']=round(f.iva,2)
-        resumen['tributos']=None
-        #resumen['observaciones']=f.observaciones
-        #if f.invoice_payment_term_id.fe_condicion_id:
-        #    resumen['condicionOperacion']=int(f.invoice_payment_term_id.fe_condicion_id.codigo)
-        #else:
-        #    resumen['condicionOperacion']=2
-        return resumen
-
-
-
-
-
-
-
-##-----------------------------------------------------------------------------------------------------------------------------------------------------------
-##   COMUNES
-##-----------------------------------------------------------------------------------------------------------------------------------------------------------        
-    
-
-    def get_emisor(self):
-        self.ensure_one()
-        f=self
-        emisor={}
-        emisor['nit']=f.company_id.partner_id.nit.replace('-','')
-        emisor['nrc']=f.company_id.partner_id.nrc.replace('-','')
-        emisor['nombre']=f.company_id.partner_id.name
-        emisor['codActividad']=f.company_id.partner_id.fe_actividad_id.codigo
-        emisor['descActividad']=f.company_id.partner_id.fe_actividad_id.name
-        emisor['nombreComercial']=None
-        emisor['tipoEstablecimiento']=f.company_id.fe_establecimiento_id.codigo
-        emisor['direccion']=f.get_direccion(f.company_id.partner_id)
-        emisor['telefono']=f.company_id.partner_id.phone
-        emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
-        
-        return emisor
-    
-    def get_direccion(self,partner):
-        self.ensure_one()
-        f=self
-        direccion={}
-        direccion['departamento']=partner.state_id.code
-        direccion['municipio']=partner.fe_municipio_id.codigo
-        direccion['complemento']=partner.street
-        return direccion
-
-
-
-
-    
-    
-
-    def get_pagos(self):
-        return None
-
-    def get_extension(self):
-        self.ensure_one()
-        f=self
-        extension={}
-        if f.entrega:
-            extension['nombEntrega']=f.entrega
-        if f.doc_entrega:
-            extension['docuEntrega']=f.doc_entrega
-        if f.recibe:
-            extension['nombRecibe']=f.recibe
-        if f.doc_recibe:
-            extension['docuRecibe']=f.doc_recibe
-        if f.observaciones:
-            extension['observaciones']=f.observaciones
-        if f.placa:
-            extension['placaVehiculo']=f.placa
-        if len(extension)==0:
-            return None
-        else:
-            return extension
-    
-

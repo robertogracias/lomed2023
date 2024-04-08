@@ -1490,9 +1490,9 @@
 <record id="svfe_remision_4" model="sv_fe.remision"><field name="name">Traslado</field><field name="codigo">04</field></record>
 <record id="svfe_remision_5" model="sv_fe.remision"><field name="name">Otros</field><field name="codigo">04</field></record>
 
-<record id="svfe_donacion_1" model="sv_fe.remision"><field name="name">Efectivo</field><field name="codigo">1</field></record>
-<record id="svfe_donacion_2" model="sv_fe.remision"><field name="name">Bien</field><field name="codigo">2</field></record>
-<record id="svfe_donacion_3" model="sv_fe.remision"><field name="name">Servicio</field><field name="codigo">3</field></record>
+<record id="svfe_donacion1_1" model="sv_fe.donacion"><field name="name">Efectivo</field><field name="codigo">1</field></record>
+<record id="svfe_donacion1_2" model="sv_fe.donacion"><field name="name">Bien</field><field name="codigo">2</field></record>
+<record id="svfe_donacion1_3" model="sv_fe.donacion"><field name="name">Servicio</field><field name="codigo">3</field></record>
 
 
 <record id="svfe_resinto_01" model="sv_fe.resinto"><field name="name">Terrestre San Bartolo</field><field name="codigo">01</field></record>

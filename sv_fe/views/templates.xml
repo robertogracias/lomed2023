@@ -20,7 +20,14 @@
         
   
 
-
+     <report
+            id="dte_report_picking"
+            string="DTE"
+            model="stock.picking"
+            report_type="qweb-pdf"
+            file="sv_fe.dte_report_1"
+            name="sv_fe.dte_report_1"
+            menu="True"/>
 
 
 
@@ -46,8 +53,8 @@
         
   <t t-call="web.html_container">
     <t t-foreach="docs" t-as="o">
-       <t t-set="lang" t-value="o.invoice_user_id.sudo().lang if o.move_type in ('in_invoice', 'in_refund') else o.partner_id.lang"/>
-         <t t-set="o" t-value="o.with_context(lang=lang)"/>
+       <t t-set="lang" t-value="o.partner_id.lang"/>
+         <!--t t-set="o" t-value="o.with_context(lang=lang)"/-->
           <div class="page" style="font-family: monospace;">
             
             <style type="text/css">
@@ -235,7 +242,12 @@
             <tr>
               <td style="width:60%;vertical-align: top;font-size:12px;">
                 <strong>Valor en letras:  </strong><span t-esc="json['resumen']['totalLetras']"/><br/>
-                <strong>Condición de la operación:  </strong><span t-if="o.invoice_payment_term_id.id==1" t-esc="'Contado'"/><span t-if="o.invoice_payment_term_id.id!=1" t-esc="'Crédito'"/><br/>
+                <t t-if="o.tipo_documento_id.fe_tipo_doc_id.codigo!='04'">
+                <strong>Condición de la operación:  </strong>
+                  <span t-if="o.invoice_payment_term_id.id==1" t-esc="'Contado'"/>
+                  <span t-if="o.invoice_payment_term_id.id!=1" t-esc="'Crédito'"/>
+                  <br/>
+                </t>
                 <strong>Observaciones:  </strong>
                   <t t-if="'extension' in json and json['extension']">
                   <span t-if="'extension' in json and 'observaciones' in json['extension']" t-esc="json['extension']['observaciones']"/><br/>

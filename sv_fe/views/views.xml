@@ -368,6 +368,81 @@
 
 
 
+<!-- NOTA DE REMISION-->
+    <record id="fe_picking_tree" model="ir.ui.view">
+            <field name="name">fe_picking_tree</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="dte_estado" widget="badge" decoration-success="dte_estado == 'PROCESADO'" decoration-danger="dte_estado == 'RECHAZADO'"/>
+                 </xpath>
+            </field>
+        </record>
+
+
+        <record id="fe_picking_form" model="ir.ui.view">
+            <field name="name">fe_picking_form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                 
+                 <xpath expr="//field[@name='move_type']" position="after">
+                    
+                 </xpath>
+
+                 
+                 <xpath expr="//notebook" position="inside">
+                    <page string="Factura Electronica">
+                        <button name="generar_fe" type="object" string="Transmitir DTE" attrs="{'invisible':['|',('state','!=','done'),('sello','!=',False)]}" />
+                        <field name="dte_estado" readonly="1"/>
+                        <field name="dte_error" style="color:red;" readonly="1" attrs="{'invisible':[('dte_estado','=','PROCESADO')]}"/>
+                        <group>
+                            <field name="tipo_documento_id" domain="[('tipo_movimiento','=','entry')]"/>
+                            <field name="fe_remision_id" />
+                            <field name="fe_tipo_doc_id" invisible="1"/>
+                            <field name="fe_codigo" invisible="1"/>
+                            
+                        </group>
+                        <label for="doc_json"/> 
+                        <field name="doc_json"  readonly="1"/>
+                        <label for="doc_firmado"/> 
+                        <field name="doc_firmado"  readonly="1"/>                        
+                        <label for="doc_respuesta"/> 
+                        <field name="doc_respuesta"  readonly="1"/>
+                        <group>
+                            <field name="uuid" readonly="1"/>
+                            <field name="control"  readonly="1"/>
+                            <field name="sello"  readonly="1"/>
+                        </group>
+                    </page>       
+
+                    <page string="Revesion Electronica" attrs="{'invisible':[('sello','=',False)]}">
+                        <button name="revertir_fe" type="object" string="Revertir" attrs="{'invisible':['|',('sello','=',False),('reversion_sello','!=',False)]}"/>
+                        <group>
+                            <field name="reversion_motivo" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
+                            <field name="reversion_responsable" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
+                            <field name="reversion_responsable_tipo_id" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
+                            <field name="reversion_responsable_doc" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
+                            <field name="reversion_solicita" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
+                            <field name="reversion_solicita_tipo_id" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
+                            <field name="reversion_solicita_doc" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
+                            
+                        </group>
+                        <label for="reversion_json"/> 
+                        <field name="reversion_json"  readonly="1"/>
+                        <label for="reversion_firmado"/> 
+                        <field name="reversion_firmado"  readonly="1"/>                        
+                        <label for="reversion_respuesta"/> 
+                        <field name="reversion_respuesta"  readonly="1"/>
+                        <group>
+                            <field name="reversion_sello"  readonly="1"/>
+                        </group>
+                    </page>       
+
+                </xpath>
+            </field>
+        </record>  
 
         
 
