@@ -63,6 +63,7 @@ class sv_fe_partner(models.Model):
     fe_tipo_persona_id=fields.Many2one(comodel_name='sv_fe.tipo_persona',string="Tipo de Persona")
     fe_domicilio_id=fields.Many2one(comodel_name='sv_fe.domicilio',string="Domicilio")
     comercial=fields.Char("Nombre Comercial")
+    x_comercial=fields.Char("Nombre Comercial")
 
 class sv_fe_uom(models.Model):
     _inherit='uom.uom'

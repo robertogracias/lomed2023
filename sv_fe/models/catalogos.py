@@ -46,7 +46,10 @@ class sv_fe_ambiente(models.Model):
             encabezado = {"content-type": "application/x-www-form-urlencoded","User-Agent":"Odoo/16"}
             dic={"user":self.user,"pwd":self.password}
             #raise UserError(self.url+'/seguridad/auth?'+dic)
-            result = requests.post(self.url+'/seguridad/auth',params=dic, headers=encabezado)
+            try:
+                result = requests.post(self.url+'/seguridad/auth',params=dic, headers=encabezado)
+            except:
+                raise UserError('EL SITIO DEL MH NO ESTA EN LINEA')
             respuesta=json.loads(result.text)
             token=respuesta['body']['token']
             ##raise UserError(str(respuesta))

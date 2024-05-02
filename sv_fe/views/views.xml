@@ -323,7 +323,8 @@
             <field name="arch" type="xml">
                  <form>
                     <header>
-                        <button name="contingencia_fe" type="object" string="Transmitir"/>
+                        <button name="contingencia_fe" type="object" string="Transmitir" attrs="{'invisible':[('sello','=',False)]}"/>
+                        <button name="send_dtes" type="object" string="Transmitir DTE's" attrs="{'invisible':[('sello','!=',False)]}"/>
                     </header>
                     <sheet>
                         <group>

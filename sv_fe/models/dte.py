@@ -165,6 +165,13 @@ class sv_fe_contingencia(models.Model):
                 r.name=r.control
             else:
                 r.name='-'
+    
+    def send_dtes(self):
+        self.ensure_one()
+        for d in self.dte_ids:
+            if not d.sello:
+                d.generar_fe(self)
+
 
 
     def contingencia_fe(self):
@@ -370,6 +377,8 @@ class sv_fe_move(models.Model):
     fe_codigo=fields.Char(string='Codigo tipo doc',related='fe_tipo_doc_id.codigo',store=True)
     fe_transmision_id=fields.Many2one(comodel_name='sv_fe.transmision',string='Modelo de Transmision')
     fe_ambiente_id=fields.Many2one(comodel_name='sv_fe.ambiente',string='Ambiente')
+    proforma=fields.Boolean("Proforma")
+    contingencia=fields.Many2one(comodel_name='sv_fe.contingencia_ocurrencia',string='Contingencia')
 
 
     def button_draft(self):
@@ -394,7 +403,10 @@ class sv_fe_move(models.Model):
                     ambiente=r.fe_ambiente_id.codigo
                 else:
                     ambiente=r.company_id.fe_ambiente_id.codigo
-                res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+                if r.uuid:
+                    res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+                else:
+                    res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+'proforma'+'%26fechaEmi='+(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
                 #res='https://admin.factura.gob.sv/consultaPublica?ambiente=01&codGen='+r.uuid+'&echaEmi='+(r.date_confirm).strftime('%Y-%m-%d')
             r.dte_qr=res
 
@@ -417,8 +429,10 @@ class sv_fe_move(models.Model):
         #dte=dte.replace('False','null')
         #dte=dte.replace('\'','\"')
         #firmandolo
-        if not f.date_confirm:
-            f.date_confirm=datetime.now()
+        if f.sello:
+            raise UserError('EL DTE YA FUE TRANSMITIDO')
+        f.proforma=True
+        #f.date_confirm=datetime.now()
         firma={}
         firma['nit']=f.company_id.partner_id.nit.replace('-','')
         firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
@@ -449,16 +463,18 @@ class sv_fe_move(models.Model):
         json_datos_cliente=json_datos_cliente.replace('False','null')
         json_datos_cliente=json_datos_cliente.replace('false','null')
         f.doc_json=json_datos_cliente
+
         
-    def generar_fe(self,contingencia=False):
+    def generar_fe(self,contingencia=None):
         self.ensure_one()
         f=self
-
+        #raise UserError(str(contingencia))
         if not contingencia:
             f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_1').id
             f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
         else:
             f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_2').id
+            f.contingencia=contingencia.id
 
         #generando el dte
         #dte=str(f.get_factura())
@@ -499,6 +515,7 @@ class sv_fe_move(models.Model):
         json_datos_cliente=json_datos_cliente.replace('false','null')
         f.doc_json=json_datos_cliente
         #raise UserError(json_datos)
+        self.env.cr.savepoint()
         result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
         respuesta=json.loads(result.text)
         #raise UserError(result.text)
@@ -525,7 +542,11 @@ class sv_fe_move(models.Model):
             print('------------------------------')
             print(str(json_datos))
             print('----------------------------------------------------------------------------------------------------------')
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/recepciondte',data=json_datos, headers=encabezado)
+            self.env.cr.savepoint()
+            try:
+                result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/recepciondte',data=json_datos, headers=encabezado)
+            except:
+                raise UserError('EL SITIO DEL MH NO ESTA EN LINEA')
             print(str(result))
             f.doc_respuesta=result.text
             try:
@@ -641,7 +662,10 @@ class sv_fe_move(models.Model):
             print(str(json_datos))
             print('----------------------------------------------------------------------------------------------------------')
             #raise UserError(str(encabezado)+'------'+json_datos)
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/anulardte',data=json_datos, headers=encabezado)
+            try:
+                result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/anulardte',data=json_datos, headers=encabezado)
+            except:
+                raise UserError('EL SITIO DEL MH NO ESTA EN LINEA')
             print(str(result))
             f.reversion_respuesta=result.text
             try:
@@ -844,7 +868,7 @@ class sv_fe_move(models.Model):
     def get_identificacion_fac(self):        
         self.ensure_one()
         f=self
-        if not f.uuid:
+        if not f.uuid and not f.proforma:
             f.uuid=str(uuid.uuid4()).upper()
             if f.tipo_documento_id.sequencia_id:
                 f.control=f.tipo_documento_id.sequencia_id.next_by_id()
@@ -858,10 +882,14 @@ class sv_fe_move(models.Model):
         identificacion['codigoGeneracion']=f.uuid
         identificacion['tipoModelo']=1
         identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
+        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        if not f.proforma:
+            identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        else:
+            identificacion['fecEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%H:%M:%S')
         identificacion['tipoMoneda']='USD'        
         return identificacion
 
@@ -1137,7 +1165,7 @@ class sv_fe_move(models.Model):
     def get_identificacion_ccf(self):        
         self.ensure_one()
         f=self
-        if not f.uuid:
+        if not f.uuid and not f.proforma:
             f.uuid=str(uuid.uuid4()).upper()
             if f.tipo_documento_id.sequencia_id:
                 f.control=f.tipo_documento_id.sequencia_id.next_by_id()
@@ -1151,10 +1179,14 @@ class sv_fe_move(models.Model):
         identificacion['codigoGeneracion']=f.uuid
         identificacion['tipoModelo']=1
         identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
+        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        if not f.proforma:
+            identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        else:
+            identificacion['fecEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%H:%M:%S')
         identificacion['tipoMoneda']='USD'        
         return identificacion
 
@@ -1441,7 +1473,7 @@ class sv_fe_move(models.Model):
     def get_identificacion_cr(self):        
         self.ensure_one()
         f=self
-        if not f.uuid:
+        if not f.uuid and not f.proforma:
             f.uuid=str(uuid.uuid4()).upper()
             if f.tipo_documento_id.sequencia_id:
                 f.control=f.tipo_documento_id.sequencia_id.next_by_id()
@@ -1456,10 +1488,14 @@ class sv_fe_move(models.Model):
         identificacion['codigoGeneracion']=f.uuid
         identificacion['tipoModelo']=1
         identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
+        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        if not f.proforma:
+            identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        else:
+            identificacion['fecEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%H:%M:%S')
         identificacion['tipoMoneda']='USD'        
         return identificacion
 
@@ -1643,7 +1679,7 @@ class sv_fe_move(models.Model):
     def get_identificacion_nc(self):        
         self.ensure_one()
         f=self
-        if not f.uuid:
+        if not f.uuid and not f.proforma:
             f.uuid=str(uuid.uuid4()).upper()
             if f.tipo_documento_id.sequencia_id:
                 f.control=f.tipo_documento_id.sequencia_id.next_by_id()
@@ -1659,10 +1695,14 @@ class sv_fe_move(models.Model):
         identificacion['codigoGeneracion']=f.uuid
         identificacion['tipoModelo']=1
         identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
+        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        if not f.proforma:
+            identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        else:
+            identificacion['fecEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%H:%M:%S')
         identificacion['tipoMoneda']='USD'        
         return identificacion
 
@@ -1949,7 +1989,7 @@ class sv_fe_move(models.Model):
     def get_identificacion_se(self):        
         self.ensure_one()
         f=self
-        if not f.uuid:
+        if not f.uuid and not f.proforma:
             f.uuid=str(uuid.uuid4()).upper()
             if f.tipo_documento_id.sequencia_id:
                 f.control=f.tipo_documento_id.sequencia_id.next_by_id()
@@ -1965,10 +2005,14 @@ class sv_fe_move(models.Model):
         identificacion['codigoGeneracion']=f.uuid
         identificacion['tipoModelo']=1
         identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
+        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        if not f.proforma:
+            identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        else:
+            identificacion['fecEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%H:%M:%S')
         identificacion['tipoMoneda']='USD'        
         return identificacion
 
@@ -2157,7 +2201,7 @@ class sv_fe_move(models.Model):
     def get_identificacion_nd(self):        
         self.ensure_one()
         f=self
-        if not f.uuid:
+        if not f.uuid and not f.proforma:
             f.uuid=str(uuid.uuid4()).upper()
             if f.tipo_documento_id.sequencia_id:
                 f.control=f.tipo_documento_id.sequencia_id.next_by_id()
@@ -2173,10 +2217,14 @@ class sv_fe_move(models.Model):
         identificacion['codigoGeneracion']=f.uuid
         identificacion['tipoModelo']=1
         identificacion['tipoOperacion']=1
-        identificacion['tipoContingencia']=None
-        identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
+        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        if not f.proforma:
+            identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        else:
+            identificacion['fecEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%H:%M:%S')
         identificacion['tipoMoneda']='USD'        
         return identificacion
 
@@ -2560,7 +2608,7 @@ class sv_fe_move(models.Model):
     def get_identificacion_export(self):        
         self.ensure_one()
         f=self
-        if not f.uuid:
+        if not f.uuid and not f.proforma:
             f.uuid=str(uuid.uuid4()).upper()
             if f.tipo_documento_id.sequencia_id:
                 f.control=f.tipo_documento_id.sequencia_id.next_by_id()
@@ -2576,10 +2624,15 @@ class sv_fe_move(models.Model):
         identificacion['tipoModelo']=1
         identificacion['tipoOperacion']=1
         
-        identificacion['tipoContingencia']=None #f.company_id.fe_contingencia_id.codigo
+        identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
+        #identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
         #identificacion['motivoContin']=None
-        identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        if not f.proforma:
+            identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
+        else:
+            identificacion['fecEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            identificacion['horEmi']=(datetime.now()+timedelta(hours=-6)).strftime('%H:%M:%S')
         identificacion['tipoMoneda']='USD'      
         identificacion['motivoContigencia'] = None  
         return identificacion
@@ -2804,7 +2857,10 @@ class sv_fe_move(models.Model):
        
        
         #resumen['porcentajeDescuento'] = 
-        resumen['codIncoterms'] = f.invoice_incoterm_id.fe_incoterm_id.codigo
+        if f.invoice_incoterm_id:
+            resumen['codIncoterms'] = f.invoice_incoterm_id.fe_incoterm_id.codigo
+        else:
+            resumen['codIncoterms'] = None
         #resumen['totalIva']=round(f.iva,2)
         #resumen['saldoFavor']=0
         if f.invoice_payment_term_id.fe_condicion_id:
@@ -2936,8 +2992,7 @@ class sv_fe_move_picking(models.Model):
             f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
         else:
             f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_2').id
-        if not f.date_confirm:
-            f.date_confirm=datetime.now()
+        f.date_confirm=datetime.now()
         if not f.partner_id:
             f.partner_id=f.company_id.partner_id.id
 
@@ -3008,6 +3063,7 @@ class sv_fe_move_picking(models.Model):
         json_datos=json_datos.replace('None','null')
         json_datos=json_datos.replace('False','null')
         #raise UserError(json_datos)
+        self.env.cr.savepoint()
         result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
         respuesta=json.loads(result.text)
         #raise UserError(result.text)
@@ -3033,7 +3089,11 @@ class sv_fe_move_picking(models.Model):
             print(str(json_datos))
             print('----------------------------------------------------------------------------------------------------------')
             #raise UserError(str(encabezado)+'------'+json_datos)
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/anulardte',data=json_datos, headers=encabezado)
+            self.env.cr.savepoint()
+            try:
+                result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/anulardte',data=json_datos, headers=encabezado)
+            except:
+                raise UserError('EL SITIO DEL MH NO ESTA EN LINEA')
             print(str(result))
             f.reversion_respuesta=result.text
             try:
