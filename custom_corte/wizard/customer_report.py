@@ -85,7 +85,7 @@ class odoo_customer_report_partner(models.Model):
             dic={}
             dic['tipo']='Nota de Credito'
             dic['fecha']=l.invoice_date
-            dic['numero']=l.tipo_documento_id.name+' '+l.doc_numero
+            dic['numero']=(l.tipo_documento_id.name if l.tipo_documento_id else '')+' '+(l.doc_numero if l.doc_numero else '')
             dic['descripcion']=l.x_paciente
             dic['monto']=l.amount_total
             dic['suma']=l.amount_total*-1
