@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<!--RETACEO-->
+        <record id="customer_report_form_view" model="ir.ui.view">
+            <field name="name">customer_report_form_view</field>
+            <field name="model">odoosv.customer_report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                      <field name="partner_id"/>
+                    </group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <footer>
+                        <button type="object" id="main_print_button" name="print_report" string="Imprimir" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="report_partner_form" model="ir.ui.view">
+            <field name="name">report_partner_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//div[@name='button_box']" position="inside">
+                    <button class="oe_stat_button" name="open_report" type="object" icon="fa-pencil-square-o" help="Reporte">
+                        <span>Reporte</span>
+                    </button>   
+                </xpath>
+            </field>
+        </record>  
+
+        <record id="odoosv_customer_report" model="ir.actions.report">
+            <field name="name">Reporte de Clientes</field>
+            <field name="model">res.partner</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">custom_corte.customer_report_document</field>
+            <field name="report_file">custom_corte.customer_report_document</field>
+            <field name="binding_model_id" ref="custom_corte.model_res_partner"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id ='customer_report_document'>
+            <t t-call="web.html_container">
+                    <t t-set="cliente" value="docs[0]"/>
+                    <span><b>ACCIONES REALIZADAS POR EL CLIENTE:</b><span t-esc="partner_name" /><br/></span>
+                    <span><b>Desde:</b><span t-esc="date_from"/> <b style="maring-left:10px;">Hasta:</b><span t-esc="date_to"/></span>
+                    <table style="font-size:10px;width:100%" class="table table-bordered ">
+                        <tr>
+                            <td style="width:10%">Fecha</td>
+                            <td style="width:10%">Tipo</td>
+                            <td style="width:15%">Numero</td>
+                            <td style="width:40%">Descripcion</td>
+                            <td style="width:10%">Monto</td>
+                            <td style="width:10%">Saldo</td>
+                        </tr>
+                        <t t-set="listado" t-value="request.env['res.partner'].get_movimientos(partner_id,date_from,date_to)"/>
+                        <t t-set="total" t-value="0.0"/>
+                        <t t-foreach="listado" t-as="o">
+                            <t t-set="total" t-value="total+o['suma']"/>
+                            <tr>
+                                <td><span t-esc="o['fecha']"/></td>
+                                <td><span t-esc="o['tipo']"/></td>
+                                <td><span t-esc="o['numero']"/></td>
+                                <td><span t-esc="o['descripcion']"/></td>
+                                <td><span t-esc="'%.2f'% o['monto']"/></td>
+                                <td><span t-esc="'%.2f'% total"/></td>
+                            </tr>
+                        </t>
+                    </table>
+                    
+
+                    
+            </t>
+        </template>
+
+
+
+
+    </data>
+</odoo>

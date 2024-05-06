@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="odoosv_asistencia_form">
+        <field name="name">odoosv_asistencia_form</field>
+        <field name="model">odoosv.asistencia</field>
+        <field name="arch" type="xml">
+            <form string="Asistencia">
+                <sheet>
+                    <div class="oe_title oe_inline">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div> 
+                    <group>
+                        <field name="employee_id" />
+                        <field name="department_id" />
+                    </group>
+                    <group>
+                        <group string="Esperado">
+                            <field name="he_entrada" />
+                            <field name="he_salida_almuerzo" />
+                            <field name="he_entrada_almuerzo" />
+                            <field name="he_salida" />
+                        </group>
+                        <group string="Real">
+                            <field name="entrada" />
+                            <field name="salida_almuerzo" />
+                            <field name="entrada_almuerzo" />
+                            <field name="salida" />
+                        </group>
+                    </group>
+                    <group>
+                        <field name="entrada_tarde" />
+                        <field name="entrada_tarde_almuerzo" />
+                    </group>
+
+                </sheet>
+                
+            </form>
+        </field>
+     </record>
+    
+    
+    <!--tree del pei-->
+     <record model="ir.ui.view" id="odoosv_asistencia_tree">
+        <field name="name">odoosv_asistencia_tree</field>
+        <field name="model">odoosv.asistencia</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="employee_id" />
+                <field name="department_id" />
+                <field name="fecha" widget="date" options="{'format': 'dd/MM/yyyy'}"/>
+                <field name="entrada" />
+                <field name="salida_almuerzo" />
+                <field name="entrada_almuerzo" />
+                <field name="salida" />
+                <field name="entrada_tarde"  widget="float_time"/>
+                <field name="entrada_tarde_almuerzo" widget="float_time"/>
+            </tree>
+        </field>
+     </record>
+    
+    
+    <!--action del pei-->
+        <record model="ir.actions.act_window" id="asistencia_action">
+                <field name="name">Reporte de asistencia</field>
+                <field name="res_model">odoosv.asistencia</field>
+                <field name="view_mode">tree,form</field>
+                <field name="help" type="html">
+                    <p class="oe_view_nocontent_create">Asistencias
+                    </p>
+                </field>
+            </record>
+    
+    <!--menu del pei-->
+       <menuitem id="odoosv_asistencia_mnu" parent="hr_attendance.menu_hr_attendance_root" name="Reporte de Asistencia" action="asistencia_action" sequence="9"/> 
+    
+        <record model="ir.actions.server" id="action_asistencia_hoy">
+            <field name="name">Calcular el dia de hoy</field>
+            <field name="model_id" ref="custom_corte.model_odoosv_asistencia"/>
+            <field name="binding_model_id" ref="custom_corte.model_odoosv_asistencia" />
+            <field name="state">code</field>
+            <field name="binding_view_types">form</field>
+            <field name="code">
+record.procesar_hoy()
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="action_asistencia_mes">
+            <field name="name">Calcular este mes</field>
+            <field name="model_id" ref="custom_corte.model_odoosv_asistencia"/>
+            <field name="binding_model_id" ref="custom_corte.model_odoosv_asistencia" />
+            <field name="state">code</field>
+            <field name="binding_view_types">form</field>
+            <field name="code">
+record.procesar_mes()
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="action_asistencia_mes_anterior">
+            <field name="name">Calcular este mes anterior</field>
+            <field name="model_id" ref="custom_corte.model_odoosv_asistencia"/>
+            <field name="binding_model_id" ref="custom_corte.model_odoosv_asistencia" />
+            <field name="state">code</field>
+            <field name="binding_view_types">form</field>
+            <field name="code">
+record.procesar_mes_anterior()
+            </field>
+        </record>
+
+    </data>
+</odoo>
