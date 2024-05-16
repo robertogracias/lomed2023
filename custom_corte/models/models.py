@@ -74,14 +74,39 @@ class odoosv_lomedcorte(models.Model):
             total += factura.amount_total
         return total
     def get_total_comprovante_retencion(self):
-        tipodocumento = self.env['odoosv.fiscal.document'].search([('formato','=', 'cretencion'),('caja_id','=',self.caja_id.id)])
+        tipodocumento = self.env['odoosv.fiscal.document'].search([('name','like', 'Comprobante de Retención'),('caja_id','=',self.caja_id.id)])
+        totales = {}
+        totales['ivatotal'] =0.00
+        totales['retenidototal']=0.00
+        totales['total']=0.00
+        total = 0.00
+        facturas=self.env['account.move'].search([('cierre_id','=',self.id),('tipo_documento_id', '=', tipodocumento.id)])
+        for factura in facturas:
+            totales['total']+= factura.amount_total
+            lineas = self.env['account.move.line'].search([('move_id','=',factura.id),('tax_group_id.code','=','iva')]) 
+            for line in lineas:
+                totales['ivatotal'] = line.credit
+            lineas1 = self.env['account.move.line'].search([('move_id','=',factura.id),('tax_group_id.code','=','retenido')])
+            for line1 in lineas1:
+                totales['retenidototal'] = line1.credit
+        return totales
+    def get_total_comprovante_retencion_iva(self):
+        tipodocumento = self.env['odoosv.fiscal.document'].search([('name','like', 'Comprobante de Retención'),('caja_id','=',self.caja_id.id)])
         
         total = 0.00
-        facturas=self.env['account.move'].search([('cierre_id','=',self.id),('tipo_documento', '=', tipodocumento.id)])
+        facturas=self.env['account.move'].search([('cierre_id','=',self.id),('tipo_documento_id', '=', tipodocumento.id)])
         for factura in facturas:
             total+= factura.amount_total
         return total
-    def get_documentos(self):
+    def get_total_comprovante_retencion_retenido(self):
+        tipodocumento = self.env['odoosv.fiscal.document'].search([('name','like', 'Comprobante de Retención'),('caja_id','=',self.caja_id.id)])
+        
+        total = 0.00
+        facturas=self.env['account.move'].search([('cierre_id','=',self.id),('tipo_documento_id', '=', tipodocumento.id)])
+        for factura in facturas:
+            total+= factura.amount_total
+        return total
+    def get_documentos(self, name):
         #documentos = self.env['odoosv.fiscal.document'].search([('caja_id','=',self.caja_id.id)])
         facturas = []
         """for documento in documentos:
@@ -93,7 +118,7 @@ class odoosv_lomedcorte(models.Model):
             anulados=self.env['account.move'].search([('cierre_id','=',self.id),('tipo_documento', '=', documento.id),('state','=','cancel')])
             dic['anulados'] = len(anulados)"""
         #agrupando
-        groups=self.env['account.move'].read_group([('invoice_date','=',self.fecha_cierre),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel'),('caja_id','=',self.caja_id.id)],['tipo_documento_id.name','min_doc:min(doc_numero)','max_doc:max(doc_numero)','count_doc:count(doc_numero)'],['tipo_documento_id'])            
+        groups=self.env['account.move'].read_group([('invoice_date','=',self.fecha_cierre),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel'),('caja_id','=',self.caja_id.id),('tipo_documento_id.name','=', name)],['tipo_documento_id.name','min_doc:min(doc_numero)','max_doc:max(doc_numero)','count_doc:count(doc_numero)'],['tipo_documento_id'],limit=1)            
         
         for r in groups:                
             doc={}
@@ -200,9 +225,63 @@ class odoosv_lomedcorte(models.Model):
             movelinereconcilied =self.env['account.move.line'].search([('payment_id','=', pago.id),('full_reconcile_id', '!=', False)])
             invoices =self.env['account.move.line'].search([('full_reconcile_id', '=', movelinereconcilied.full_reconcile_id.id),('x_doc_numero','!=', False),('move_id.tipo_documento_id.name','!=','Comprobante de Retencón')])
             for r in invoices:
-                if r.invoice_date >= hoy_1 and r.invoice_date<= hoy_2:
+                if r.date != self.fecha_cierre:
                     total += pago.amount
         return total
         
+    def get_anticipo(self):
+        total = 0.00
+        current=self.fecha_cierre
+        dia=int(datetime.strftime(current, '%d'))
+        mes=int(datetime.strftime(current, '%m'))
+        anio=int(datetime.strftime(current, '%Y'))
+        hoy_1=datetime(anio,mes,dia,0,0,1)
+        hoy_2=datetime(anio,mes,dia,23,59,59)
+        hoy_1=hoy_1+timedelta(hours=6)
+        hoy_2=hoy_2+timedelta(hours=6)
+        pagos=self.env['account.payment'].search(['&',('cierre_id','=',self.id),('payment_type','=','inbound')])
+        for pago in pagos:
+            movelinereconcilied =self.env['account.move.line'].search([('payment_id','=', pago.id),('full_reconcile_id', '!=', False)])
+            invoices =self.env['account.move.line'].search([('full_reconcile_id', '=', movelinereconcilied.full_reconcile_id.id),('x_doc_numero','!=', False),('move_id.tipo_documento_id.name','!=','Comprobante de Retencón')])
+            if len(invoices)== 0:
+                total +=pago.amount
+            #for r in invoices:
+            #    if r.invoice_date >= hoy_1 and r.invoice_date<= hoy_2:
+            #        total += pago.amount
+        return total       
+
+    def get_total_devolucion(self):
+        total = 0.00
+        #movelinereconcilied =self.env['account.move.line'].search([('full_reconcile_id', '!=', False)])
+        #invoices =self.env['account.move.line'].search([('full_reconcile_id', '=', movelinereconcilied.full_reconcile_id.id),('x_doc_numero','!=', False),('move_id.tipo_documento_id.name','like','Devolución')])
+        invoices = self.env['account.move'].search([('payment_state','=','paid'),('tipo_documento_id.name','like','Devolución'),('cierre_id','=',self.id)])
+        for r in invoices:
+            total += r.move_id.amount_total 
+        return total
+    def get_total_devo_diario(self,codes):
+        totalpago = 0.00
+        for item in self.pago_ids:
+            for codigo in codes:
+                if item.journal_id.code == codigo:
+                    movelinereconcilied =self.env['account.move.line'].search([('payment_id','=', item.id),('full_reconcile_id', '!=', False)])
+                    invoices =self.env['account.move.line'].search([('full_reconcile_id', '=', movelinereconcilied.full_reconcile_id.id),('x_doc_numero','!=', False),('move_id.tipo_documento_id.name','like','Devolución')])
+                    for invoice in invoices:
+                        totalpago += invoice.move_id.amount_total
+        return totalpago
+    def get_total_devo_credito(self):
+        totalpago = 0.00
+        for item in self.factura_ids:
+            if item.tipo_documento_id.name == "Devolución":
+                totalpago += item.amount_total
+        return totalpago
+    def get_total_devolucion_cf(self):
+        total = 0.00
+        #movelinereconcilied =self.env['account.move.line'].search([('full_reconcile_id', '!=', False)])
+        #invoices =self.env['account.move.line'].search([('full_reconcile_id', '=', movelinereconcilied.full_reconcile_id.id),('x_doc_numero','!=', False),('move_id.tipo_documento_id.name','like','Devolución')])
+        invoices = self.env['account.move'].search([('state','=','cancel'),('tipo_documento_id.codigo','like','Factura'),('cierre_id','=',self.id)])
+        for r in invoices:
+            total += r.move_id.amount_total 
+        return total
+
 
 

@@ -20,6 +20,7 @@
                     <t t-foreach="docs" t-as="doc">
                         <t t-call="web.external_layout">
                             <div class="page">
+                            <t t-set="totalretencion" t-value="0.00" />
                                 <table class="table">
                                     <tr>
                                         <td colspan='4'>VENTAS TOTALES</td>
@@ -41,11 +42,11 @@
                                         <td>INGRESO DE VENTAS DE CONTADO</td>
                                         <td>$ <span t-esc='"%.2f"% doc.gettotalpagos()' /></td>
                                         <td colspan='2'>ABONOS DE CLIENTES</td>
-                                        <td>$ <span t-esc="get_abonos()"/></td>
+                                        <td>$ <span t-esc="doc.get_abonos()"/></td>
                                     </tr>
                                     <tr>
                                         <td>A/Anticipo cliente:</td>
-                                        <td>$ ----</td>
+                                        <td>$ <span t-esc="'%.2f'% doc.get_anticipo()"/></td>
                                         <td colspan='2'>A/Anticipo cliente:</td>
                                         <td>$</td>
                                     </tr>
@@ -97,23 +98,23 @@
                                     </tr>
                                     <tr>
                                         <td>CONTADO:</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="doc.get_total_devolucion()" /></td>
                                     </tr>
                                     <tr>
                                         <td>Efectivo:</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="doc.get_total_devo_diario(['EFEC'])" /></td>
                                     </tr>
                                     <tr>
                                         <td>Cheque:</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="doc.get_total_devo_diario(['EFEC1'])" /></td>
                                     </tr>
                                     <tr>
                                         <td>Tarjeta de credito:</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="doc.get_total_devo_diario(['TRJBA', 'TRJAG', 'TRJCU'])" /></td>
                                     </tr>
                                     <tr>
                                         <td>CREDITO:</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="doc.get_total_devo_credito()" /></td>
                                     </tr>
                                     <tr>
                                         <td>NOTAS DE CREDITO:</td>
@@ -121,13 +122,15 @@
                                     </tr>
                                     <tr>
                                         <td>DEVOLUCIONES FC:</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="'%.2f'% doc.get_total_devolucion_cf()" /></td>
                                     </tr>
                                     <tr>
+                                    <t t-set="retencion" t-value="doc.get_total_comprovante_retencion()" />
                                         <td>(E)TOTAL COMPROVANTE DE RETENCION:</td>
-                                        <td>TOTAL IVA $</td>
-                                        <td colspan='2'>TOTAL IVA RETENIDO $</td>
-                                        <td>$</td>
+                                        <td>TOTAL IVA $ <span t-esc="'%.2f'% retencion['ivatotal']" /></td>
+                                        <td colspan='2'>TOTAL IVA RETENIDO $ <span t-esc="'%.2f'% retencion['retenidototal']" /></td>
+                                        <td>$ <span t-esc="'%.2f'% retencion['total']" /></td>
+                                        <t t-set="totalretencion" t-value="retencion['total']" />
                                     </tr>
                                     <tr>
                                         <td colspan="4">TOTAL DE NOTAS DE CARGO:</td>
@@ -158,19 +161,24 @@
                                         <td>EMITIDOS</td>
                                         <td>ANULADOS</td>
                                     </tr>
-                                    <tr t-foreach='doc.get_documentos()' t-as='docu' >
-                                        <td t-esc='docu["name"]'/>
+                                    <tr >
+                                    <t t-value='doc.get_documentos("Factura")' t-set='docu'/>
+                                       
+                                        <td>Facturas consumidor final:</td>
+                                        <t t-if="len(docu) > 0">
+                                        <t t-value='docu[0]' t-set='docu'/>
                                         <td t-esc="docu['min_doc']"/>
                                         <td t-esc="docu['max_doc']"/>
                                         <td t-esc="docu['cantidad']"/>
                                         <td t-esc="docu['anulados']"/>
-                                    </tr>
-                                    <tr>
-                                        <td>Facturas consumidor final:</td>
+                                        </t>
+                                        <t t-else="">
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        </t>
+
                                     </tr>
                                     <tr>
                                         <td>Devoluciones:</td>
@@ -180,18 +188,39 @@
                                         <td></td>
                                     </tr>
                                     <tr>
+                                    <t t-value='doc.get_documentos("CCF")' t-set='docu'/>
                                         <td>Comprovantes de credito fiscal:</td>
+                                        <t t-if="len(docu) > 0">
+                                        <t t-value='docu[0]' t-set='docu'/>
+                                        <td t-esc="docu['min_doc']"/>
+                                        <td t-esc="docu['max_doc']"/>
+                                        <td t-esc="docu['cantidad']"/>
+                                        <td t-esc="docu['anulados']"/>
+                                        </t>
+                                        <t t-else="">
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        </t>
                                     </tr>
                                     <tr>
+                                     <t t-value='doc.get_documentos("Nota de Credito")' t-set='docu'/>
+                                      
                                         <td>Notas de credito:</td>
+                                        <t t-if="len(docu) > 0">
+                                        <t t-value='docu[0]' t-set='docu'/>
+                                        <td t-esc="docu['min_doc']"/>
+                                        <td t-esc="docu['max_doc']"/>
+                                        <td t-esc="docu['cantidad']"/>
+                                        <td t-esc="docu['anulados']"/>
+                                        </t>
+                                        <t t-else="">
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        </t>
                                     </tr>
                                     <tr>
                                         <td>Notas de abono:</td>
@@ -201,13 +230,26 @@
                                         <td></td>
                                     </tr>
                                     <tr>
+                                     <t t-value='doc.get_documentos("Comprobante de Retencón")' t-set='docu'/>
+                                      
+                                        
                                         <td>Comprovantes de retencion:</td>
+                                        <t t-if="len(docu) > 0">
+                                        <t t-value='docu[0]' t-set='docu'/>
+                                        <td t-esc="docu['min_doc']"/>
+                                        <td t-esc="docu['max_doc']"/>
+                                        <td t-esc="docu['cantidad']"/>
+                                        <td t-esc="docu['anulados']"/>
+                                        </t>
+                                        <t t-else="">
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        </t>
                                     </tr>
                                     <tr>
+                                    
                                         <td>Notas de cargo:</td>
                                         <td></td>
                                         <td></td>
@@ -224,19 +266,19 @@
                                     
                                     <tr>
                                         <td colspan='3'>TOTAL A REMESAR:</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc='"%.2f"% doc.gettotalpagos()'/></td>
                                     </tr>
                                     <tr>
                                         <td>CHEQUES: (A+B-K)</td>
-                                        <td>$</td>
-                                    </tr>
+                                        <td>$ <span   t-esc="'%.2f'% (doc.get_pago_diarios(['EFEC1'])+doc.get_pago_diarios_recupe(['EFEC1']))" /></td>
+                                                            </tr>
                                     <tr>
                                         <td>EFECTIVO: (C+D-E-J)</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="'%.2f'% (doc.get_pago_diarios(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])+doc.get_pago_diarios_recupe(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])-totalretencion)"/></td>
                                     </tr>
                                     <tr>
                                         <td>TARJETA DE CREDITO: (F+G-L)</td>
-                                        <td>$</td>
+                                        <td>$ <span t-esc="'%.2f'% (doc.get_pago_diarios(['TRJBA', 'TRJAG', 'TRJCU']) + doc.get_pago_diarios_recupe(['TRJBA', 'TRJAG', 'TRJCU']))"/></td>
                                     </tr>
                                     <tr>
                                         <td>PAYPHONE: (H+I)</td>
@@ -258,288 +300,7 @@
                                     <hr/>
                                     <hr/>
                                 </p>
-                                <table class='table'>
-                                    <thead>
-                                        <tr>
-                                            <th colspan='12'>VENTA DEL DIA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan='12'>CONTADO</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>ABONO ELECTRONICO</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>Abono electronico agricola</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>Abono electronico america central</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>CHEQUE</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>CHEQUE BANCO AMERICA CENTRAL</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>EFECTIVO</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>TARJETA DE CREDITO</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='7'>TOTALES</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class='table'>
-                                    <thead>
-                                        <th colspan='12'>CREDITO</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='7'>TOTALES</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class='table'>
-                                    <thead>
-                                        <th colspan='12'>DEVOLUCIONES DEL DIA</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan='12'>CONTADO</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>EFECTIVO</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='7'>TOTAL DEVOLUCIONES CONTADO</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>CREDITO</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='7'>TOTAL DEVOLUCIONES CREDITO</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='7'>TOTAL DEVOLUCIONES DEL DIA</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class='table'>
-                                    <thead>
-                                        <th colspan='12'>NOTAS DE ABONO</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan='12'>ABONO ELECTRONICO</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>CHEQUE</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>EFECTIVO</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='12'>TARJETA DE CREDITO</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='7'>TOTAL DE NOTAS DE ABONO</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class='table'>
-                                    <thead>
-                                        <th colspan='12'>COMPROVANTES DE RETENCION</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan='12'>EFECTIVO</td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan='7'>TOTAL DE COMPROVANTES DE RETENCION</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
+                               
                                 <!-- Inicio la parte de pagos y facturas-->
                                 <t t-set="total" t-value="0" />
                                 <h3 style="tex-align:center">VENTAS DEL DIA</h3>
@@ -695,7 +456,7 @@
 
                                 <!--Inicio comprovante de retencion-->
                                 <t t-set="total" t-value="0" />
-                                <h3 style="tex-align:center">COMPROBANTE DE RETENCION</h3>
+                                <h3 class="tex-center">COMPROBANTE DE RETENCION</h3>
                                 <table class='table'>
                                     <thead>
                                         <th >TIPO</th>
@@ -727,6 +488,7 @@
                                             </tr>
                                                 <t t-foreach="doc.get_compro_retencion(diario.journal_id.id)" t-as="line">
                                                     <t t-set="total" t-value="total + line.move_id.amount_total" />
+                                                    <t t-if="line.move_id">
                                                     <tr>
                                                         <td t-esc="line.move_id.tipo_documento_id.name" />
                                                         <td t-esc="line.move_id.doc_numero " />
@@ -754,6 +516,7 @@
                                                         <td t-esc="line.move_id.amount_total"/>
                                                 
                                                     </tr>
+                                                    </t>
                                                 </t>
                                             
                                             <tr>
