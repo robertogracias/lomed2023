@@ -47,35 +47,63 @@
 
         <template id ='customer_report_document'>
             <t t-call="web.html_container">
-                    <t t-set="cliente" value="docs[0]"/>
-                    <span><b>ACCIONES REALIZADAS POR EL CLIENTE:</b><span t-esc="partner_name" /><br/></span>
-                    <span><b>Desde:</b><span t-esc="date_from"/> <b style="maring-left:10px;">Hasta:</b><span t-esc="date_to"/></span>
-                    <table style="font-size:10px;width:100%" class="table table-bordered ">
-                        <tr>
-                            <td style="width:10%">Fecha</td>
-                            <td style="width:10%">Tipo</td>
-                            <td style="width:15%">Numero</td>
-                            <td style="width:40%">Descripcion</td>
-                            <td style="width:10%">Monto</td>
-                            <td style="width:10%">Saldo</td>
-                        </tr>
-                        <t t-set="listado" t-value="request.env['res.partner'].get_movimientos(partner_id,date_from,date_to)"/>
-                        <t t-set="total" t-value="0.0"/>
-                        <t t-foreach="listado" t-as="o">
-                            <t t-set="total" t-value="total+o['suma']"/>
-                            <tr>
-                                <td><span t-esc="o['fecha']"/></td>
-                                <td><span t-esc="o['tipo']"/></td>
-                                <td><span t-esc="o['numero']"/></td>
-                                <td><span t-esc="o['descripcion']"/></td>
-                                <td><span t-esc="'%.2f'% o['monto']"/></td>
-                                <td><span t-esc="'%.2f'% total"/></td>
-                            </tr>
-                        </t>
-                    </table>
-                    
+                    <style>
+                        table, td, th{
+                            border:solid 1px;
+                            text-align:center;
+                            border-collapse: collapse;
+                        }
+                    </style>
+                    <div class="article" t-att-data-oe-lang="'es_SV'">
+                        <t t-set="cliente" value="docs[0]"/>
 
-                    
+                        <t t-set="currency" t-value="request.env['res.currency'].browse(2)"/>
+                        <span><b>ACCIONES REALIZADAS POR EL CLIENTE:</b><span t-esc="partner_name" /><br/></span>
+                        <span><b>Desde:</b><span t-esc="date_from"/> <b style="maring-left:10px;">Hasta:</b><span t-esc="date_to"/></span>
+
+                        <h2>Resumen</h2>
+                        <table style="font-size:12px;width:100%" class="table table-bordered ">
+                            <tr>
+                                <td style="width:10%">Documento</td>
+                                <td style="width:10%">Cantidad</td>
+                                <td style="width:15%">Monto</td>
+                            </tr>
+                            <t t-set="resumen" t-value="request.env['res.partner'].get_resumen(partner_id,date_from,date_to)"/>
+                            <t t-foreach="resumen" t-as="o">
+                                <tr>
+                                    <td><span t-esc="o['tipo']"/></td>
+                                    <td style="text-align:right;"><span t-esc="o['Cantidad']"/></td>
+                                    <td style="text-align:right;"><span t-esc="o['Monto']" t-options='{"widget": "monetary", "display_currency": currency}'/></td>
+                                </tr>
+                            </t>
+                        </table>
+
+
+                        <h2>Detalle</h2>
+                        <table style="font-size:10px;width:100%" class="table table-bordered ">
+                            <tr>
+                                <td style="width:10%">Fecha</td>
+                                <td style="width:10%">Tipo</td>
+                                <td style="width:15%">Numero</td>
+                                <td style="width:40%">Descripcion</td>
+                                <td style="width:10%">Monto</td>
+                                <td style="width:10%">Saldo</td>
+                            </tr>
+                            <t t-set="listado" t-value="request.env['res.partner'].get_movimientos(partner_id,date_from,date_to)"/>
+                            <t t-set="total" t-value="0.0"/>
+                            <t t-foreach="listado" t-as="o">
+                                <t t-set="total" t-value="total+o['suma']"/>
+                                <tr>
+                                    <td><span t-esc="o['fecha']"/></td>
+                                    <td><span t-esc="o['tipo']"/></td>
+                                    <td><span t-esc="o['numero']"/></td>
+                                    <td><span t-esc="o['descripcion']"/></td>
+                                    <td><span t-esc="'%.2f'% o['monto']"/></td>
+                                    <td><span t-esc="'%.2f'% total"/></td>
+                                </tr>
+                            </t>
+                        </table>
+                </div>
             </t>
         </template>
 

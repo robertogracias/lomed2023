@@ -36,10 +36,10 @@ class odoosv_lomedcorte(models.Model):
         return totalventa
     def get_ventastotal(self, contado = 1):
         totalcontado = 0.00
-        if contado:
-            facturas=self.env['account.move'].search([('cierre_id','=',self.id),('invoice_payment_term_id','=', 1)])
+        if contado ==1:
+            facturas=self.env['account.move'].search(['&','&','|',('cierre_id','=',self.id),('invoice_payment_term_id','=', 1),('payment_state','=', 'paid'),('invoice_payment_term_id','=', False)])
         else:
-            facturas=self.env['account.move'].search([('cierre_id','=',self.id),('invoice_payment_term_id','!=', 1)])
+            facturas=self.env['account.move'].search([('cierre_id','=',self.id),('invoice_payment_term_id','!=', 1),('payment_state','!=', 'paid')])
         for factura in facturas:
             totalcontado += factura.amount_total
         return totalcontado
@@ -201,7 +201,7 @@ class odoosv_lomedcorte(models.Model):
                     movelinereconcilied =self.env['account.move.line'].search([('payment_id','=', item.id),('full_reconcile_id', '!=', False)])
                     invoices =self.env['account.move.line'].search([('full_reconcile_id', '=', movelinereconcilied.full_reconcile_id.id),('x_doc_numero','!=', False),('move_id.invoice_date','<',hoy_1)])
                     if len(invoices) > 0:
-                        totalpago = item.monto
+                        totalpago = item.amount
         return totalpago
     
     def get_devolucione_invoice(self):
@@ -280,7 +280,7 @@ class odoosv_lomedcorte(models.Model):
         #invoices =self.env['account.move.line'].search([('full_reconcile_id', '=', movelinereconcilied.full_reconcile_id.id),('x_doc_numero','!=', False),('move_id.tipo_documento_id.name','like','Devolución')])
         invoices = self.env['account.move'].search([('state','=','cancel'),('tipo_documento_id.codigo','like','Factura'),('cierre_id','=',self.id)])
         for r in invoices:
-            total += r.move_id.amount_total 
+            total += r.amount_total 
         return total
 
 

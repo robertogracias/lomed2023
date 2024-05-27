@@ -1,658 +1,983 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <report
-            id="action_lomed_corte"
-            model="odoosv.cierre"
-            string="Corte lomed"
-            report_type="qweb-pdf"
-            name="lomed_corte.corte"
-            file="lomed_corte.corte"
-            attachment_use="False"  
-        />
-        <!--
-          attachment="(object.state in ('Borrador','Aprobado')) and
-                (''+(object.name or '').replace('/','')+'.pdf')"
-        -->
-        <template id="corte">
-            <t t-name="lomed.corte">
-                <t t-call="web.html_container">
-                    <t t-foreach="docs" t-as="doc">
-                        <t t-call="web.external_layout">
-                            <div class="page">
-                            <t t-set="totalretencion" t-value="0.00" />
-                                <table class="table">
-                                    <tr>
-                                        <td colspan='4'>VENTAS TOTALES</td>
-                                        <td >$ <sapan t-esc=' "%.2f"% doc.get_totalventa()'/></td>
-                                    </tr>
-                                    <tr>
-                                        <td >VENTAS AL CONTADO</td>
-                                        <td >$ <span t-esc="'%.2f'% doc.get_ventastotal(0)" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td >VENTAS AL CREDITO</td>
-                                        <td >$ <span t-esc="'%.2f'% doc.get_ventastotal()"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td >VENTAS CONTRA ENTREGA</td>
-                                        <td >$ ----</td>
-                                    </tr>
-                                    <tr>
-                                        <td>INGRESO DE VENTAS DE CONTADO</td>
-                                        <td>$ <span t-esc='"%.2f"% doc.gettotalpagos()' /></td>
-                                        <td colspan='2'>ABONOS DE CLIENTES</td>
-                                        <td>$ <span t-esc="doc.get_abonos()"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>A/Anticipo cliente:</td>
-                                        <td>$ <span t-esc="'%.2f'% doc.get_anticipo()"/></td>
-                                        <td colspan='2'>A/Anticipo cliente:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>(A) Cheques recibidos:</td>
-                                        <td>$ <span   t-esc="'%.2f'% doc.get_pago_diarios(['EFEC1'])" /></td>
-                                        <td colspan='2'>(B) Cheques recibidos:</td>
-                                        <td>$ <span   t-esc="'%.2f'% doc.get_pago_diarios_recupe(['EFEC1'])"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>(C) Efectivo:</td>
-                                        <td>$ <span t-esc="'%.2f'% doc.get_pago_diarios(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])" /></td>
-                                        <td colspan='2'>(D) Efectivo:</td>
-                                        <td>$ <span   t-esc="'%.2f'% doc.get_pago_diarios_recupe(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>   N/A Cuenta bancaria:</td>
-                                        <td>$ <span t-esc="'%.2f'% doc.gettotalperpago('EFEC')" /></td>
-                                        <td colspan='2'>N/A Cuenta bancaria:</td>
-                                        <td>$ <span   t-esc="'%.2f'% doc.get_pago_diarios_recupe(['EFEC'])"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>(F)Tarjeta de credito:</td>
-                                        <td>$ <span t-esc="'%.2f'% doc.get_pago_diarios(['TRJBA', 'TRJAG', 'TRJCU'])" /></td>
-                                        <td colspan='2'>(G)Tarjeta de credito:</td>
-                                        <td>$ <span   t-esc="'%.2f'% doc.get_pago_diarios_recupe(['TRJBA', 'TRJAG', 'TRJCU'])"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>(H)Payphone:</td>
-                                        <td>$</td>
-                                        <td colspan='2'>(I)Payphone:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>(J)WOMPI:</td>
-                                        <td>$</td>
-                                        <td colspan='2'>(K)WHOMPI:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Otros:</td>
-                                        <td>$</td>
-                                        <td colspan='2'>Otros:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4">DEVOLUCIONES:</td>
-                                        <td>$ <span t-esc="'%.2f'% doc.get_total_rectificativa()"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>CONTADO:</td>
-                                        <td>$ <span t-esc="doc.get_total_devolucion()" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Efectivo:</td>
-                                        <td>$ <span t-esc="doc.get_total_devo_diario(['EFEC'])" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Cheque:</td>
-                                        <td>$ <span t-esc="doc.get_total_devo_diario(['EFEC1'])" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tarjeta de credito:</td>
-                                        <td>$ <span t-esc="doc.get_total_devo_diario(['TRJBA', 'TRJAG', 'TRJCU'])" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>CREDITO:</td>
-                                        <td>$ <span t-esc="doc.get_total_devo_credito()" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td>NOTAS DE CREDITO:</td>
-                                        <td>$ <span t-esc="'%.2f'% doc.get_total_pago_rectifi()" /> </td>
-                                    </tr>
-                                    <tr>
-                                        <td>DEVOLUCIONES FC:</td>
-                                        <td>$ <span t-esc="'%.2f'% doc.get_total_devolucion_cf()" /></td>
-                                    </tr>
-                                    <tr>
-                                    <t t-set="retencion" t-value="doc.get_total_comprovante_retencion()" />
-                                        <td>(E)TOTAL COMPROVANTE DE RETENCION:</td>
-                                        <td>TOTAL IVA $ <span t-esc="'%.2f'% retencion['ivatotal']" /></td>
-                                        <td colspan='2'>TOTAL IVA RETENIDO $ <span t-esc="'%.2f'% retencion['retenidototal']" /></td>
-                                        <td>$ <span t-esc="'%.2f'% retencion['total']" /></td>
-                                        <t t-set="totalretencion" t-value="retencion['total']" />
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4">TOTAL DE NOTAS DE CARGO:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>(J)Efectivo:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>(K)Cheques:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>(L)Tarjeta de credito:</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>(M)Otros:</td>
-                                        <td>$</td>
-                                    </tr>
-                                        
-                                    <tr>
-                                                
-                                        <td>NUMERO DE DOCUMENTOS:</td>
-                                        <td>CORRELATIVO INICIAL</td>
-                                        <td>CORRELATIVO FINAL</td>
-                                        <td>EMITIDOS</td>
-                                        <td>ANULADOS</td>
-                                    </tr>
-                                    <tr >
-                                    <t t-value='doc.get_documentos("Factura")' t-set='docu'/>
-                                       
-                                        <td>Facturas consumidor final:</td>
-                                        <t t-if="len(docu) > 0">
-                                        <t t-value='docu[0]' t-set='docu'/>
-                                        <td t-esc="docu['min_doc']"/>
-                                        <td t-esc="docu['max_doc']"/>
-                                        <td t-esc="docu['cantidad']"/>
-                                        <td t-esc="docu['anulados']"/>
-                                        </t>
-                                        <t t-else="">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        </t>
-
-                                    </tr>
-                                    <tr>
-                                        <td>Devoluciones:</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                    <t t-value='doc.get_documentos("CCF")' t-set='docu'/>
-                                        <td>Comprovantes de credito fiscal:</td>
-                                        <t t-if="len(docu) > 0">
-                                        <t t-value='docu[0]' t-set='docu'/>
-                                        <td t-esc="docu['min_doc']"/>
-                                        <td t-esc="docu['max_doc']"/>
-                                        <td t-esc="docu['cantidad']"/>
-                                        <td t-esc="docu['anulados']"/>
-                                        </t>
-                                        <t t-else="">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        </t>
-                                    </tr>
-                                    <tr>
-                                     <t t-value='doc.get_documentos("Nota de Credito")' t-set='docu'/>
-                                      
-                                        <td>Notas de credito:</td>
-                                        <t t-if="len(docu) > 0">
-                                        <t t-value='docu[0]' t-set='docu'/>
-                                        <td t-esc="docu['min_doc']"/>
-                                        <td t-esc="docu['max_doc']"/>
-                                        <td t-esc="docu['cantidad']"/>
-                                        <td t-esc="docu['anulados']"/>
-                                        </t>
-                                        <t t-else="">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        </t>
-                                    </tr>
-                                    <tr>
-                                        <td>Notas de abono:</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                     <t t-value='doc.get_documentos("Comprobante de Retencón")' t-set='docu'/>
-                                      
-                                        
-                                        <td>Comprovantes de retencion:</td>
-                                        <t t-if="len(docu) > 0">
-                                        <t t-value='docu[0]' t-set='docu'/>
-                                        <td t-esc="docu['min_doc']"/>
-                                        <td t-esc="docu['max_doc']"/>
-                                        <td t-esc="docu['cantidad']"/>
-                                        <td t-esc="docu['anulados']"/>
-                                        </t>
-                                        <t t-else="">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        </t>
-                                    </tr>
-                                    <tr>
-                                    
-                                        <td>Notas de cargo:</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>***Documentos marcados***:</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td colspan='3'>TOTAL A REMESAR:</td>
-                                        <td>$ <span t-esc='"%.2f"% doc.gettotalpagos()'/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>CHEQUES: (A+B-K)</td>
-                                        <td>$ <span   t-esc="'%.2f'% (doc.get_pago_diarios(['EFEC1'])+doc.get_pago_diarios_recupe(['EFEC1']))" /></td>
-                                                            </tr>
-                                    <tr>
-                                        <td>EFECTIVO: (C+D-E-J)</td>
-                                        <td>$ <span t-esc="'%.2f'% (doc.get_pago_diarios(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])+doc.get_pago_diarios_recupe(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])-totalretencion)"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>TARJETA DE CREDITO: (F+G-L)</td>
-                                        <td>$ <span t-esc="'%.2f'% (doc.get_pago_diarios(['TRJBA', 'TRJAG', 'TRJCU']) + doc.get_pago_diarios_recupe(['TRJBA', 'TRJAG', 'TRJCU']))"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td>PAYPHONE: (H+I)</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>PAYPHONE: (H+I)</td>
-                                        <td>$</td>
-                                    </tr>
-                                    <tr>
-                                        <td>WOMPI: (J+K)</td>
-                                        <td>$</td>
-                                    </tr>
-                                </table>
-                                <p>
-                                    <strong>Observaciones:</strong>
-                                    <br/>
-                                    <hr/>
-                                    <hr/>
-                                    <hr/>
-                                </p>
-                               
-                                <!-- Inicio la parte de pagos y facturas-->
-                                <t t-set="total" t-value="0" />
-                                <h3 style="tex-align:center">VENTAS DEL DIA</h3>
-                                <table class='table'>
-                                    <thead>
-                                        <th >TIPO</th>
-                                        <th >NO DOC</th>
-                                        <th >CODIGO</th>
-                                        <th >NOMBRE DEL CLIENTE</th>
-                                        <th >CODIGO</th>
-                                        <th >GESTOR NOMBRE</th>
-                                        <th >SUB TOTAL</th>
-                                        <th >IVA</th>
-                                        <th >IVA RETENIDO</th>
-                                        <th >IVA PERSIVIDO</th>
-                                        <th >TOTAL</th>
-                                    </thead>
-                                    <tbody>
-                                           <t t-set="totalc" t-value="0" />
-                                            <t t-set="subtotalc" t-value="0" />
-                                            <t t-set="totalivac" t-value="0" />
-                                            <t t-set="totalretenidoc" t-value="0" />
-                                            <t t-set="totalpersividoc" t-value="0" />
-                                            
-                                        <t t-foreach='doc.cierrepago_ids' t-as="diario">
-                                         
-                                            <t t-set="total" t-value="0" />
-                                            <t t-set="subtotal" t-value="0" />
-                                            <t t-set="totaliva" t-value="0" />
-                                            <t t-set="totalretenido" t-value="0" />
-                                            <t t-set="totalpersivido" t-value="0" />
-                                            <tr>
-                                                <td colspan='11' t-esc="diario.name"/> 
-                                            </tr>
-                                            <t t-set="valor" t-value="doc.pagos(diario.journal_id.id)"/>
-                                            <t t-foreach="valor" t-as="item" >
-
-                                                <t t-foreach="doc.obtenerinvoices(item.id)" t-as="line">
-                                                    <t t-set="total" t-value="total + line.move_id.amount_total" />
-                                                    <tr>
-                                                        <td t-esc="line.move_id.tipo_documento_id.name" />
-                                                        <td t-esc="line.move_id.doc_numero " />
-                                                        <td />
-                                                        <td t-esc="line.move_id.partner_id.name" />
-                                                        <td />
-                                                        <td >
-                                                            <span t-esc="item.move_id.invoice_user_id.name" />
-                                                        </td>
-                                                        <t t-if="line.move_id.partner_id.name == 'Factura'">
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
-                                                            <td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)"/>
-                                                            <td >0.0</td>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <td t-esc="line.move_id.amount_untaxed"/>
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed" />
-                                                            <td t-esc="doc.gettax('iva',line.move_id.id)"/>
-                                                            <t t-set='totaliva' t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
-                                                        </t>
-                                                        <td t-esc="doc.gettax('retenido',line.move_id.id)"/>
-                                                        <t t-set='totalretenido' t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
-                                                        <td t-esc="doc.gettax('Retencion',line.move_id.id)"/>
-                                                        <t t-set='totalpersivido' t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
-                                                        <td t-esc="line.move_id.amount_total"/>
-                                                
-                                                    </tr>
-                                                </t>
-                                            </t>
-                                            <tr>
-                                                <td colspan='6'>TOTAL <span t-esc='diario.name'/> </td>
-                                                <td t-esc=' "%.2f"% subtotal'/>
-                                                <td t-esc=' "%.2f"% totaliva '/>
-                                                <td t-esc=' "%.2f"% totalretenido'/>
-                                                <td t-esc=' "%.2f"% totalpersivido'/>
-                                                <td>
-                                                    <span t-esc=' "%.2f"% total'/>
-                                                </td>
-                                            </tr>
-                                            <t t-set="totalc" t-value="totalc + total" />
-                                            <t t-set="subtotalc" t-value="subtotalc + subtotal" />
-                                            <t t-set="totalivac" t-value="totalivac +totaliva" />
-                                            <t t-set="totalretenidoc" t-value="totalretenidoc + totalretenido" />
-                                            <t t-set="totalpersividoc" t-value="totalpersividoc + totalpersivido" />
-                                            <t t-set="total" t-value="0" />
-                                            <t t-set="subtotal" t-value="0" />
-                                            <t t-set="totaliva" t-value="0" />
-                                            <t t-set="totalretenido" t-value="0" />
-                                            <t t-set="totalpersivido" t-value="0" />
-                                        </t>
-                                        <!--
-                                        <t t-foreach='doc.cierrepago_ids' t-as="diario">
-                                            <t t-set="valor" t-value="doc.get_compro_retencion(diario.id)"/>
-                                            <t t-foreach="valor" t-as="item" >
-
-                                                <t t-foreach="doc.obtenerinvoices(item.id)" t-as="line">
-                                                    <t t-set="total" t-value="total + line.move_id.amount_total" />
-                                                    <tr>
-                                                        <td t-esc="line.move_id.tipo_documento_id.name" />
-                                                        <td t-esc="line.move_id.doc_numero " />
-                                                        <td />
-                                                        <td t-esc="line.move_id.partner_id.name" />
-                                                        <td />
-                                                        <td >
-                                                            <span t-esc="item.move_id.invoice_user_id.name" />
-                                                        </td>
-                                                        <t t-if="line.move_id.partner_id.name == 'Factura'">
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
-                                                            <td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)"/>
-                                                            <td >0.0</td>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <td t-esc="line.move_id.amount_untaxed"/>
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed" />
-                                                            <td t-esc="doc.gettax('iva',line.move_id.id)"/>
-                                                            <t t-set='totaliva' t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
-                                                        </t>
-                                                        <td t-esc="doc.gettax('retenido',line.move_id.id)"/>
-                                                        <t t-set='totalretenido' t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
-                                                        <td t-esc="doc.gettax('Retencion',line.move_id.id)"/>
-                                                        <t t-set='totalpersivido' t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
-                                                        <td t-esc="line.move_id.amount_total"/>
-                                                
-                                                    </tr>
-                                                </t>
-                                            </t>
-                                            </t>
-                                            <tr>
-                                                <td colspan='6'>TOTAL <span t-esc='diario.name'/> </td>
-                                                <td t-esc=' "%.2f"% subtotal'/>
-                                                <td t-esc=' "%.2f"% totaliva '/>
-                                                <td t-esc=' "%.2f"% totalretenido'/>
-                                                <td t-esc=' "%.2f"% totalpersivido'/>
-                                                <td>
-                                                    <span t-esc=' "%.2f"% total'/>
-                                                </td>
-                                            </tr>
-                                        
-                                        
-                                        -->
-                                        <tr>
-                                            <td colspan='6'>TOTAL CONTADO </td>
-                                            <td t-esc=' "%.2f"% subtotalc'/>
-                                            <td t-esc=' "%.2f"% totalivac'/>
-                                            <td t-esc=' "%.2f"% totalretenidoc'/>
-                                            <td t-esc=' "%.2f"% totalpersividoc'/>
-                                            <td>
-                                                <span t-esc=' "%.2f"% totalc'/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <!-- Final la parte de pagos y facturas-->
-
-                                <!--Inicio comprovante de retencion-->
-                                <t t-set="total" t-value="0" />
-                                <h3 class="tex-center">COMPROBANTE DE RETENCION</h3>
-                                <table class='table'>
-                                    <thead>
-                                        <th >TIPO</th>
-                                        <th >NO DOC</th>
-                                        <th >CODIGO</th>
-                                        <th >NOMBRE DEL CLIENTE</th>
-                                        <th >CODIGO</th>
-                                        <th >GESTOR NOMBRE</th>
-                                        <th >SUB TOTAL</th>
-                                        <th >IVA</th>
-                                        <th >IVA RETENIDO</th>
-                                        <th >IVA PERSIVIDO</th>
-                                        <th >TOTAL</th>
-                                    </thead>
-                                    <tbody>
-                                        <t t-set="totalc" t-value="0" />
-                                        <t t-set="subtotalc" t-value="0" />
-                                        <t t-set="totalivac" t-value="0" />
-                                        <t t-set="totalretenidoc" t-value="0" />
-                                        <t t-set="totalpersividoc" t-value="0" />
-                                        <t t-foreach='doc.cierrepago_ids' t-as="diario">
-                                            <t t-set="total" t-value="0" />
-                                            <t t-set="subtotal" t-value="0" />
-                                            <t t-set="totaliva" t-value="0" />
-                                            <t t-set="totalretenido" t-value="0" />
-                                            <t t-set="totalpersivido" t-value="0" />
-                                            <tr>
-                                                <td colspan='11' t-esc="diario.name"/> 
-                                            </tr>
-                                                <t t-foreach="doc.get_compro_retencion(diario.journal_id.id)" t-as="line">
-                                                    <t t-set="total" t-value="total + line.move_id.amount_total" />
-                                                    <t t-if="line.move_id">
-                                                    <tr>
-                                                        <td t-esc="line.move_id.tipo_documento_id.name" />
-                                                        <td t-esc="line.move_id.doc_numero " />
-                                                        <td />
-                                                        <td t-esc="line.move_id.partner_id.name" />
-                                                        <td />
-                                                        <td >
-                                                            <span t-esc="line.move_id.invoice_user_id.name" />
-                                                        </td>
-                                                        <t t-if="line.move_id.partner_id.name == 'Factura'">
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
-                                                            <td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)"/>
-                                                            <td >0.0</td>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <td t-esc="line.move_id.amount_untaxed"/>
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed" />
-                                                            <td t-esc="doc.gettax('iva',line.move_id.id)"/>
-                                                            <t t-set='totaliva' t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
-                                                        </t>
-                                                        <td t-esc="doc.gettax('retenido',line.move_id.id)"/>
-                                                        <t t-set='totalretenido' t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
-                                                        <td t-esc="doc.gettax('Retencion',line.move_id.id)"/>
-                                                        <t t-set='totalpersivido' t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
-                                                        <td t-esc="line.move_id.amount_total"/>
-                                                
-                                                    </tr>
-                                                    </t>
-                                                </t>
-                                            
-                                            <tr>
-                                                <td colspan='6'>TOTAL <span t-esc='diario.name'/> </td>
-                                                <td t-esc=' "%.2f"% subtotal'/>
-                                                <td t-esc=' "%.2f"% totaliva '/>
-                                                <td t-esc=' "%.2f"% totalretenido'/>
-                                                <td t-esc=' "%.2f"% totalpersivido'/>
-                                                <td>
-                                                    <span t-esc=' "%.2f"% total'/>
-                                                </td>
-                                            </tr>
-                                            <t t-set="totalc" t-value="totalc + total" />
-                                            <t t-set="subtotalc" t-value="subtotalc + subtotal" />
-                                            <t t-set="totalivac" t-value="totalivac +totaliva" />
-                                            <t t-set="totalretenidoc" t-value="totalretenidoc + totalretenido" />
-                                            <t t-set="totalpersividoc" t-value="totalpersividoc + totalpersivido" />
-                                        </t>
-                                       
-                                        <tr>
-                                            <td colspan='6'>TOTAL CONTADO </td>
-                                            <td t-esc=' "%.2f"% subtotalc'/>
-                                            <td t-esc=' "%.2f"% totalivac'/>
-                                            <td t-esc=' "%.2f"% totalretenidoc'/>
-                                            <td t-esc=' "%.2f"% totalpersividoc'/>
-                                            <td>
-                                                <span t-esc=' "%.2f"% totalc'/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <!--Final comprprovante de retencion-->
-                                
-                                
-                                <!-- Haciendo la parte de pagos y facturas -->
-                                <!-- Devoluciones del dia -->
-                                <t t-set="total" t-value="0" />
-                                <h3 style="tex-align:center">DEVOLUCIONES DEL DIA</h3>
-                                <table class='table'>
-                                    <thead>
-                                        <th >TIPO</th>
-                                        <th >NO DOC</th>
-                                        <th >CODIGO</th>
-                                        <th >NOMBRE DEL CLIENTE</th>
-                                        <th >CODIGO</th>
-                                        <th >GESTOR NOMBRE</th>
-                                        <th >SUB TOTAL</th>
-                                        <th >IVA</th>
-                                        <th >IVA RETENIDO</th>
-                                        <th >IVA PERSIVIDO</th>
-                                        <th >TOTAL</th>
-                                    </thead>
-                                    <tbody>
-                                        <t t-set="totalc" t-value="0" />
-                                        <t t-set="subtotalc" t-value="0" />
-                                        <t t-set="totalivac" t-value="0" />
-                                        <t t-set="totalretenidoc" t-value="0" />
-                                        <t t-set="totalpersividoc" t-value="0" />
-                                        <t t-foreach='doc.cierrepago_ids' t-as="diario">
-                                            <t t-set="total" t-value="0" />
-                                            <t t-set="subtotal" t-value="0" />
-                                            <t t-set="totaliva" t-value="0" />
-                                            <t t-set="totalretenido" t-value="0" />
-                                            <t t-set="totalpersivido" t-value="0" />
-                                            <tr>
-                                                <td colspan='11' t-esc="diario.name"/> 
-                                            </tr>
-                                            <t t-set="valor" t-value="doc.get_compro_retencion(diario.journal_id.id)"/>
-                                            <t t-foreach="valor" t-as="item" >
-
-                                                <t t-foreach="doc.obtenerinvoices(item.id)" t-as="line">
-                                                    <t t-set="total" t-value="total + line.move_id.amount_total" />
-                                                    <tr>
-                                                        <td t-esc="line.move_id.tipo_documento_id.name" />
-                                                        <td t-esc="line.move_id.doc_numero " />
-                                                        <td />
-                                                        <td t-esc="line.move_id.partner_id.name" />
-                                                        <td />
-                                                        <td >
-                                                            <span t-esc="item.move_id.invoice_user_id.name" />
-                                                        </td>
-                                                        <t t-if="line.move_id.partner_id.name == 'Factura'">
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
-                                                            <td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)"/>
-                                                            <td >0.0</td>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <td t-esc="line.move_id.amount_untaxed"/>
-                                                            <t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed" />
-                                                            <td t-esc="doc.gettax('iva',line.move_id.id)"/>
-                                                            <t t-set='totaliva' t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
-                                                        </t>
-                                                        <td t-esc="doc.gettax('retenido',line.move_id.id)"/>
-                                                        <t t-set='totalretenido' t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
-                                                        <td t-esc="doc.gettax('Retencion',line.move_id.id)"/>
-                                                        <t t-set='totalpersivido' t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
-                                                        <td t-esc="line.move_id.amount_total"/>
-                                                
-                                                    </tr>
-                                                </t>
-                                            </t>
-                                            <tr>
-                                                <td colspan='6'>TOTAL <span t-esc='diario.name'/> </td>
-                                                <td t-esc=' "%.2f"% subtotal'/>
-                                                <td t-esc=' "%.2f"% totaliva '/>
-                                                <td t-esc=' "%.2f"% totalretenido'/>
-                                                <td t-esc=' "%.2f"% totalpersivido'/>
-                                                <td>
-                                                    <span t-esc=' "%.2f"% total'/>
-                                                </td>
-                                            </tr>
-                                            <t t-set="totalc" t-value="totalc + total" />
-                                            <t t-set="subtotalc" t-value="subtotalc + subtotal" />
-                                            <t t-set="totalivac" t-value="totalivac +totaliva" />
-                                            <t t-set="totalretenidoc" t-value="totalretenidoc + totalretenido" />
-                                            <t t-set="totalpersividoc" t-value="totalpersividoc + totalpersivido" />
-                                        </t>
-                                        <tr>
-                                            <td colspan='6'>TOTAL CONTADO </td>
-                                            <td t-esc=' "%.2f"% subtotalc'/>
-                                            <td t-esc=' "%.2f"% totalivac'/>
-                                            <td t-esc=' "%.2f"% totalretenidoc'/>
-                                            <td t-esc=' "%.2f"% totalpersividoc'/>
-                                            <td>
-                                                <span t-esc=' "%.2f"% totalc'/>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <!-- Devoluciones del dia -->
-                                
-                            </div>
-                        </t>
-                    </t>
-                </t>
-            </t>    
-        </template>
-    </data>
+	<data>
+		<report id="action_lomed_corte" model="odoosv.cierre" string="Corte lomed" report_type="qweb-pdf" name="lomed_corte.corte" file="lomed_corte.corte" attachment_use="False" />
+		<!--
+		attachment="(object.state in ('Borrador','Aprobado')) and
+		(''+(object.name or '').replace('/','')+'.pdf')"
+		-->
+		<template id="corte">
+			<t t-name="lomed.corte">
+				<t t-call="web.html_container">
+					<t t-foreach="docs" t-as="doc">
+						<div class="article" t-att-data-oe-lang="'es_SV'">
+							<div class="page">
+								<t t-set="totalretencion" t-value="0.00" />
+								<table class="table">
+									<tr>
+										<td colspan="4">
+											VENTAS TOTALES
+										</td>
+										<td>
+											$
+											<sapan t-esc=" '%.2f'% doc.get_totalventa()" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											VENTAS AL CONTADO
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_ventastotal(1)" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											VENTAS AL CREDITO
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_ventastotal(0)" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											VENTAS CONTRA ENTREGA
+										</td>
+										<td>
+											$ ----
+										</td>
+									</tr>
+									<tr>
+										<td>
+											INGRESO DE VENTAS DE CONTADO
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.gettotalpagos()" />
+										</td>
+										<td colspan="2">
+											ABONOS DE CLIENTES
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_abonos()" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											A/Anticipo cliente:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_anticipo()" />
+										</td>
+										<td colspan="2">
+											A/Anticipo cliente:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(A) Cheques recibidos:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_pago_diarios(['EFEC1'])" />
+										</td>
+										<td colspan="2">
+											(B) Cheques recibidos:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_pago_diarios_recupe(['EFEC1'])" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(C) Efectivo:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_pago_diarios(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])" />
+										</td>
+										<td colspan="2">
+											(D) Efectivo:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_pago_diarios_recupe(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											N/A Cuenta bancaria:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.gettotalperpago('EFEC')" />
+										</td>
+										<td colspan="2">
+											N/A Cuenta bancaria:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_pago_diarios_recupe(['EFEC'])" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(F)Tarjeta de credito:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_pago_diarios(['TRJBA', 'TRJAG', 'TRJCU'])" />
+										</td>
+										<td colspan="2">
+											(G)Tarjeta de credito:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_pago_diarios_recupe(['TRJBA', 'TRJAG', 'TRJCU'])" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(H)Payphone:
+										</td>
+										<td>
+											$
+										</td>
+										<td colspan="2">
+											(I)Payphone:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(J)WOMPI:
+										</td>
+										<td>
+											$
+										</td>
+										<td colspan="2">
+											(K)WHOMPI:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											Otros:
+										</td>
+										<td>
+											$
+										</td>
+										<td colspan="2">
+											Otros:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr style="background-color: #B6B6B6;">
+										<td colspan="4">
+											DEVOLUCIONES:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_total_rectificativa()" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											CONTADO:
+										</td>
+										<td>
+											$
+											<span t-esc="doc.get_total_devolucion()" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											Efectivo:
+										</td>
+										<td>
+											$
+											<span t-esc="doc.get_total_devo_diario(['EFEC'])" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											Cheque:
+										</td>
+										<td>
+											$
+											<span t-esc="doc.get_total_devo_diario(['EFEC1'])" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											Tarjeta de credito:
+										</td>
+										<td>
+											$
+											<span t-esc="doc.get_total_devo_diario(['TRJBA', 'TRJAG', 'TRJCU'])" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											CREDITO:
+										</td>
+										<td>
+											$
+											<span t-esc="doc.get_total_devo_credito()" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											NOTAS DE CREDITO:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_total_pago_rectifi()" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											DEVOLUCIONES FC:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.get_total_devolucion_cf()" />
+										</td>
+									</tr>
+									<tr style="background-color: #B6B6B6;">
+										<t t-set="retencion" t-value="doc.get_total_comprovante_retencion()" />
+										<td>
+											(E)TOTAL COMPROVANTE DE RETENCION:
+										</td>
+										<td>
+											TOTAL IVA $
+											<span t-esc="'%.2f'% retencion['ivatotal']" />
+										</td>
+										<td colspan="2">
+											TOTAL IVA RETENIDO $
+											<span t-esc="'%.2f'% retencion['retenidototal']" />
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% retencion['total']" />
+										</td>
+										<t t-set="totalretencion" t-value="retencion['total']" />
+									</tr>
+									<tr style="background-color: #B6B6B6;">
+										<td colspan="4">
+											TOTAL DE NOTAS DE CARGO:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(J)Efectivo:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(K)Cheques:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(L)Tarjeta de credito:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											(M)Otros:
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr style="background-color: #B6B6B6;">
+										<td>
+											NUMERO DE DOCUMENTOS:
+										</td>
+										<td>
+											CORRELATIVO INICIAL
+										</td>
+										<td>
+											CORRELATIVO FINAL
+										</td>
+										<td>
+											EMITIDOS
+										</td>
+										<td>
+											ANULADOS
+										</td>
+									</tr>
+									<tr>
+										<t t-value="doc.get_documentos('Factura')" t-set="docu" />
+										<td>
+											Facturas consumidor final:
+										</td>
+										<t t-if="len(docu) > 0">
+											<t t-value="docu[0]" t-set="docu" />
+											<td t-esc="docu['min_doc']" />
+											<td t-esc="docu['max_doc']" />
+											<td t-esc="docu['cantidad']" />
+											<td t-esc="docu['anulados']" />
+										</t>
+										<t t-else="">
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+										</t>
+									</tr>
+									<tr>
+										<td>
+											Devoluciones:
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+									</tr>
+									<tr>
+										<t t-value="doc.get_documentos('CCF')" t-set="docu" />
+										<td>
+											Comprovantes de credito fiscal:
+										</td>
+										<t t-if="len(docu) > 0">
+											<t t-value="docu[0]" t-set="docu" />
+											<td t-esc="docu['min_doc']" />
+											<td t-esc="docu['max_doc']" />
+											<td t-esc="docu['cantidad']" />
+											<td t-esc="docu['anulados']" />
+										</t>
+										<t t-else="">
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+										</t>
+									</tr>
+									<tr>
+										<t t-value="doc.get_documentos('Nota de Credito')" t-set="docu" />
+										<td>
+											Notas de credito:
+										</td>
+										<t t-if="len(docu) > 0">
+											<t t-value="docu[0]" t-set="docu" />
+											<td t-esc="docu['min_doc']" />
+											<td t-esc="docu['max_doc']" />
+											<td t-esc="docu['cantidad']" />
+											<td t-esc="docu['anulados']" />
+										</t>
+										<t t-else="">
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+										</t>
+									</tr>
+									<tr>
+										<td>
+											Notas de abono:
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+									</tr>
+									<tr>
+										<t t-value="doc.get_documentos('Comprobante de Retencón')" t-set="docu" />
+										<td>
+											Comprovantes de retencion:
+										</td>
+										<t t-if="len(docu) > 0">
+											<t t-value="docu[0]" t-set="docu" />
+											<td t-esc="docu['min_doc']" />
+											<td t-esc="docu['max_doc']" />
+											<td t-esc="docu['cantidad']" />
+											<td t-esc="docu['anulados']" />
+										</t>
+										<t t-else="">
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+											<td>
+											</td>
+										</t>
+									</tr>
+									<tr>
+										<td>
+											Notas de cargo:
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											***Documentos marcados***:
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+										<td>
+										</td>
+									</tr>
+									<tr style="background-color: #B6B6B6;">
+										<td colspan="4">
+											TOTAL A REMESAR:
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% doc.gettotalpagos()" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											CHEQUES: (A+B-K)
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% (doc.get_pago_diarios(['EFEC1'])+doc.get_pago_diarios_recupe(['EFEC1']))" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											EFECTIVO: (C+D-E-J)
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% (doc.get_pago_diarios(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])+doc.get_pago_diarios_recupe(['PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA'])-totalretencion)" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											TARJETA DE CREDITO: (F+G-L)
+										</td>
+										<td>
+											$
+											<span t-esc="'%.2f'% (doc.get_pago_diarios(['TRJBA', 'TRJAG', 'TRJCU']) + doc.get_pago_diarios_recupe(['TRJBA', 'TRJAG', 'TRJCU']))" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											PAYPHONE: (H+I)
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											PAYPHONE: (H+I)
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+									<tr>
+										<td>
+											WOMPI: (J+K)
+										</td>
+										<td>
+											$
+										</td>
+									</tr>
+								</table>
+								<p>
+									<strong>
+										Observaciones:
+									</strong>
+									<br />
+									<hr />
+									<hr />
+									<hr style="page-break-after: always;" />
+								</p>
+								<!-- Inicio la parte de pagos y facturas -->
+								<t t-set="total" t-value="0" />
+								<h3 class="text-center">
+									VENTAS DEL DIA
+								</h3>
+								<table class="table">
+									<thead>
+										<th>
+											TIPO
+										</th>
+										<th>
+											NO DOC
+										</th>
+										<th>
+											CODIGO
+										</th>
+										<th>
+											NOMBRE DEL CLIENTE
+										</th>
+										<th>
+											CODIGO
+										</th>
+										<th>
+											GESTOR NOMBRE
+										</th>
+										<th>
+											SUB TOTAL
+										</th>
+										<th>
+											IVA
+										</th>
+										<th>
+											IVA RETENIDO
+										</th>
+										<th>
+											IVA PERSIVIDO
+										</th>
+										<th>
+											TOTAL
+										</th>
+									</thead>
+									<tbody>
+										<t t-set="totalc" t-value="0" />
+										<t t-set="subtotalc" t-value="0" />
+										<t t-set="totalivac" t-value="0" />
+										<t t-set="totalretenidoc" t-value="0" />
+										<t t-set="totalpersividoc" t-value="0" />
+										<t t-foreach="doc.cierrepago_ids" t-as="diario">
+											<t t-set="total" t-value="0" />
+											<t t-set="subtotal" t-value="0" />
+											<t t-set="totaliva" t-value="0" />
+											<t t-set="totalretenido" t-value="0" />
+											<t t-set="totalpersivido" t-value="0" />
+											<tr>
+												<td colspan="11" t-esc="diario.name" />
+											</tr>
+											<t t-set="valor" t-value="doc.pagos(diario.journal_id.id)" />
+											<t t-foreach="valor" t-as="item">
+												<t t-foreach="doc.obtenerinvoices(item.id)" t-as="line">
+													<t t-set="total" t-value="total + line.move_id.amount_total" />
+													<tr>
+														<td t-esc="line.move_id.tipo_documento_id.name" />
+														<td t-esc="line.move_id.doc_numero " />
+														<td />
+														<td t-esc="line.move_id.partner_id.name" />
+														<td />
+														<td>
+															<span t-esc="item.move_id.invoice_user_id.name" />
+														</td>
+														<t t-if="line.move_id.partner_id.name == 'Factura'">
+															<t t-set="subtotal" t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
+															<td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
+															<td>
+																0.0
+															</td>
+														</t>
+														<t t-else="">
+															<td t-esc="line.move_id.amount_untaxed" />
+															<t t-set="subtotal" t-value="subtotal + line.move_id.amount_untaxed" />
+															<td t-esc="doc.gettax('iva',line.move_id.id)" />
+															<t t-set="totaliva" t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
+														</t>
+														<td t-esc="doc.gettax('retenido',line.move_id.id)" />
+														<t t-set="totalretenido" t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
+														<td t-esc="doc.gettax('Retencion',line.move_id.id)" />
+														<t t-set="totalpersivido" t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
+														<td t-esc="line.move_id.amount_total" />
+													</tr>
+												</t>
+											</t>
+											<tr style="background-color: #B6B6B6;">
+												<td colspan="6">
+													TOTAL
+													<span t-esc="diario.name" />
+												</td>
+												<td t-esc=" '%.2f'% subtotal" />
+												<td t-esc=" '%.2f'% totaliva " />
+												<td t-esc=" '%.2f'% totalretenido" />
+												<td t-esc=" '%.2f'% totalpersivido" />
+												<td>
+													<span t-esc=" '%.2f'% total" />
+												</td>
+											</tr>
+											<t t-set="totalc" t-value="totalc + total" />
+											<t t-set="subtotalc" t-value="subtotalc + subtotal" />
+											<t t-set="totalivac" t-value="totalivac +totaliva" />
+											<t t-set="totalretenidoc" t-value="totalretenidoc + totalretenido" />
+											<t t-set="totalpersividoc" t-value="totalpersividoc + totalpersivido" />
+											<t t-set="total" t-value="0" />
+											<t t-set="subtotal" t-value="0" />
+											<t t-set="totaliva" t-value="0" />
+											<t t-set="totalretenido" t-value="0" />
+											<t t-set="totalpersivido" t-value="0" />
+										</t>
+										<!--
+										<t t-foreach='doc.cierrepago_ids' t-as="diario">
+										<t t-set="valor" t-value="doc.get_compro_retencion(diario.id)"/>
+										<t t-foreach="valor" t-as="item" >
+										
+										<t t-foreach="doc.obtenerinvoices(item.id)" t-as="line">
+										<t t-set="total" t-value="total + line.move_id.amount_total" />
+										<tr>
+										<td t-esc="line.move_id.tipo_documento_id.name" />
+										<td t-esc="line.move_id.doc_numero " />
+										<td />
+										<td t-esc="line.move_id.partner_id.name" />
+										<td />
+										<td >
+										<span t-esc="item.move_id.invoice_user_id.name" />
+										</td>
+										<t t-if="line.move_id.partner_id.name == 'Factura'">
+										<t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
+										<td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)"/>
+										<td >0.0</td>
+										</t>
+										<t t-else="">
+										<td t-esc="line.move_id.amount_untaxed"/>
+										<t t-set='subtotal' t-value="subtotal + line.move_id.amount_untaxed" />
+										<td t-esc="doc.gettax('iva',line.move_id.id)"/>
+										<t t-set='totaliva' t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
+										</t>
+										<td t-esc="doc.gettax('retenido',line.move_id.id)"/>
+										<t t-set='totalretenido' t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
+										<td t-esc="doc.gettax('Retencion',line.move_id.id)"/>
+										<t t-set='totalpersivido' t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
+										<td t-esc="line.move_id.amount_total"/>
+										
+										</tr>
+										</t>
+										</t>
+										</t>
+										<tr>
+										<td colspan='6'>TOTAL <span t-esc='diario.name'/> </td>
+										<td t-esc=' '%.2f'% subtotal'/>
+										<td t-esc=' '%.2f'% totaliva '/>
+										<td t-esc=' '%.2f'% totalretenido'/>
+										<td t-esc=' '%.2f'% totalpersivido'/>
+										<td>
+										<span t-esc=' '%.2f'% total'/>
+										</td>
+										</tr>
+										-->
+										<tr style="background-color: #B6B6B6;">
+											<td colspan="6">
+												TOTAL CONTADO
+											</td>
+											<td t-esc=" '%.2f'% subtotalc" />
+											<td t-esc=" '%.2f'% totalivac" />
+											<td t-esc=" '%.2f'% totalretenidoc" />
+											<td t-esc=" '%.2f'% totalpersividoc" />
+											<td>
+												<span t-esc=" '%.2f'% totalc" />
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<!-- Final la parte de pagos y facturas -->
+								<!-- Inicio comprovante de retencion -->
+								<t t-set="total" t-value="0" />
+								<h3 class="text-center">
+									COMPROBANTE DE RETENCION
+								</h3>
+								<table class="table">
+									<thead>
+										<th>
+											TIPO
+										</th>
+										<th>
+											NO DOC
+										</th>
+										<th>
+											CODIGO
+										</th>
+										<th>
+											NOMBRE DEL CLIENTE
+										</th>
+										<th>
+											CODIGO
+										</th>
+										<th>
+											GESTOR NOMBRE
+										</th>
+										<th>
+											SUB TOTAL
+										</th>
+										<th>
+											IVA
+										</th>
+										<th>
+											IVA RETENIDO
+										</th>
+										<th>
+											IVA PERSIVIDO
+										</th>
+										<th>
+											TOTAL
+										</th>
+									</thead>
+									<tbody>
+										<t t-set="totalc" t-value="0" />
+										<t t-set="subtotalc" t-value="0" />
+										<t t-set="totalivac" t-value="0" />
+										<t t-set="totalretenidoc" t-value="0" />
+										<t t-set="totalpersividoc" t-value="0" />
+										<t t-foreach="doc.cierrepago_ids" t-as="diario">
+											<t t-set="total" t-value="0" />
+											<t t-set="subtotal" t-value="0" />
+											<t t-set="totaliva" t-value="0" />
+											<t t-set="totalretenido" t-value="0" />
+											<t t-set="totalpersivido" t-value="0" />
+											<tr>
+												<td colspan="11" t-esc="diario.name" />
+											</tr>
+											<t t-foreach="doc.get_compro_retencion(diario.journal_id.id)" t-as="line">
+												<t t-set="total" t-value="total + line.move_id.amount_total" />
+												<t t-if="line.move_id">
+													<tr>
+														<td t-esc="line.move_id.tipo_documento_id.name" />
+														<td t-esc="line.move_id.doc_numero " />
+														<td />
+														<td t-esc="line.move_id.partner_id.name" />
+														<td />
+														<td>
+															<span t-esc="line.move_id.invoice_user_id.name" />
+														</td>
+														<t t-if="line.move_id.partner_id.name == 'Factura'">
+															<t t-set="subtotal" t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
+															<td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
+															<td>
+																0.0
+															</td>
+														</t>
+														<t t-else="">
+															<td t-esc="line.move_id.amount_untaxed" />
+															<t t-set="subtotal" t-value="subtotal + line.move_id.amount_untaxed" />
+															<td t-esc="doc.gettax('iva',line.move_id.id)" />
+															<t t-set="totaliva" t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
+														</t>
+														<td t-esc="doc.gettax('retenido',line.move_id.id)" />
+														<t t-set="totalretenido" t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
+														<td t-esc="doc.gettax('Retencion',line.move_id.id)" />
+														<t t-set="totalpersivido" t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
+														<td t-esc="line.move_id.amount_total" />
+													</tr>
+												</t>
+											</t>
+											<tr style="background-color: #B6B6B6;">
+												<td colspan="6">
+													TOTAL
+													<span t-esc="diario.name" />
+												</td>
+												<td t-esc=" '%.2f'% subtotal" />
+												<td t-esc=" '%.2f'% totaliva " />
+												<td t-esc=" '%.2f'% totalretenido" />
+												<td t-esc=" '%.2f'% totalpersivido" />
+												<td>
+													<span t-esc=" '%.2f'% total" />
+												</td>
+											</tr>
+											<t t-set="totalc" t-value="totalc + total" />
+											<t t-set="subtotalc" t-value="subtotalc + subtotal" />
+											<t t-set="totalivac" t-value="totalivac +totaliva" />
+											<t t-set="totalretenidoc" t-value="totalretenidoc + totalretenido" />
+											<t t-set="totalpersividoc" t-value="totalpersividoc + totalpersivido" />
+										</t>
+										<tr style="background-color: #B6B6B6;">
+											<td colspan="6">
+												TOTAL CONTADO
+											</td>
+											<td t-esc=" '%.2f'% subtotalc" />
+											<td t-esc=" '%.2f'% totalivac" />
+											<td t-esc=" '%.2f'% totalretenidoc" />
+											<td t-esc=" '%.2f'% totalpersividoc" />
+											<td>
+												<span t-esc=" '%.2f'% totalc" />
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<!-- Final comprprovante de retencion -->
+								<!-- Haciendo la parte de pagos y facturas -->
+								<!-- Devoluciones del dia -->
+								<t t-set="total" t-value="0" />
+								<h3 class="text-center">
+									DEVOLUCIONES DEL DIA
+								</h3>
+								<table class="table">
+									<thead>
+										<th>
+											TIPO
+										</th>
+										<th>
+											NO DOC
+										</th>
+										<th>
+											CODIGO
+										</th>
+										<th>
+											NOMBRE DEL CLIENTE
+										</th>
+										<th>
+											CODIGO
+										</th>
+										<th>
+											GESTOR NOMBRE
+										</th>
+										<th>
+											SUB TOTAL
+										</th>
+										<th>
+											IVA
+										</th>
+										<th>
+											IVA RETENIDO
+										</th>
+										<th>
+											IVA PERSIVIDO
+										</th>
+										<th>
+											TOTAL
+										</th>
+									</thead>
+									<tbody>
+										<t t-set="totalc" t-value="0" />
+										<t t-set="subtotalc" t-value="0" />
+										<t t-set="totalivac" t-value="0" />
+										<t t-set="totalretenidoc" t-value="0" />
+										<t t-set="totalpersividoc" t-value="0" />
+										<t t-foreach="doc.cierrepago_ids" t-as="diario">
+											<t t-set="total" t-value="0" />
+											<t t-set="subtotal" t-value="0" />
+											<t t-set="totaliva" t-value="0" />
+											<t t-set="totalretenido" t-value="0" />
+											<t t-set="totalpersivido" t-value="0" />
+											<tr>
+												<td colspan="11" t-esc="diario.name" />
+											</tr>
+											<t t-set="valor" t-value="doc.get_compro_retencion(diario.journal_id.id)" />
+											<t t-foreach="valor" t-as="item">
+												<t t-foreach="doc.obtenerinvoices(item.id)" t-as="line">
+													<t t-set="total" t-value="total + line.move_id.amount_total" />
+													<tr>
+														<td t-esc="line.move_id.tipo_documento_id.name" />
+														<td t-esc="line.move_id.doc_numero " />
+														<td />
+														<td t-esc="line.move_id.partner_id.name" />
+														<td />
+														<td>
+															<span t-esc="item.move_id.invoice_user_id.name" />
+														</td>
+														<t t-if="line.move_id.partner_id.name == 'Factura'">
+															<t t-set="subtotal" t-value="subtotal + line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
+															<td t-esc="line.move_id.amount_untaxed + doc.gettax('iva',line.move_id.id)" />
+															<td>
+																0.0
+															</td>
+														</t>
+														<t t-else="">
+															<td t-esc="line.move_id.amount_untaxed" />
+															<t t-set="subtotal" t-value="subtotal + line.move_id.amount_untaxed" />
+															<td t-esc="doc.gettax('iva',line.move_id.id)" />
+															<t t-set="totaliva" t-value="totaliva + doc.gettax('iva',line.move_id.id)" />
+														</t>
+														<td t-esc="doc.gettax('retenido',line.move_id.id)" />
+														<t t-set="totalretenido" t-value="totalretenido + doc.gettax('retenido',line.move_id.id)" />
+														<td t-esc="doc.gettax('Retencion',line.move_id.id)" />
+														<t t-set="totalpersivido" t-value="totalpersivido + doc.gettax('Retencion',line.move_id.id)" />
+														<td t-esc="line.move_id.amount_total" />
+													</tr>
+												</t>
+											</t>
+											<tr style="background-color: #B6B6B6;">
+												<td colspan="6">
+													TOTAL
+													<span t-esc="diario.name" />
+												</td>
+												<td t-esc=" '%.2f'% subtotal" />
+												<td t-esc=" '%.2f'% totaliva " />
+												<td t-esc=" '%.2f'% totalretenido" />
+												<td t-esc=" '%.2f'% totalpersivido" />
+												<td>
+													<span t-esc=" '%.2f'% total" />
+												</td>
+											</tr>
+											<t t-set="totalc" t-value="totalc + total" />
+											<t t-set="subtotalc" t-value="subtotalc + subtotal" />
+											<t t-set="totalivac" t-value="totalivac +totaliva" />
+											<t t-set="totalretenidoc" t-value="totalretenidoc + totalretenido" />
+											<t t-set="totalpersividoc" t-value="totalpersividoc + totalpersivido" />
+										</t>
+										<tr style="background-color: #B6B6B6;">
+											<td colspan="6">
+												TOTAL CONTADO
+											</td>
+											<td t-esc=" '%.2f'% subtotalc" />
+											<td t-esc=" '%.2f'% totalivac" />
+											<td t-esc=" '%.2f'% totalretenidoc" />
+											<td t-esc=" '%.2f'% totalpersividoc" />
+											<td>
+												<span t-esc=" '%.2f'% totalc" />
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<!-- Devoluciones del dia -->
+							</div>
+						</div>
+					</t>
+				</t>
+			</t>
+		</template>
+	</data>
 </odoo>

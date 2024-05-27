@@ -52,7 +52,41 @@ class odoo_customer_report_partner(models.Model):
         }
         return action
     
+    def get_resumen(self,partner_id,date_from,date_to):
+        result={}
 
+        sale_orders=self.env['sale.order'].search([('date_order','>=',date_from),('date_order','<=',date_to),('partner_id','=',partner_id),('state','=','sale')],order='date_order asc')
+        result['Orden de Venta']={'tipo':'Orden de venta','Cantidad':0,'Monto':0.0}
+        for l in sale_orders:
+            result['Orden de Venta']['Cantidad']+=1
+            result['Orden de Venta']['Monto']+=l.amount_total
+        #Tipos documentos
+        docs=self.env['account.move'].search([('invoice_date','>=',date_from),('invoice_date','<=',date_to),('partner_id','=',partner_id),('state','=','posted'),('move_type','in',['out_invoice','out_refund'])]).mapped('tipo_documento_id')
+        for d in docs:
+            result[d.name]={'tipo':d.name,'Cantidad':0,'Monto':0.0}
+        result[d.name]={'tipo':'Otro','Cantidad':0,'Monto':0.0}
+        #Facturas
+        facturas=self.env['account.move'].search([('invoice_date','>=',date_from),('invoice_date','<=',date_to),('partner_id','=',partner_id),('state','=','posted'),('move_type','in',['out_invoice','out_refund'])],order='invoice_date asc')
+        for l in facturas:
+            doc=l.tipo_documento_id.name if l.tipo_documento_id else 'Otro'
+            result[doc]['Cantidad']+=1
+            result[doc]['Monto']+=l.amount_total
+        #pagos
+        journals=self.env['account.payment'].search([('date','>=',date_from),('date','<=',date_to),('partner_id','=',partner_id),('state','=','posted'),('payment_type','=','inbound')]).mapped('journal_id')
+        for j in journals:
+            result[j.name]={'tipo':j.name,'Cantidad':0,'Monto':0.0}
+            
+        pagos=self.env['account.payment'].search([('date','>=',date_from),('date','<=',date_to),('partner_id','=',partner_id),('state','=','posted'),('payment_type','=','inbound')],order='date asc')
+        for l in pagos:
+            doc=l.journal_id.name
+            result[doc]['Cantidad']+=1
+            result[doc]['Monto']+=l.amount 
+        lista=[]
+        for l in result.values():
+            if l['Monto']!=0:
+                lista.append(l)               
+        return lista
+    
     def get_movimientos(self,partner_id,date_from,date_to):
         #self.ensure_one()
         #ordenes de venta
