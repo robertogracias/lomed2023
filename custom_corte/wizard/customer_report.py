@@ -55,7 +55,7 @@ class odoo_customer_report_partner(models.Model):
     def get_resumen(self,partner_id,date_from,date_to):
         result={}
 
-        sale_orders=self.env['sale.order'].search([('date_order','>=',date_from),('date_order','<=',date_to),('partner_id','=',partner_id),('state','=','sale')],order='date_order asc')
+        sale_orders=self.env['sale.order'].search([('date_order','>=',date_from),('date_order','<=',date_to),('partner_id','=',partner_id),('state','in',('sale','done'))],order='date_order asc')
         result['Orden de Venta']={'tipo':'Orden de venta','Cantidad':0,'Monto':0.0}
         for l in sale_orders:
             result['Orden de Venta']['Cantidad']+=1
