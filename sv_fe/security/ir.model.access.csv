@@ -28,3 +28,4 @@ sv_fe_tipo_persona,sv_fe_tipo_persona,model_sv_fe_tipo_persona,base.group_user,1
 sv_fe_transporte,sv_fe_transporte,model_sv_fe_transporte,base.group_user,1,0,0,0
 sv_fe_incoterms,sv_fe_incoterms,model_sv_fe_incoterms,base.group_user,1,0,0,0
 sv_fe_domicilio,sv_fe_domicilio,model_sv_fe_domicilio,base.group_user,1,0,0,0
+sv_fe_documento_pais,sv_fe_documento_pais,model_sv_fe_documento_pais,base.group_user,1,1,1,0

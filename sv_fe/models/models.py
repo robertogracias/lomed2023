@@ -43,6 +43,9 @@ class sv_fe_documento(models.Model):
     fe_contingencia_id=fields.Many2one(comodel_name='sv_fe.doc_contingencia',string="Documento en contingencia")
     sequencia_id=fields.Many2one(comodel_name='ir.sequence',string="Numeracion")
     version=fields.Integer("Version")
+    fill_reversion=fields.Boolean("Llenar datos de reversion automaticamente")
+    oveeride_doc=fields.Boolean("Sobreescribir numero de documento")
+
 
 class sv_fe_tax(models.Model):
     _inherit='account.tax'
@@ -64,6 +67,12 @@ class sv_fe_partner(models.Model):
     fe_domicilio_id=fields.Many2one(comodel_name='sv_fe.domicilio',string="Domicilio")
     comercial=fields.Char("Nombre Comercial")
     x_comercial=fields.Char("Nombre Comercial")
+    documento_pais_id=fields.Many2one(comodel_name='sv_fe.documento_pais',string="Nombre Doc. ID")
+
+
+class sv_fe_tipodoc(models.Model):
+    _name='sv_fe.documento_pais'
+    name=fields.Char("Nombre del documento")
 
 class sv_fe_uom(models.Model):
     _inherit='uom.uom'

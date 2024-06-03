@@ -23,6 +23,9 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                 <xpath expr="//field[@name='vat']" position="before">
+                    <field name="documento_pais_id"/>
+                 </xpath>
                  <xpath expr="//notebook" position="inside">
                     <page string="Factura Electronica">
                         <group>
@@ -87,7 +90,9 @@
                         <field name="fe_doc_asociado_id" />
                         <field name="fe_contingencia_id" />   
                         <field name="version" />  
-                        <field name="sequencia_id" />                        
+                        <field name="sequencia_id" />
+                        <field name="fill_reversion" />
+                        <field name="oveeride_doc" />
                         </group>
                     </group>                          
                 </xpath>
@@ -216,9 +221,9 @@
                     <field name="dte_error" style="color:red;" readonly="1" attrs="{'invisible':[('dte_estado','=','PROCESADO')]}"/>
                  </xpath>
 
-                 <xpath expr="//field[@name='doc_numero']" position="replace">
-                    <field name="doc_numero" readonly="1"  required="0" attrs="{'required':[(1,'=',0)]}"/>
-                 </xpath>
+                 <!--xpath expr="//field[@name='doc_numero']" position="replace">
+                    <field name="doc_numero" readonly="1"  required="0" />
+                 </xpath-->
                  <xpath expr="//notebook" position="inside">
                     <page string="Factura Electronica">
                         <group>
@@ -232,6 +237,7 @@
                             <field name="doc_relacionado" attrs="{'required':[('fe_codigo','in',['05','06'])],'invisible':[('fe_codigo','not in',['05','06'])],'readonly':[('sello','=',True)]}" domain="[('partner_id','=',partner_id),('move_type','=','out_invoice')]"/>
                             <field name="sv_fe_regimen_id" attrs="{'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
                             <field name="sv_fe_tipo_itemexpor_id" attrs="{'required':[('fe_codigo','=','11')],'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
+                            <field name="sv_fe_transporte_id" attrs="{'required':[('fe_codigo','=','11')],'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
                             <field name="sv_fe_resinto_id" attrs="{'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
                             <field name="placa" invisible="1"/>
                         </group>

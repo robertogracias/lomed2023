@@ -54,7 +54,7 @@ def numero_to_letras(numero):
         numero_letras = numero_letras.strip()
         contador = contador + 1
         entero = int(entero / 1000)
-    numero_letras = numero_letras+" CON " + str(decimal) +"/100"
+    numero_letras = numero_letras+" CON " + (str(decimal) if decimal>=10 else ('0'+str(decimal))) +"/100"
     return numero_letras
  
 
@@ -379,6 +379,7 @@ class sv_fe_move(models.Model):
     fe_ambiente_id=fields.Many2one(comodel_name='sv_fe.ambiente',string='Ambiente')
     proforma=fields.Boolean("Proforma")
     contingencia=fields.Many2one(comodel_name='sv_fe.contingencia_ocurrencia',string='Contingencia')
+    sv_fe_transporte_id=fields.Many2one(comodel_name='sv_fe.transporte',string='Transporte')
 
 
     def button_draft(self):
@@ -452,7 +453,8 @@ class sv_fe_move(models.Model):
             firma['dteJson'] = f.get_exp()
         else:
             raise UserError('No ha configurado el tipo de documento para que pueda emitir una factura electrónica.')
-        f.doc_numero=f.control
+        if f.fe_tipo_doc_id.oveeride_doc:
+            f.doc_numero=f.control
         encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
         json_datos = json.dumps(firma)
         json_datos=json_datos.replace('None','null')
@@ -468,6 +470,7 @@ class sv_fe_move(models.Model):
     def generar_fe(self,contingencia=None):
         self.ensure_one()
         f=self
+        f.proforma=False
         #raise UserError(str(contingencia))
         if not contingencia:
             f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_1').id
@@ -503,7 +506,8 @@ class sv_fe_move(models.Model):
             firma['dteJson'] = f.get_exp()
         else:
             raise UserError('No ha configurado el tipo de documento para que pueda emitir una factura electrónica.')
-        f.doc_numero=f.control
+        if f.tipo_documento_id.oveeride_doc:
+            f.doc_numero=f.control
         encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
         json_datos = json.dumps(firma)
         json_datos=json_datos.replace('None','null')
@@ -561,68 +565,6 @@ class sv_fe_move(models.Model):
             #raise UserError(result.text)
         #raise UserError(result.text)
 
-    def test_fe(self):
-        self.ensure_one()
-        f=self
-        
-        if not f.date_confirm:
-            f.date_confirm=datetime.now()
-        firma={}
-        firma['nit']=f.company_id.partner_id.nit.replace('-','')
-        firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
-        firma['dteJson']=f.doc_json
-        f.doc_numero=f.control
-        encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
-        json_datos = json.dumps(firma)
-        json_datos=json_datos.replace('None','null')
-        json_datos=json_datos.replace('False','null')
-        json_datos=json_datos.replace('false','null')
-        json_datos_cliente=json.dumps( firma['dteJson'])
-        json_datos_cliente=json_datos_cliente.replace('None','null')
-        json_datos_cliente=json_datos_cliente.replace('False','null')
-        json_datos_cliente=json_datos_cliente.replace('false','null')
-        #f.doc_json=json_datos_cliente
-        #raise UserError(json_datos)
-        result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
-        respuesta=json.loads(result.text)
-        #raise UserError(result.text)
-        if respuesta['status']=="OK":
-            body=respuesta["body"]
-            f.doc_firmado=body
-            encabezado={}
-            encabezado['Authorization']=f.company_id.fe_ambiente_id.get_token()
-            encabezado['User-Agent']="Odoo/16"
-            encabezado['content-type']="application/JSON"
-            dic={}
-            dic['ambiente']=f.company_id.fe_ambiente_id.codigo
-            dic['idEnvio']=f.id
-            dic['version']=f.tipo_documento_id.version
-            dic['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
-            dic['documento']=body
-            dic['codigoGeneracion']=f.uuid
-            json_datos = json.dumps(dic)
-            json_datos=json_datos.replace('None','null')
-            json_datos=json_datos.replace('False','null')
-            #raise UserError(str(encabezado)+'------'+json_datos)
-            print('---------------------------------------------------------------------------------------------------------')
-            print(str(encabezado))
-            print('------------------------------')
-            print(str(json_datos))
-            print('----------------------------------------------------------------------------------------------------------')
-            result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/recepciondte',data=json_datos, headers=encabezado)
-            print(str(result))
-            f.doc_respuesta=result.text
-            try:
-                respuesta=json.loads(result.text)
-                f.dte_estado=respuesta['estado']
-                if respuesta['estado']=='PROCESADO':
-                    f.sello=respuesta['selloRecibido']
-                else:
-                    f.dte_error=respuesta['observaciones']
-            except:
-                print('Error')
-            #raise UserError(result.text)
-        #raise UserError(result.text)
 
     def revertir_fe(self):
         self.ensure_one()
@@ -699,6 +641,7 @@ class sv_fe_move(models.Model):
         self.ensure_one()
         f=self
         emisor={}
+
         emisor['nit']=f.company_id.partner_id.nit.replace('-','')
         emisor['nombre']=f.company_id.partner_id.name
         emisor['tipoEstablecimiento']=f.company_id.fe_establecimiento_id.codigo
@@ -789,6 +732,27 @@ class sv_fe_move(models.Model):
         self.ensure_one()
         f=self
         dic={}
+        if f.tipo_documento_id.fill_reversion:
+            if not f.reversion_responsable:
+                f.reversion_responsable=self.env.user.partner_id.name
+            if not f.reversion_responsable_doc:
+                if self.env.user.partner_id.dui:
+                    f.reversion_responsable_tipo_id=self.env.ref('sv_fe.svfe_doc_identificacion_2').id
+                    f.reversion_responsable_doc=self.env.user.partner_id.dui
+                elif self.env.user.partner_id.nit:
+                    f.reversion_responsable_tipo_id=self.env.ref('sv_fe.svfe_doc_identificacion_1').id
+                    f.reversion_responsable_doc=self.env.user.partner_id.nit
+            if not f.reversion_solicita:
+                f.reversion_solicita=f.partner_id.name
+            if not f.reversion_solicita_doc:
+                if f.partner_id.dui:
+                    f.reversion_solicita_tipo_id=self.env.ref('sv_fe.svfe_doc_identificacion_2').id
+                    f.reversion_solicita_doc=f.partner_id.dui
+                elif f.partner_id.nit:
+                    f.reversion_solicita_tipo_id=self.env.ref('sv_fe.svfe_doc_identificacion_1').id
+                    f.reversion_solicita_doc=f.partner_id.nit
+
+
         dic['tipoAnulacion']=2
         dic['motivoAnulacion']=f.reversion_motivo
         dic['nombreResponsable']=f.reversion_responsable 
@@ -941,7 +905,7 @@ class sv_fe_move(models.Model):
         f=self
         direccion={}
         if partner.state_id:
-            direccion['departamento']=partner.state_id.code
+            direccion['departamento']=partner.fe_municipio_id.departamento_id.code
         else:
            return None
         if partner.fe_municipio_id:
@@ -2485,7 +2449,7 @@ class sv_fe_move(models.Model):
         self.ensure_one()
         f=self
         direccion={}
-        direccion['departamento']=partner.state_id.code
+        direccion['departamento']=partner.fe_municipio_id.departamento_id.code
         direccion['municipio']=partner.fe_municipio_id.codigo
         direccion['complemento']=partner.street
         return direccion
@@ -2642,18 +2606,9 @@ class sv_fe_move(models.Model):
         f=self
         if f.partner_id.nit!="NA":
             receptor={}
-            if f.partner_id.nrc:
-                receptor['tipoDocumento']='37'
-                receptor['numDocumento']=f.partner_id.nrc.replace('-','')
-            else:
-                if f.partner_id.nit:
-                    receptor['tipoDocumento']='36'
-                    receptor['numDocumento']=f.partner_id.nit.replace('-','')
-                   
-                elif f.partner_id.dui:
-                    receptor['tipoDocumento']='13'
-                    receptor['numDocumento']=f.partner_id.dui.replace('-','')
-            #receptor['nit']=f.partner_id.x_nit.replace('-','')
+            receptor['tipoDocumento']='37'
+            receptor['numDocumento']=f.partner_id.vat
+            
             if f.partner_id.comercial:
                  receptor['nombreComercial']=f.partner_id.comercial
             else:
@@ -2946,14 +2901,14 @@ class sv_fe_move_picking(models.Model):
     def get_qr(self):
         for r in self:
             res=''
-            if r.move_type in ('out_invoice','out_refund','in_invoice','in_refound'):
-                ambiente='00'
-                if r.fe_ambiente_id:
-                    ambiente=r.fe_ambiente_id.codigo
-                else:
-                    ambiente=r.company_id.fe_ambiente_id.codigo
-                res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-                #res='https://admin.factura.gob.sv/consultaPublica?ambiente=01&codGen='+r.uuid+'&echaEmi='+(r.date_confirm).strftime('%Y-%m-%d')
+            #if r.move_type in ('out_invoice','out_refund','in_invoice','in_refound',''):
+            ambiente='00'
+            if r.fe_ambiente_id:
+                ambiente=r.fe_ambiente_id.codigo
+            else:
+                ambiente=r.company_id.fe_ambiente_id.codigo
+            res='https://admin.factura.gob.sv/consultaPublica%3Fambiente='+ambiente+'%26codGen='+r.uuid+'%26fechaEmi='+(r.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
+            #res='https://admin.factura.gob.sv/consultaPublica?ambiente=01&codGen='+r.uuid+'&echaEmi='+(r.date_confirm).strftime('%Y-%m-%d')
             r.dte_qr=res
 
     
@@ -2971,7 +2926,7 @@ class sv_fe_move_picking(models.Model):
         firma['nit']=f.company_id.partner_id.nit.replace('-','')
         firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
         firma['dteJson']=f.get_nr()
-        f.doc_numero=f.control
+        #f.doc_numero=f.control
         encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
         json_datos = json.dumps(firma)
         json_datos=json_datos.replace('None','null')
@@ -3467,7 +3422,7 @@ class sv_fe_move_picking(models.Model):
         self.ensure_one()
         f=self
         direccion={}
-        direccion['departamento']=partner.state_id.code
+        direccion['departamento']=partner.fe_municipio_id.departamento_id.code
         direccion['municipio']=partner.fe_municipio_id.codigo
         direccion['complemento']=partner.street
         return direccion
