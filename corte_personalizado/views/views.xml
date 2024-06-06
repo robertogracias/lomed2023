@@ -27,6 +27,7 @@
                                 <t t-set="invoices" t-value='data["invoices"]' />
                                 <t t-set="invoicescredito" t-value='data["invoicescredito"]' />
                                 <t t-set="devoluciones" t-value='data["devoluciones"]' />
+                                <t t-set="grupos" t-value="data['grupos']" />
                                 <t t-set="totalretencion" t-value="0.00" />
                                 <table class="table">
                                     <tr style="background-color: #B6B6B6;">
@@ -177,7 +178,7 @@
                                         <td>EMITIDOS</td>
                                         <td>ANULADOS</td>
                                     </tr>
-                                    <tr t-foreach='groups' t-as='item'>
+                                    <tr t-foreach='grupos' t-as='item'>
                                         <td t-esc="item['name']+':'"/>
                                         <td t-esc="item['min_doc']"/>
                                         <td t-esc="item['max_doc']"/>

@@ -20,25 +20,29 @@ class odoosv_lomedcorte(models.Model):
     #iniciando el envio de objeto completo
     def get_resumen(self):
         resumen = {}
+        resumen1 = self.get_resume()
+        lineresume = False
+        for resumeitem in resumen1:
+            lineresume = resumeitem
         grupos = []
         #primera face
-        resumen['totalventas'] = 0
-        resumen['ventacontado'] = 0
-        resumen['ventacredito'] = 0
+        resumen['totalventas'] = self.total_facturado
+        resumen['ventacontado'] = self.total_pagado
+        resumen['ventacredito'] = lineresume.get('faccredito')
         resumen['ventascontraentrega'] = 0
         #fin primera fase
         #inicio ingreso de ventas al contado
         resumen['totalingreso'] = 0
         resumen['totalabono'] =0
-        resumen['ingreanticipocliente']= 0
+        resumen['ingreanticipocliente']= lineresume.get('anticipo')
         resumen['aboanticipocliente']= 0
-        resumen['ingrechequerecibido'] = 0#a
+        resumen['ingrechequerecibido'] = lineresume.get('chequesrecibidos')#a
         resumen['abonchequerecibido'] =0 #b
-        resumen['ingreefectivo'] = 0 #c
+        resumen['ingreefectivo'] = lineresume.get('efectivo') #c
         resumen['aboefectivo'] = 0 #d
-        resumen['ingrenacuenta'] = 0
+        resumen['ingrenacuenta'] = lineresume.get('ncuneta')
         resumen['abonacuenta'] = 0
-        resumen['ingretarjetacredito'] = 0 #e
+        resumen['ingretarjetacredito'] = lineresume.get('tarjeta') #e
         resumen['abotarjetacredito'] = 0 #f
         resumen['ingrepayphone'] = 0
         resumen['abopayphone'] = 0
@@ -48,7 +52,7 @@ class odoosv_lomedcorte(models.Model):
         resumen['abootro'] = 0
         #fin ingreso de ventas al contado
         #inicio devouciones
-        resumen['totadevoluciones'] = 0
+        resumen['totadevoluciones'] = lineresume.get('devoluciones')
         resumen['totalcontado'] = 0
         resumen['efectivo'] = 0
         resumen['cheque'] = 0
@@ -110,6 +114,7 @@ class odoosv_lomedcorte(models.Model):
         data['invoicescredito'] =invoicescredito
         data['comprovanteretencion'] = comprovanteretencion
         data['devoluciones'] = devoluciones
+        data['grupos'] = grupos
         return data
         
 
@@ -206,10 +211,10 @@ class odoosv_lomedcorte(models.Model):
             total+= factura.amount_total
         return total
     def get_grupos(self):
-        facturas = 0
+        facturas = []
         #agrupando
-        groups=self.env['account.move'].read_group([('invoice_date','=',self.fecha_cierre),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel'),('caja_id','=',self.caja_id.id)],['tipo_documento_id.name','min_doc:min(doc_numero)','max_doc:max(doc_numero)','count_doc:count(doc_numero)'],['tipo_documento_id'])            
-        """for r in groups:                
+        groups=self.env['account.move'].read_group([('invoice_date','=',self.fecha_cierre),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel'),('caja_id','=',self.caja_id.id)],['tipo_documento_id','min_doc:min(doc_numero)','max_doc:max(doc_numero)','count_doc:count(doc_numero)'],['tipo_documento_id'])            
+        for r in groups:                
             doc={}
             tipo=self.env['odoosv.fiscal.document'].browse(r['tipo_documento_id'][0])    
             doc['name']=tipo.name
@@ -218,8 +223,8 @@ class odoosv_lomedcorte(models.Model):
             doc['cantidad']=r['count_doc']
             anulados=self.env['account.move'].search([('invoice_date','=',self.fecha_cierre),('move_type','in',['out_invoice','out_refund']),('tipo_documento_id', '=', tipo.id),('state','=','cancel')])
             doc['anulados'] = len(anulados)
-            facturas.append(doc)"""
-        return groups
+            facturas.append(doc)
+        return facturas
     def get_today_invoices(self, journal_id):
         current=self.fecha_cierre
         dia=int(datetime.strftime(current, '%d'))
@@ -478,4 +483,78 @@ order by apm.name->>'es_ES', ofd.name, am2.date
             data = self._cr.dictfetchall()
         return data
 
+    def get_resume(self):
+        data = []
+        current=self.fecha_cierre
+        dia=int(datetime.strftime(current, '%d'))
+        mes=int(datetime.strftime(current, '%m'))
+        anio=int(datetime.strftime(current, '%Y'))
+        hoy_1=datetime(anio,mes,dia,0,0,1)
+        hoy_1=hoy_1+timedelta(hours=6)
+        sql = """
+select 
+(
+select coalesce(sum(am.amount_total),0.00) from 
+account_move am 
+where am.state not in ('cancel','paid','draft') and am.payment_state != 'paid'
+and am.cierre_id = {0}
+) as faccredito,
+(
+select coalesce(sum(ap.amount),0.00)
+from account_payment ap 
+inner join account_move am on am.id = ap.move_id  
+where am.state = 'posted' and am.ref is null
+and ap.cierre_id = {0}
+) as anticipo,
+(
+select coalesce(sum(ap.amount),0.00 )
+from account_payment ap 
+inner join account_move am on am.id = ap.move_id 
+inner join account_journal aj ON aj.id  = am.journal_id 
+where aj.code = 'EFEC1'
+and ap.is_reconciled = True
+and ap.cierre_id = {0}
+) as chequesrecibidos,
+(
+select coalesce(sum(ap.amount),0.00 )
+from account_payment ap 
+inner join account_move am on am.id = ap.move_id 
+inner join account_journal aj ON aj.id  = am.journal_id 
+where aj.code in ('PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA')
+and ap.is_reconciled = True
+and ap.cierre_id = {0}
+) as efectivo,
+(
+select coalesce(sum(ap.amount),0.00 )
+from account_payment ap 
+inner join account_move am on am.id = ap.move_id 
+inner join account_journal aj ON aj.id  = am.journal_id 
+where aj.code = 'EFEC'
+and ap.is_reconciled = True
+and ap.cierre_id = {0}
+) as ncuneta,
+(
+select coalesce(sum(ap.amount),0.00 )
+from account_payment ap 
+inner join account_move am on am.id = ap.move_id 
+inner join account_journal aj ON aj.id  = am.journal_id 
+where aj.code in ('TRJBA', 'TRJAG', 'TRJCU') 
+and ap.is_reconciled = True
+and ap.cierre_id = {0}
+) as tarjeta,
+(
+select coalesce(sum(am.amount_total),0.00 ) from 
+account_move am 
+inner join odoosv_fiscal_document ofd on ofd.id = am.tipo_documento_id
+where am.state not in ('cancel','paid','draft') and am.payment_state = 'paid'
+and ofd.formato = 'NCREDITO'
+and am.cierre_id = {0}
+) as devoluciones
+
+from account_move amt limit 1
+        """.format(self.id)
+        self._cr.execute(sql)
+        if self._cr.description: #Verify whether or not the query generated any tuple before fetching in order to avoid PogrammingError: No results when fetching
+            data = self._cr.dictfetchall()
+        return data
 
