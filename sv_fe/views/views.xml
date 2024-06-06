@@ -265,7 +265,7 @@
                             <field name="reversion_solicita_tipo_id" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
                             <field name="reversion_solicita_doc" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
                             
-                            <field name="placa" />
+                            <field name="placa" invisible="1"/>
                         </group>
                         <label for="reversion_json"/> 
                         <field name="reversion_json"  readonly="1"/>

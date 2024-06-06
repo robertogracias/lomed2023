@@ -613,6 +613,7 @@ class sv_fe_move(models.Model):
             try:
                 respuesta=json.loads(result.text)
                 if respuesta['estado']=='PROCESADO':
+                    f.dte_estado='REVERTIDO'
                     f.reversion_sello=respuesta['selloRecibido']
             except:
                 print('Error')
