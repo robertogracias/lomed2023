@@ -493,8 +493,8 @@ class sv_fe_move(models.Model):
             firma['dteJson'] = f.get_exp()
         else:
             raise UserError('No ha configurado el tipo de documento para que pueda emitir una factura electrónica.')
-        if f.fe_tipo_doc_id.oveeride_doc:
-            f.doc_numero=f.control
+        #if f.fe_tipo_doc_id.oveeride_doc:
+        #    f.doc_numero=f.control
         encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
         json_datos = json.dumps(firma)
         json_datos=json_datos.replace('None','null')
@@ -554,7 +554,7 @@ class sv_fe_move(models.Model):
             firma['dteJson'] = f.get_donacion()
         else:
             raise UserError('No ha configurado el tipo de documento para que pueda emitir una factura electrónica.')
-        if f.tipo_documento_id.oveeride_doc:
+        if f.tipo_documento_id.override_doc:
             f.doc_numero=f.control
     
         encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
