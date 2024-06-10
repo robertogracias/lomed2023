@@ -305,6 +305,12 @@ class sv_fe_contingencia(models.Model):
         
         return dic
 
+class sv_fe_donacion_doc(models.Model):
+    _name='sv_fe.donacion_doc'
+    name=fields.Char("Identificacion")
+    descripcion=fields.Char("Detalle")
+    fe_doc_asociado_id=fields.Many2one(comodel_name='sv_fe.docasociado',string="Documento Asociado")
+    move_id=fields.Many2one(comodel_name='account.move',string='Factura')
        
 
 
@@ -380,6 +386,40 @@ class sv_fe_move(models.Model):
     proforma=fields.Boolean("Proforma")
     contingencia=fields.Many2one(comodel_name='sv_fe.contingencia_ocurrencia',string='Contingencia')
     sv_fe_transporte_id=fields.Many2one(comodel_name='sv_fe.transporte',string='Transporte')
+    doc_asociados=fields.One2many(comodel_name='sv_fe.donacion_doc',string='Documentos asociados',inverse_name='move_id')
+
+    extra_discount=fields.Monetary("Descuento extra")
+    permite_factura_rectificativa=fields.Boolean(string='Permite facturac rectificativa',related='tipo_documento_id.permite_factura_rectificativa',store=True)
+    permite_reversion=fields.Boolean(string="Permite Reversion",compute="get_allow_reversion",store=False)
+
+
+
+    
+
+    @api.depends('date_confirm','tipo_documento_id')
+    def get_allow_reversion(self):
+        for r in self:
+            resultado=True
+            if r.tipo_documento_id:
+                if r.tipo_documento_id.horas_reversion>0 and r.date_confirm:
+                    data1 = r.date_confirm
+                    data2 = datetime.now()
+                    diff = data2 - data1
+                    days, seconds = diff.days, diff.seconds
+                    hours = days * 24 + seconds // 3600
+                    if hours<=r.tipo_documento_id.horas_reversion:
+                        resultado= True
+                    else:
+                        resultado= False
+            r.permite_reversion=resultado
+
+    def action_reverse(self):
+        for r in self:
+            if r.move_type=='out_invoice':
+                if r.tipo_documento_id and not r.tipo_documento_id.permite_factura_rectificativa:
+                    raise UserError('ESTE TIPO DE DOCUMENTO NO PERMITE NOTA DE CREDITO')
+        res=super(sv_fe_move,self).action_reverse()
+        return res;
 
 
     def button_draft(self):
@@ -485,6 +525,12 @@ class sv_fe_move(models.Model):
         #dte=dte.replace('False','null')
         #dte=dte.replace('\'','\"')
         #firmandolo
+        dic={}
+        dic['move']=f
+        dic['partner']=f.partner_id
+        dic['ValidationError']=ValidationError
+        if f.tipo_documento_id.validacion_previa:
+            safe_eval(r.tipo_documento_id.validacion_previa,dic, mode='exec')
         if not f.date_confirm:
             f.date_confirm=datetime.now()
         firma={}
@@ -504,10 +550,13 @@ class sv_fe_move(models.Model):
             firma['dteJson']=f.get_cr()
         elif f.tipo_documento_id.fe_tipo_doc_id.codigo=='11':
             firma['dteJson'] = f.get_exp()
+        elif f.tipo_documento_id.fe_tipo_doc_id.codigo=='15':
+            firma['dteJson'] = f.get_donacion()
         else:
             raise UserError('No ha configurado el tipo de documento para que pueda emitir una factura electrónica.')
         if f.tipo_documento_id.oveeride_doc:
             f.doc_numero=f.control
+    
         encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
         json_datos = json.dumps(firma)
         json_datos=json_datos.replace('None','null')
@@ -613,7 +662,7 @@ class sv_fe_move(models.Model):
             try:
                 respuesta=json.loads(result.text)
                 if respuesta['estado']=='PROCESADO':
-                    f.dte_estado='REVERTIDO'
+                    f.dte_estado='INVALIDADO'
                     f.reversion_sello=respuesta['selloRecibido']
             except:
                 print('Error')
@@ -925,7 +974,7 @@ class sv_fe_move(models.Model):
         f.gravadas=0
         f.exentas=0
         f.nosujetas=0
-        f.gravadas_des=0
+        f.gravadas_des=f.extra_discount
         f.exentas_des=0
         f.nosujetas_des=0
         f.gravadas_linea_des=0
@@ -1179,7 +1228,7 @@ class sv_fe_move(models.Model):
         f.gravadas=0
         f.exentas=0
         f.nosujetas=0
-        f.gravadas_des=0
+        f.gravadas_des=f.extra_discount
         f.exentas_des=0
         f.nosujetas_des=0
         f.gravadas_linea_des=0
@@ -1499,7 +1548,7 @@ class sv_fe_move(models.Model):
         f.gravadas=0
         f.exentas=0
         f.nosujetas=0
-        f.gravadas_des=0
+        f.gravadas_des=f.extra_discount
         f.exentas_des=0
         f.nosujetas_des=0
         f.retencion=0
@@ -1701,7 +1750,7 @@ class sv_fe_move(models.Model):
         f.gravadas=0
         f.exentas=0
         f.nosujetas=0
-        f.gravadas_des=0
+        f.gravadas_des=f.extra_discount
         f.exentas_des=0
         f.nosujetas_des=0
         f.gravadas_linea_des=0
@@ -2016,7 +2065,7 @@ class sv_fe_move(models.Model):
         f.gravadas=0
         f.exentas=0
         f.nosujetas=0
-        f.gravadas_des=0
+        f.gravadas_des=f.extra_discount
         f.exentas_des=0
         f.nosujetas_des=0
         f.retencion=0
@@ -2106,6 +2155,197 @@ class sv_fe_move(models.Model):
         else:
             resumen['condicionOperacion']=2
         return resumen
+
+
+
+
+
+##-----------------------------------------------------------------------------------------------------------------------------------------------------------
+##   DONACION
+##-----------------------------------------------------------------------------------------------------------------------------------------------------------        
+    def get_donacion(self):
+        self.ensure_one()
+        f=self
+        dic={}
+        dic['identificacion']=f.get_identificacion_donacion()
+        dic['donatario']=f.get_emisor_donacion()
+        dic['donante']=f.get_receptor_donacion()
+        dic['cuerpoDocumento']=f.get_cuerpo_donacion()
+        dic['resumen']=f.get_resumen_donacion()
+        dic['otrosDocumentos']=f.get_doc_asociados_donacion()
+        dic['apendice']=None
+        return dic
+
+
+    def get_emisor_donacion(self):
+        self.ensure_one()
+        f=self
+        emisor={}
+        #emisor['nit']=f.company_id.partner_id.nit.replace('-','')
+        emisor['nrc']=f.company_id.partner_id.nrc.replace('-','')
+        emisor['nombre']=f.company_id.partner_id.name
+        emisor['codActividad']=f.company_id.partner_id.fe_actividad_id.codigo
+        emisor['descActividad']=f.company_id.partner_id.fe_actividad_id.name
+        emisor['nombreComercial']=None
+        emisor['nrc']=None
+        emisor['tipoEstablecimiento']=f.company_id.fe_establecimiento_id.codigo
+        emisor['direccion']=f.get_direccion(f.company_id.partner_id)
+        emisor['telefono']=f.company_id.partner_id.phone
+        emisor['correo']=f.company_id.partner_id.email
+        emisor['codEstableMH']=None
+        emisor['codEstable']=None
+        emisor['codPuntoVentaMH']=None
+        emisor['codPuntoVenta']=None
+        emisor['tipoDocumento']='36'
+        emisor['numDocumento']=f.company_id.partner_id.nit.replace('-','')
+        return emisor
+    
+    
+    def get_identificacion_donacion(self):        
+        self.ensure_one()
+        f=self
+        if not f.uuid:
+            f.uuid=str(uuid.uuid4()).upper()
+            f.control=f.tipo_documento_id.fe_tipo_doc_id.sequencia_id.next_by_id()
+        identificacion={}
+        identificacion['version']=f.tipo_documento_id.version
+        identificacion['ambiente']=f.company_id.fe_ambiente_id.codigo
+        identificacion['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
+        identificacion['numeroControl']=f.control
+        identificacion['codigoGeneracion']=f.uuid
+        identificacion['tipoModelo']=1
+        identificacion['tipoOperacion']=1
+        fecha=f.date_confirm
+        identificacion['fecEmi']=fecha.strftime('%Y-%m-%d')
+        identificacion['horEmi']=fecha.strftime('%H:%M:%S')
+        identificacion['tipoMoneda']='USD'        
+        return identificacion
+
+    def get_receptor_donacion(self):
+        self.ensure_one()
+        f=self
+        if f.partner_id.nit!="NA":
+            receptor={}
+            if f.partner_id.x_dui:
+                receptor['tipoDocumento']='13'
+                receptor['numDocumento']=f.partner_id.x_dui.replace('-','')
+            else:
+                receptor['tipoDocumento']='36'
+                receptor['numDocumento']=f.partner_id.nit.replace('-','')
+            receptor['nombre']=f.partner_id.name
+            receptor['codActividad']=f.partner_id.fe_actividad_id.codigo
+            receptor['descActividad']=f.partner_id.fe_actividad_id.name
+            receptor['direccion']=f.get_direccion(f.partner_id)
+            receptor['telefono']=f.partner_id.phone
+            receptor['codPais'] = f.partner_id.country_id.fe_codigo
+            receptor['correo']=f.partner_id.email
+            receptor['nrc']=f.partner_id.nrc.replace('-','')
+            receptor['codDomiciliado']=int(f.partner_id.fe_domicilio_id.codigo)
+            #receptor['nombreComercial']=None
+            #receptor['tipoEstablecimiento']=f.partner_id.fe_establecimiento_id.codigo
+            return receptor
+        else:
+            return None
+    
+   
+    def get_doc_asociados_donacion(self):
+        self.ensure_one()
+        lista=[]
+        for l in self.doc_asociados:
+            dic={}
+            dic['codDocAsociado']=int(l.fe_doc_asociado_id.codigo)
+            dic['descDocumento']=l.name
+            dic['detalleDocumento']=l.descripcion
+            lista.append(dic)
+        return lista
+
+
+
+    def get_cuerpo_donacion(self):
+        self.ensure_one()
+        f=self
+        f.gravadas=0
+        f.exentas=0
+        f.nosujetas=0
+        f.gravadas_des=f.extra_discount
+        f.exentas_des=0
+        f.nosujetas_des=0
+        f.retencion=0
+        f.percepcion=0
+        f.isr=0
+        f.iva=0
+        lista=[]
+        i=1
+        for l in f.invoice_line_ids:
+            dic={}
+            dic['numItem']=i
+            #if l.product_id and l.product_id.fe_tipo_item_id:
+            #    dic['tipoItem']=int(l.product_id.fe_tipo_item_id.codigo)
+            #else:
+            #    dic['tipoItem']=1
+            dic['cantidad']=l.quantity
+            dic['codigo']=l.product_id.default_code if l.product_id.default_code else 'NA'
+            if l.uom_id.fe_unidad_id:
+                dic['uniMedida']=int(l.uom_id.fe_unidad_id.codigo)
+            else:
+                dic['uniMedida']=59
+            dic['descripcion']=l.name
+            dic['valorUni']=l.price_unit
+            dic['depreciacion']=l.depreciacion
+            dic['tipoDonacion']=int(l.tipo_donacion.codigo)
+
+            descuento=l.discount/100
+            valor_con_descuento=1-descuento
+            
+            #dic['montoDescu']=(l.price_unit*l.quantity*descuento)
+            iva=False
+            ivap=0
+            exento=True
+            nosujeto=False
+            retencion=False
+            persepcion=False
+            isr=False
+            tributos=[]
+            for t in l.invoice_line_tax_ids:
+                iva=True if t.tax_group_id.name=='iva' else False
+                ivap=t.amount/100 if t.tax_group_id.name=='iva' else ivap
+                exento=True if t.tax_group_id.name=='exento' else False
+                nosujeto=True if t.tax_group_id.name=='nosujeto' else False
+                retencion=True if t.tax_group_id.name=='retencion' else False
+                persepcion=True if t.tax_group_id.name=='persepcion' else False
+                isr=True if t.tax_group_id.name=='isr' else False
+
+                f.retencion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.name=='retencion' else 0
+                f.percepcion+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.name=='persepcion' else 0
+                f.isr+=((l.price_unit*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.name=='isr' else 0
+                if t.fe_tributo_id:
+                    tributos.append(t.fe_tributo_id.codigo)
+            dic['valor']=l.price_subtotal
+            f.nosujetas+=l.price_subtotal
+            lista.append(dic)
+            i+=1
+        return lista
+
+    def get_resumen_donacion(self):
+        self.ensure_one()
+        f=self
+        resumen={}
+        #resumen['descu']=0
+        #resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
+        resumen['valorTotal']=f.nosujetas
+        #resumen['ivaRete1']=round(f.retencion,2)
+        #resumen['reteRenta']=round(abs(f.isr),2)
+        #resumen['totalCompra']=f.nosujetas
+        #resumen['totalPagar']=round(resumen['totalCompra']-resumen['reteRenta'],2)
+        resumen['totalLetras']=numero_to_letras(round(resumen['valorTotal'],2))
+        resumen['pagos']=f.get_pagos()
+        #resumen['observaciones']=f.observaciones
+        #if f.payment_term_id.fe_condicion_id:
+        #    resumen['condicionOperacion']=int(f.payment_term_id.fe_condicion_id.codigo)
+        #else:
+        #    resumen['condicionOperacion']=2
+        return resumen
+
 
 
 
@@ -2218,7 +2458,7 @@ class sv_fe_move(models.Model):
         f.gravadas=0
         f.exentas=0
         f.nosujetas=0
-        f.gravadas_des=0
+        f.gravadas_des=f.extra_discount
         f.exentas_des=0
         f.nosujetas_des=0
         f.retencion=0
@@ -2644,7 +2884,7 @@ class sv_fe_move(models.Model):
         f.gravadas=0
         f.exentas=0
         f.nosujetas=0
-        f.gravadas_des=0
+        f.gravadas_des=f.extra_discount
         f.exentas_des=0
         f.nosujetas_des=0
         f.gravadas_linea_des=0

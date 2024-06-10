@@ -27,8 +27,8 @@ class odoosv_lomedcorte(models.Model):
         grupos = []
         #primera face
         resumen['totalventas'] = self.total_facturado
-        resumen['ventacontado'] = self.total_pagado
-        resumen['ventacredito'] = lineresume.get('faccredito')
+        resumen['ventacontado'] = lineresume.get('ventacontado')
+        resumen['ventacredito'] = lineresume.get('ventacredito')
         resumen['ventascontraentrega'] = 0
         #fin primera fase
         #inicio ingreso de ventas al contado
@@ -42,10 +42,10 @@ class odoosv_lomedcorte(models.Model):
         resumen['aboefectivo'] = 0 #d
         resumen['ingrenacuenta'] = lineresume.get('ncuneta')
         resumen['abonacuenta'] = 0
-        resumen['ingretarjetacredito'] = lineresume.get('tarjeta') #e
-        resumen['abotarjetacredito'] = 0 #f
-        resumen['ingrepayphone'] = 0
-        resumen['abopayphone'] = 0
+        resumen['ingretarjetacredito'] = lineresume.get('tarjeta') #f
+        resumen['abotarjetacredito'] = 0 #g
+        resumen['ingrepayphone'] = 0 #h
+        resumen['abopayphone'] = 0#i
         resumen['ingrewompy'] = 0
         resumen['abowompy'] = 0
         resumen['ingreotro'] = 0
@@ -85,11 +85,11 @@ class odoosv_lomedcorte(models.Model):
         #final de documentos agrupados
         #inicio total a remesar 
         resumen['totalremesar'] = 0
-        resumen['remesacheques'] = 0# a+b+k
-        resumen['remeefectivo'] = 0 # a+d-e-j
-        resumen['remetarjetacredito'] = 0 # f+g-l
-        resumen['remepayphone'] = 0 # h+i
-        resumen['remewhompy'] = 0 # j + k
+        resumen['remesacheques'] = resumen['ingrechequerecibido']+ resumen['abonchequerecibido']+resumen['notaccheque']# a+b+k
+        resumen['remeefectivo'] = resumen['ingrenacuenta']+resumen['ingrechequerecibido']+resumen['aboefectivo']-resumen['comprototal']-resumen['notacefectivo']# a+d-e-j
+        resumen['remetarjetacredito'] = resumen['ingretarjetacredito']+resumen['abotarjetacredito']- resumen['notactarjeta'] # f+g-l
+        resumen['remepayphone'] = resumen['ingrepayphone']+resumen['abopayphone'] # h+i
+        resumen['remewhompy'] = resumen['abowompy']+resumen['ingreotro'] # j + k
         #final total a remesar
         
         
@@ -213,7 +213,7 @@ class odoosv_lomedcorte(models.Model):
     def get_grupos(self):
         facturas = []
         #agrupando
-        groups=self.env['account.move'].read_group([('invoice_date','=',self.fecha_cierre),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel'),('caja_id','=',self.caja_id.id)],['tipo_documento_id','min_doc:min(doc_numero)','max_doc:max(doc_numero)','count_doc:count(doc_numero)'],['tipo_documento_id'])            
+        groups=self.env['account.move'].read_group([('cierre_id','=',self.id),('move_type','in',['out_invoice','out_refund']),('state','!=','draft'),('state','!=','cancel'),('caja_id','=',self.caja_id.id)],['tipo_documento_id','min_doc:min(doc_numero)','max_doc:max(doc_numero)','count_doc:count(doc_numero)'],['tipo_documento_id'])            
         for r in groups:                
             doc={}
             tipo=self.env['odoosv.fiscal.document'].browse(r['tipo_documento_id'][0])    
@@ -221,7 +221,7 @@ class odoosv_lomedcorte(models.Model):
             doc['min_doc']=r['min_doc']
             doc['max_doc']=r['max_doc']
             doc['cantidad']=r['count_doc']
-            anulados=self.env['account.move'].search([('invoice_date','=',self.fecha_cierre),('move_type','in',['out_invoice','out_refund']),('tipo_documento_id', '=', tipo.id),('state','=','cancel')])
+            anulados=self.env['account.move'].search([('cierre_id','=',self.id),('move_type','in',['out_invoice','out_refund']),('tipo_documento_id', '=', tipo.id),('state','=','cancel')])
             doc['anulados'] = len(anulados)
             facturas.append(doc)
         return facturas
@@ -520,16 +520,17 @@ select coalesce(sum(ap.amount),0.00 )
 from account_payment ap 
 inner join account_move am on am.id = ap.move_id 
 inner join account_journal aj ON aj.id  = am.journal_id 
-where aj.code in ('PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA')
+where aj.code = 'EFEC' 
 and ap.is_reconciled = True
 and ap.cierre_id = {0}
+--('PROME', 'BAC', 'AG542','AG543','HIPOT','HIPO1','CUSCA')
 ) as efectivo,
 (
 select coalesce(sum(ap.amount),0.00 )
 from account_payment ap 
 inner join account_move am on am.id = ap.move_id 
 inner join account_journal aj ON aj.id  = am.journal_id 
-where aj.code = 'EFEC'
+where aj.code = 'TRANS'
 and ap.is_reconciled = True
 and ap.cierre_id = {0}
 ) as ncuneta,
@@ -549,8 +550,23 @@ inner join odoosv_fiscal_document ofd on ofd.id = am.tipo_documento_id
 where am.state not in ('cancel','paid','draft') and am.payment_state = 'paid'
 and ofd.formato = 'NCREDITO'
 and am.cierre_id = {0}
-) as devoluciones
-
+) as devoluciones,
+(
+select coalesce(sum(am.amount_total),0.00) from 
+account_move am 
+inner join account_payment_term apt on apt.id = am.invoice_payment_term_id
+where am.state not in ('cancel','paid','draft') and am.payment_state != 'paid'
+and am.cierre_id = {0}
+and lower( apt.name->>'es_ES') like '%pago inmediato%'
+) as ventacontado,
+(
+select coalesce(sum(am.amount_total),0.00) from 
+account_move am 
+inner join account_payment_term apt on apt.id = am.invoice_payment_term_id
+where am.state not in ('cancel','paid','draft') and am.payment_state != 'paid'
+and am.cierre_id = {0}
+and lower( apt.name->>'es_ES')not like '%pago inmediato%'
+) as ventacredito
 from account_move amt limit 1
         """.format(self.id)
         self._cr.execute(sql)

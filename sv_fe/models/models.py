@@ -44,7 +44,10 @@ class sv_fe_documento(models.Model):
     sequencia_id=fields.Many2one(comodel_name='ir.sequence',string="Numeracion")
     version=fields.Integer("Version")
     fill_reversion=fields.Boolean("Llenar datos de reversion automaticamente")
-    oveeride_doc=fields.Boolean("Sobreescribir numero de documento")
+    override_doc=fields.Boolean("Sobreescribir numero de documento")
+    validacion_previa=fields.Text("Validaciones previa transmision")
+    horas_reversion=fields.Integer("Horas para permitir la reversion")
+    permite_factura_rectificativa=fields.Boolean("Permite factura rectivficativa")
 
 
 class sv_fe_tax(models.Model):

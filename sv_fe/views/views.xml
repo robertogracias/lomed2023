@@ -92,7 +92,10 @@
                         <field name="version" />  
                         <field name="sequencia_id" />
                         <field name="fill_reversion" />
-                        <field name="oveeride_doc" />
+                        <field name="override_doc" />
+                        <field name="validacion_previa" />
+                        <field name="horas_reversion" />
+                        <field name="permite_factura_rectificativa" />
                         </group>
                     </group>                          
                 </xpath>
@@ -228,6 +231,9 @@
                     <page string="Factura Electronica">
                         <group>
                             <field name="fe_tipo_doc_id" invisible="1"/>
+                            <field name="permite_factura_rectificativa" invisible="1"/>
+                            <field name="permite_reversion" invisible="1"/>
+                            
                             <field name="fe_codigo" invisible="1"/>
                             <field name="entrega" attrs="{'required':[('fe_codigo','in',['05','06','14'])],'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
                             <field name="doc_entrega"  attrs="{'required':[('fe_codigo','in',['05','06','14'])],'invisible':[('fe_codigo','not in',['05','06','14'])],'readonly':[('sello','=',True)]}"/>
@@ -241,6 +247,14 @@
                             <field name="sv_fe_resinto_id" attrs="{'invisible':[('fe_codigo','!=','11')],'readonly':[('sello','=',True)]}"/>
                             <field name="placa" invisible="1"/>
                         </group>
+                        <label for="doc_asociados" attrs="{'invisible':[('fe_codigo','!=','15')]}"/>
+                        <field name="doc_asociados" attrs="{'invisible':[('fe_codigo','!=','15')]}">
+                            <tree editable="bottom">
+                                <field name="fe_doc_asociado_id"/>
+                                <field name="name"/>
+                                <field name="descripcion"/>
+                            </tree>
+                        </field>
                         <label for="doc_json"/> 
                         <field name="doc_json"  readonly="1"/>
                         <label for="doc_firmado"/> 
@@ -254,8 +268,8 @@
                         </group>
                     </page>       
 
-                    <page string="Revesion Electronica" attrs="{'invisible':[('sello','=',False)]}">
-                        <button name="revertir_fe" type="object" string="Revertir" attrs="{'invisible':['|',('sello','=',False),('reversion_sello','!=',False)]}"/>
+                    <page string="Invalidación Electronica" attrs="{'invisible':[('sello','=',False)]}">
+                        <button name="revertir_fe" type="object" string="Invalidar" attrs="{'invisible':['|','|',('sello','=',False),('reversion_sello','!=',False),('permite_reversion','=',False)]}"/>
                         <group>
                             <field name="reversion_motivo" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
                             <field name="reversion_responsable" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
@@ -424,7 +438,7 @@
                         </group>
                     </page>       
 
-                    <page string="Revesion Electronica" attrs="{'invisible':[('sello','=',False)]}">
+                    <page string="Invalidación Electronica" attrs="{'invisible':[('sello','=',False)]}">
                         <button name="revertir_fe" type="object" string="Revertir" attrs="{'invisible':['|',('sello','=',False),('reversion_sello','!=',False)]}"/>
                         <group>
                             <field name="reversion_motivo" attrs="{'readonly':[('reversion_sello','=',True)]}"/>
