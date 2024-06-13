@@ -608,7 +608,7 @@ class sv_fe_move(models.Model):
                 if respuesta['estado']=='PROCESADO':
                     f.sello=respuesta['selloRecibido']
                 else:
-                    f.dte_error=respuesta['observaciones']
+                    f.dte_error=(str(respuesta['observaciones'])+'-'+str(respuesta['descripcionMsg']))
             except:
                 print('Error')
             #raise UserError(result.text)
@@ -1086,6 +1086,7 @@ class sv_fe_move(models.Model):
                 f.iva+=dic['ivaItem']
                 #f.iva+=round(ivaitem*l.quantity,2)
                 lista.append(dic)
+                i+=1
             else:
                 descuento_global+=(l.price_total*-1)
                 iva=False
@@ -1113,8 +1114,7 @@ class sv_fe_move(models.Model):
                     iva=True if t.tax_group_id.code=='iva' else False
                     ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
                 f.iva+=(round((l.price_unit*l.quantity)*(ivap),6))
-                f.iva_des+=(round((l.price_unit*l.quantity*-1)*(ivap),6))
-            i+=1
+                f.iva_des+=(round((l.price_unit*l.quantity*-1)*(ivap),6))            
         return lista
 
     def get_resumen_fac(self):
@@ -1333,6 +1333,7 @@ class sv_fe_move(models.Model):
                 dic['noGravado']=0
                 f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
                 lista.append(dic)
+                i+=1
             else:
                 descuento_global+=(l.price_total*-1)
                 iva=False
@@ -1370,7 +1371,7 @@ class sv_fe_move(models.Model):
                         price_unit_notax=l.price_unit
                 f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
                 f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
-            i+=1
+            
         return lista
 
     def get_resumen_ccf(self):
@@ -1851,6 +1852,7 @@ class sv_fe_move(models.Model):
                     dic['tributos']=None
                 f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
                 lista.append(dic)
+                i+=1
             else:
                 descuento_global+=(l.price_total*-1)
                 iva=False
@@ -1888,7 +1890,7 @@ class sv_fe_move(models.Model):
                         price_unit_notax=l.price_unit
                 f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
                 f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
-            i+=1
+            
         return lista
 
     def get_resumen_nc(self):
@@ -2557,6 +2559,7 @@ class sv_fe_move(models.Model):
                 #dic['noGravado']=0
                 f.iva+=(round((price_unit_notax*l.quantity*valor_con_descuento)*(ivap),6))
                 lista.append(dic)
+                i+=1
             else:
                 descuento_global+=(l.price_total*-1)
                 iva=False
@@ -2594,7 +2597,7 @@ class sv_fe_move(models.Model):
                         price_unit_notax=l.price_unit
                 f.iva+=(round((price_unit_notax*l.quantity)*(ivap),6))
                 f.iva_des+=(round((price_unit_notax*l.quantity*-1)*(ivap),6))
-            i+=1
+            
         return lista
 
     def get_resumen_nd(self):
@@ -2978,6 +2981,7 @@ class sv_fe_move(models.Model):
                 dic['noGravado']=0
 
                 lista.append(dic)
+                i+=1
             else:
                 descuento_global+=l.price_subtotal
                 iva=False
@@ -2995,7 +2999,7 @@ class sv_fe_move(models.Model):
                     f.gravadas_des+=(l.price_total*-1)
                 else:
                     f.gravadas_des+=(l.price_total*-1)
-            i+=1
+            
         return lista
     
     def get_extension_exp(self):
