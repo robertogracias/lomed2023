@@ -426,7 +426,8 @@ class sv_fe_move(models.Model):
         res=super(sv_fe_move,self).button_draft()
         for r in self:
             if r.sello:
-                raise UserError("EL DTE YA FUE TRANSMITIDO Y SELLADO")
+                if not r.reversion_sello:
+                    raise UserError("EL DTE YA FUE TRANSMITIDO Y SELLADO")
 
         
 
@@ -512,6 +513,8 @@ class sv_fe_move(models.Model):
         f=self
         f.proforma=False
         #raise UserError(str(contingencia))
+        if f.sello:
+            raise UserError('EL DTE YA FUE TRANSMITIDO')
         if not contingencia:
             f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_1').id
             f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
@@ -1092,10 +1095,13 @@ class sv_fe_move(models.Model):
                 iva=False
                 exento=True
                 nosujeto=False
+                incluido=False
                 for t in l.tax_ids:
                     iva=True if t.tax_group_id.code=='iva' else False
                     exento=True if t.tax_group_id.code=='exento' else False
                     nosujeto=True if t.tax_group_id.code=='nosujeto' else False
+                    if iva:
+                        incluido=t.price_include
                 if iva or retencion or persepcion:
                     f.gravadas_des+=(l.price_total*-1)
                 elif exento:
@@ -1113,8 +1119,11 @@ class sv_fe_move(models.Model):
                 for t in l.tax_ids:
                     iva=True if t.tax_group_id.code=='iva' else False
                     ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                f.iva+=(round((l.price_unit*l.quantity)*(ivap),6))
-                f.iva_des+=(round((l.price_unit*l.quantity*-1)*(ivap),6))            
+                price_unit=l.price_unit
+                if incluido:
+                    price_unit=price_unit/(1+ivap)
+                f.iva+=(round((price_unit*l.quantity)*(ivap),6))
+                f.iva_des+=(round((price_unit*l.quantity*-1)*(ivap),6))            
         return lista
 
     def get_resumen_fac(self):
