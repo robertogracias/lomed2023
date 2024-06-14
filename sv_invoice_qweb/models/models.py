@@ -171,7 +171,7 @@ class odoosv_account_move(models.Model):
                 retenido=False
                 if l.display_type=='tax':      
                     if l.tax_line_id:
-                        if l.tax_line_id.tax_group_id.code=='retenido':
+                        if l.tax_line_id.tax_group_id.code=='retencion':
                             retenido=True
                 if retenido==True:
                     total+=(l.credit-l.debit)
