@@ -1934,7 +1934,7 @@ class sv_fe_move(models.Model):
                 for l in f.line_ids:
                    if l.tax_line_id and l.tax_line_id.id==t:
                       valor=l.credit-l.debit if l.credit>l.debit else l.debit-l.credit
-                tmh['valor']=valor
+                tmh['valor']=round(valor,2)
                 tributosmh.append(tmh)
             resumen['tributos']=tributosmh
         else:
