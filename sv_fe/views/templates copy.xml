@@ -76,162 +76,166 @@
             <style type="text/css">
              .tableborder td{
                 border-collapse: collapse;
-                border:thin solid black;
+                border:thin solid #1E5FA1;
               }
 
             </style>
           <t t-set="json" t-value="o.get_json()"/>
           
-          <div class="row">
-            <div class="container" style="text-align:center">
-              <span><b>DOCUMENTO TRIBUTARIO ELECTRONICO</b></span>
-              <br/>
-              <b style="text-transform: uppercase;"><span t-field="o.tipo_documento_id.fe_tipo_doc_id.name"/></b>
-            </div>
-          </div>
           
           
-          
+          <table style="font-size:11px;width:100%;margin-left:0px;">
+            <tr>
+              <td style="width:50%;">
+                <div style="border:2px solid white;line-height:15px;line-height:200%;height:180px;border-radius: 10px;padding:15px;" class="container">
+                  <strong><span t-esc="json['emisor']['nombre']"/></strong><br/>
+                  <span t-esc="json['emisor']['descActividad']"/><br/>
+                  <strong>NIT:  </strong><span t-esc="json['emisor']['nit']"/><br/>
+                  <strong>NRC:  </strong><span t-esc="json['emisor']['nrc']"/><br/>
+                  <strong>Dirección:  </strong><span t-esc="json['emisor']['direccion']['complemento']"/>,<span t-field="o.company_id.partner_id.fe_municipio_id.name"/>,<span t-field="o.company_id.partner_id.state_id.name"/><br/>
+                  <strong>Teléfono:  </strong><span t-esc="json['emisor']['telefono']"/><br/>
+                  <strong>Correo:  </strong><span t-esc="json['emisor']['correo']"/>
+                </div>
+              </td>
+              
+              <td style="width:50%;">
+                <div style="border: 1px solid #1E5FA1; border-radius: 15px;height:180px;">
+                  <table style="width:100%;">
+                    <tr>
+                      <td style="width:40%;text-align:center;">
+                        <img t-att-src="'http://5.161.112.151:8089/report/barcode/QR/'+o.dte_qr" style="height:80px; width:80px;" alt="QR Code"/>
+                      </td>
+                      <td style="width:60%;font-size:10px;">
+                        <div style="border: 1px solid #1E5FA1; border-radius: 15px;background-color:#1E5FA1;color:white;text-align:center;font-size:11px;">
+                          <span><b>DOCUMENTO TRIBUTARIO ELECTRONICO</b></span>
+                          <br/>
+                          <b><span t-field="o.tipo_documento_id.fe_tipo_doc_id.name"/></b>
+                        </div>
+                        <strong>Módelo de Facturación:  </strong><br/>
+                        <span t-field="o.company_id.fe_modelo_facturacion_id.name"/><br/>
+                        <strong>Módelo de Transmisión:  </strong><br/>
+                          <span t-if="o.fe_transmision_id" t-field="o.fe_transmision_id.name"/>
+                          <span t-if="not o.fe_transmision_id" t-field="o.company_id.fe_transmision_id.name"/>
+                          <br/>
+                        <strong>Fecha y Hora de Generación:  </strong><br/>
+                        <span t-esc="json['identificacion']['fecEmi']"/><span t-esc="'  '"/><span t-esc="json['identificacion']['horEmi']"/>
+                        <strong>Código de Generación:  </strong><br/>
+                        <span t-field="o.uuid"/><br/>
+                        <strong>Número de Control:  </strong><br/>
+                        <span t-field="o.control"/><br/>
+                        <strong>Sello de recepción:  </strong><br/>
+                        <span t-field="o.sello"/>
 
-
-
-          
-
-
-          <div class="row">
-            <div class="container" style="text-align:center;font-size:11px;">
-              <table style="font-size:11px;width:100%;margin-left:0px;">
-
-                <!--tr>
-                  <td style="width:50%;text-align:left;">
-                    <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height:120px;height:120px;float:left" alt="Logo"/>
-                  </td>
-                  <td style="width:50%;text-align:center;">
-                    <div class="container" style="padding:10px;text-align:center">
-                      <img t-att-src="'http://localhost:8069/report/barcode/QR/'+o.dte_qr" style="height:120px; width:120px;margin-top:-60px" alt="QR Code"/>
-                    </div>
-                  </td>
-                </tr-->
-                
-                <tr><br/></tr>
-                
-                <tr style="line-height:200%;">
-                  <td>
-                    <strong>Código de Generación:  </strong><span t-field="o.uuid"/><br/>
-                    <strong>Número de Control:  </strong><span t-field="o.control"/><br/>
-                    <strong>Sello de recepción:  </strong><span t-field="o.sello"/>
-                    
-                  </td>
-                  <td>
-                    <img t-att-src="'http://localhost:8069/report/barcode/QR/'+o.dte_qr" style="height:80px; width:80px;" alt="QR Code"/>
-                  </td>
-                  <td style="padding-left:20px;">
-                    <strong>Módelo de Facturación:  </strong><span t-field="o.company_id.fe_modelo_facturacion_id.name"/><br/>
-                    <strong>Módelo de Transmisión:  </strong>
-                      <span t-if="o.fe_transmision_id" t-field="o.fe_transmision_id.name"/>
-                      <span t-if="not o.fe_transmision_id" t-field="o.company_id.fe_transmision_id.name"/>
-                      <br/>
-                    <strong>Fecha y Hora de Generación:  </strong><span t-esc="json['identificacion']['fecEmi']"/><span t-esc="'  '"/><span t-esc="json['identificacion']['horEmi']"/>
-                  </td>
+                        
+                      </td>
+                    </tr>
+                  </table>
                   
-                </tr>
-                <tr style="line-height:200%;" t-if="o.sello==False">
-                  <td colspan="3">
-                    <strong>ESTE DOCUMENTO ES UNA PROFORMA, NO PRODUCE EFECTOS FISCALES NI CONTABLES</strong>
-                    <br/>
-                    <strong>CONFIRMAR SI LOS DATOS SON CORRECTOS PARA PROCEDER A LA TRANSMISION DEL DTE</strong>
+                </div>
+              </td>
+              
+            </tr>
+          </table>
+          
+          <div class="row container" style="line-height:200%;" t-if="o.sello==False">
+                  
+            <strong>ESTE DOCUMENTO ES UNA PROFORMA, NO PRODUCE EFECTOS FISCALES NI CONTABLES</strong>
+            <br/>
+            <strong>CONFIRMAR SI LOS DATOS SON CORRECTOS PARA PROCEDER A LA TRANSMISION DEL DTE</strong>
                     
-                  </td>
-                </tr>
-
-                <tr style="font-size:12px;">
-                  <td style="text-align:center" colspan="2"><strong>Emisor</strong></td>
-                  <td style="text-align:center"><strong>Receptor</strong></td>
-                </tr>
-
-
-                 <tr>
-                  <td colspan="2" style="width:50%;">
-                    <t t-if="'emisor' in json">
-                      <div style="border:2px solid black;line-height:15px;line-height:200%;height:200px;border-radius: 10px;padding:15px;" class="container">
-                        <strong>Nombre o razón social:  </strong><span t-esc="json['emisor']['nombre']"/><br/>
-                        <strong>NIT:  </strong><span t-esc="json['emisor']['nit']"/><br/>
-                        <strong>NRC:  </strong><span t-esc="json['emisor']['nrc']"/><br/>
-                        <strong>Actividad Económica:  </strong><span t-esc="json['emisor']['descActividad']"/><br/>
-                        <strong>Dirección:  </strong><span t-esc="json['emisor']['direccion']['complemento']"/>,<span t-esc="o.company_id.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.company_id.partner_id.state_id.name"/><br/>
-                        <strong>Número Teléfono:  </strong><span t-esc="json['emisor']['telefono']"/><br/>
-                        <strong>Correo Electrónico:  </strong><span t-esc="json['emisor']['correo']"/>
-                      </div>
-                    </t>
-                    <t t-if="'donatario' in json">
-                      <div style="border:2px solid black;line-height:15px;line-height:200%;height:200px;border-radius: 10px;padding:15px;" class="container">
-                        <strong>Nombre o razón social:  </strong><span t-esc="json['donatario']['nombre']"/><br/>
-                        <strong>NIT:  </strong><span t-esc="json['donatario']['nit']"/><br/>
-                        <strong>NRC:  </strong><span t-esc="json['donatario']['nrc']"/><br/>
-                        <strong>Actividad Económica:  </strong><span t-esc="json['donatario']['descActividad']"/><br/>
-                        <strong>Dirección:  </strong><span t-esc="json['donatario']['direccion']['complemento']"/>,<span t-esc="o.company_id.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.company_id.partner_id.state_id.name"/><br/>
-                        <strong>Número Teléfono:  </strong><span t-esc="json['donatario']['telefono']"/><br/>
-                        <strong>Correo Electrónico:  </strong><span t-esc="json['donatario']['correo']"/>
-                      </div>
-                    </t>
-                  </td>
-
-
-
-                  <td style="width:50%;">
-                  <t t-if="'receptor' in json">
-
+          </div>
+       
+          <div class="row container" style="font-size:10px;border: 1px solid #1E5FA1; border-radius: 15px;height:120px;">
+             <div style="vertical-align: middle;border: 1px solid #1E5FA1; border-radius: 15px;background-color:#1E5FA1;color:white;text-align:center;font-size:10px;width:150px;margin-top:-15px;margin-lef:30px;height:30px;">
+               RECEPTOR
+              </div>
+            <t t-if="'receptor' in json">
                     <t t-if="o.tipo_documento_id.fe_tipo_doc_id.codigo!='11'">
-                      <div style="border:2px solid black;line-height:15px;line-height:200%;height:200px;border-radius: 10px;padding:15px;" class="container">
-                        <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['nombre']"/><br/>
-                        <strong>NIT:  </strong><span t-esc="o.partner_id.nit"/><br/>
-                        <strong>NRC:  </strong><span t-esc="o.partner_id.nrc"/><br/>
-                        <strong>Actividad Económica:  </strong><span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['descActividad']"/><br/>
-                        <strong>Dirección:  </strong><span t-if="'direccion' in json['receptor'] and json['receptor']['direccion'] and 'complemento' in json['receptor']['direccion']" t-esc="json['receptor']['direccion']['complemento']"/>,<span  t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.partner_id.state_id.name"/><br/>
-                        <strong>Número Teléfono:  </strong><span t-if="'telefono' in json['receptor']" t-esc="json['receptor']['telefono']"/><br/>
-                        <strong>Correo Electrónico:  </strong><span t-if="'correo' in json['receptor']" t-esc="json['receptor']['correo']"/>
+                      <div style="border:2px solid white;line-height:15px;height:100px;border-radius: 10px;padding:15px;" class="row container col-12">
+                        <table style="width:100%">
+                          <tr>
+                            <td style="width:50%;">
+                              <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['nombre']"/><br/>
+                          <strong>NIT:  </strong><span t-esc="o.partner_id.nit"/><br/>
+                          <strong>NRC:  </strong><span t-esc="o.partner_id.nrc"/><br/>
+                          <strong>Actividad Económica:  </strong><span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['descActividad']"/><br/>
+                            </td>
+                            <td  style="width:50%;">
+                               <strong>Dirección:  </strong><span t-if="'direccion' in json['receptor'] and json['receptor']['direccion'] and 'complemento' in json['receptor']['direccion']" t-esc="json['receptor']['direccion']['complemento']"/>,<span  t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.partner_id.state_id.name"/><br/>
+                          <strong>Número Teléfono:  </strong><span t-if="'telefono' in json['receptor']" t-esc="json['receptor']['telefono']"/><br/>
+                          <strong>Correo Electrónico:  </strong><span t-if="'correo' in json['receptor']" t-esc="json['receptor']['correo']"/>
+                            </td>
+                          </tr>
+                        </table>
+                          
+
                       </div>
                     </t>
                     <t t-if="o.tipo_documento_id.fe_tipo_doc_id.codigo=='11'">
-                      <div style="border:2px solid black;line-height:15px;line-height:200%;height:200px;border-radius: 10px;padding:15px;" class="container">
-                        <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['nombre']"/><br/>
-                        <strong>
-                          <span t-if="o.partner_id.documento_pais_id" t-esc="o.partner_id.documento_pais_id.name"/><span t-if="o.partner_id.documento_pais_id==false" t-esc="'DOC ID'"/>:</strong>
-                          <span t-esc="o.partner_id.vat"/><br/>
-                        <strong>Dirección:  </strong><span t-esc="json['receptor']['complemento']"/>,<span t-field="o.partner_id.country_id.name"/><br/>                        
-                        <strong>Número Teléfono:  </strong><span t-if="'telefono' in json['receptor']" t-esc="json['receptor']['telefono']"/><br/>
-                        <strong>Correo Electrónico:  </strong><span t-if="'correo' in json['receptor']" t-esc="json['receptor']['correo']"/><br/>
-                        <strong>Incoterm:  </strong><span t-if="o.invoice_incoterm_id.fe_incoterm_id" t-esc="o.invoice_incoterm_id.fe_incoterm_id.name"/>
+                      <div style="border:2px solid white;line-height:15px;height:100px;border-radius: 10px;padding:15px;" class="row container col-12">
+                        
+                        <table style="width:100%">
+                          <tr>
+                            <td style="width:50%;">
+                              <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['nombre']"/><br/>
+                          <strong>
+                            <span t-if="o.partner_id.documento_pais_id" t-esc="o.partner_id.documento_pais_id.name"/><span t-if="o.partner_id.documento_pais_id==false" t-esc="'DOC ID'"/>:</strong>
+                            <span t-esc="o.partner_id.vat"/><br/>
+                            </td>
+                            <td  style="width:50%;">
+                              <strong>Dirección:  </strong><span t-esc="json['receptor']['complemento']"/>,<span t-field="o.partner_id.country_id.name"/><br/>                        
+                          <strong>Número Teléfono:  </strong><span t-if="'telefono' in json['receptor']" t-esc="json['receptor']['telefono']"/><br/>
+                          <strong>Correo Electrónico:  </strong><span t-if="'correo' in json['receptor']" t-esc="json['receptor']['correo']"/><br/>
+                          <strong>Incoterm:  </strong><span t-if="o.invoice_incoterm_id.fe_incoterm_id" t-esc="o.invoice_incoterm_id.fe_incoterm_id.name"/>
+                            </td>
+                          </tr>
+                        </table>
+                      
                       </div>
                     </t>
                   </t>
                   <t t-if="'sujetoExcluido' in json">
-                    <div style="border:2px solid black;line-height:15px;line-height:200%;height:200px;border-radius: 10px;padding:15px;" class="container">
-                      <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['nombre']"/><br/>
+                    <div style="border:2px solid white;line-height:15px;height:100px;border-radius: 10px;padding:15px;" class="row container col-12">
+                      <table style="width:100%">
+                          <tr>
+                            <td style="width:50%;">
+                              <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['nombre']"/><br/>
                       <strong>NIT:  </strong><span t-if="'numDocumento' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['numDocumento']"/><br/>
                       <strong>Actividad Económica:  </strong><span t-if="'nombre' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['descActividad']"/><br/>
-                      <strong>Dirección:  </strong><span t-if="'direccion' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['direccion']['complemento']"/>,<span  t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.partner_id.state_id.name"/><br/>
+                            </td>
+                            <td  style="width:50%;">
+                              <strong>Dirección:  </strong><span t-if="'direccion' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['direccion']['complemento']"/>,<span  t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.partner_id.state_id.name"/><br/>
                       <strong>Número Teléfono:  </strong><span t-if="'telefono' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['telefono']"/><br/>
                       <strong>Correo Electrónico:  </strong><span t-if="'correo' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['correo']"/>
+                            </td>
+                          </tr>
+                        </table>
+                      
                     </div>
                   </t>
                   <t t-if="'donante' in json">
-                    <div style="border:2px solid black;line-height:15px;line-height:200%;height:200px;border-radius: 10px;padding:15px;" class="container">
-                      <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['donante']" t-esc="json['donante']['nombre']"/><br/>
+                    <div style="border:2px solid white;line-height:15px;height:100px;border-radius: 10px;padding:15px;" class="row container col-12">
+                      <table style="width:100%">
+                          <tr>
+                            <td style="width:50%;">
+                              <strong>Nombre o razón social:  </strong><span t-if="'nombre' in json['donante']" t-esc="json['donante']['nombre']"/><br/>
                       <strong>NIT:  </strong><span t-if="'numDocumento' in json['donante']" t-esc="json['donante']['numDocumento']"/><br/>
                       <strong>Actividad Económica:  </strong><span t-if="'nombre' in json['donante']" t-esc="json['sujetoExcluido']['descActividad']"/><br/>
-                      <strong>Dirección:  </strong><span t-if="'direccion' in json['donante']" t-esc="json['donante']['direccion']['complemento']"/>,<span t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.partner_id.state_id.name"/><br/>
+                            </td>
+                            <td  style="width:50%;">
+                              <strong>Dirección:  </strong><span t-if="'direccion' in json['donante']" t-esc="json['donante']['direccion']['complemento']"/>,<span  t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>,<span t-field="o.partner_id.state_id.name"/><br/>
                       <strong>Número Teléfono:  </strong><span t-if="'telefono' in json['donante']" t-esc="json['donante']['telefono']"/><br/>
                       <strong>Correo Electrónico:  </strong><span t-if="'correo' in json['donante']" t-esc="json['donante']['correo']"/>
+                            </td>
+                          </tr>
+                        </table>
+                     
                     </div>
                   </t>
-                  </td>
-                </tr>
-
-              </table>
-            </div>
           </div>
 
+
+         
 
            
             
@@ -250,8 +254,8 @@
            <div class="row" style="text-align:center;font-size:11px">
              <div class="col-12">
                <br/>
-               <table class="table tableborder" style="font-size:10px;border:solid 1px; border-collapse: collapse;">
-                 <tr style="background-color:#cccccc;text-align:center;border:solid 1px; border-collapse: collapse;">
+               <table class="table tableborder" style="font-size:10px;border:solid 1px  #1E5FA1; border-collapse: collapse;">
+                 <tr style="background-color: #1E5FA1;text-align:center;border:solid 1px; border-collapse: collapse;color:white">
                    <th style="width:5%;">No.</th>
                    <th style="width:10%;">CODIGO</th>
                    <th style="width:10%;">CANTIDAD</th>
@@ -267,13 +271,13 @@
                    
                  </tr>
                  <t t-set="i" t-value="1"/>
-                 <tr t-foreach="json['cuerpoDocumento']" t-as="l" style="border:solid 1px; border-collapse: collapse;">
+                 <tr t-foreach="json['cuerpoDocumento']" t-as="l" style="border:solid 1px  #1E5FA1; border-collapse: collapse;">
                    <td style="text-align: center;"><span t-esc="i"/></td>
                    <td style="text-align: center;"><span t-esc="l['codigo']"/></td>
-                   <td style="text-align: center;"><span t-esc="int(l['cantidad'])"/></td>
+                   <td style="text-align: center;"><span t-esc="l['cantidad']"/></td>
                    <td style="text-align: center;"><span t-esc="request.env['sv_fe.unidad'].search([('codigo','=',l['uniMedida'])],limit=1).name"/></td>
                    <td style="text-align: left;"><span t-esc="l['descripcion']"/></td>
-                   <td style="text-align: right;">$<span t-esc="'%.6f'%l['precioUni']"/></td>
+                   <td style="text-align: right;"><span t-esc="l['precioUni']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                    <td style="text-align: right;"><span t-esc="l['montoDescu']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                    <td t-if="o.move_type=='out_invoice' or o.move_type=='out_refund'" style="text-align: right;"><span t-if="'ventaNoSuj' in l" t-esc="l['ventaNoSuj']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                    <td t-if="o.move_type=='out_invoice' or o.move_type=='out_refund'" style="text-align: right;"><span t-if="'ventaExenta' in l" t-esc="l['ventaExenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
@@ -304,11 +308,6 @@
                   <t t-if="'extension' in json and json['extension']">
                   <span t-if="'extension' in json and 'observaciones' in json['extension']" t-esc="json['extension']['observaciones']"/><br/>
                   </t>
-                  <br/>
-                  <t t-if="o.tipo_documento_id.fe_tipo_doc_id.codigo=='11'">
-                  <strong>TRANSPORTE:  </strong>
-                  <span t-if="o.sv_fe_transporte_id" t-esc="o.sv_fe_transporte_id.name"/><br/>
-                  </t>
               </td>
               <td style="width:40%;padding:10px;" t-if="o.move_type=='out_invoice' or o.move_type=='out_refund'">
                 <table class="table tableborder" style="font-size:10px;width:100%;border-radius: 5px;padding:5px;border:thin solid black;border:solid 1px; border-collapse: collapse;">
@@ -319,7 +318,7 @@
                   <tr>
                     <td style="text-align: left;">Suma Total de Operaciones</td>
                     <td style="text-align: right;">
-                      <span t-esc="(json['resumen']['totalNoSuj'] if 'totalNoSuj' in json['resumen'] else 0.0 )+                         (json['resumen']['totalExenta']  if 'totalExenta' in json['resumen'] else 0.0)+                         (json['resumen']['totalGravada'] if 'totalGravada' in json['resumen'] else 0.0)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      <span t-esc="json['resumen']['totalNoSuj']+json['resumen']['totalExenta']+json['resumen']['totalGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                     </td>
                   </tr>
 
@@ -474,7 +473,7 @@
            </table>
            
            <div class="row">
-             <div class="col-12 container" style="border:2px solid black;line-height:15px;line-height:200%;height:100px;border-radius: 10px;padding:15px;">
+             <div class="col-12 container" style="border:2px solid  #1E5FA1;line-height:15px;line-height:200%;height:100px;border-radius: 10px;padding:15px;">
                <table style="width:100%;font-size:12px;">
                  <tr>
                    <td style="width:70%">
@@ -947,498 +946,212 @@
 
 <template id ='dte_ticket_document'>        
   <t t-call="web.html_container">
-      
-					<t t-foreach="docs" t-as="o">
-            <t t-set="lang" t-value="o.partner_id.lang"/>
-						<t t-set="o" t-value="o.with_context(lang=lang)"/>
-						<div class="page" style="font-family: monospace;width:250px;max-width:250px;min-width:250px;font-size:9px;text-align:left;">
-							<style type="text/css">
-								.tableborder td{
-								border-collapse: collapse;
-								border:thin solid black;
-								padding:2px;
-								margin:0px;
-								}
-								.tableborder tr{
-								padding:1px;
-								margin:0px;
-								}
-							</style>
-							<t t-set="json" t-value="o.get_json()"/>
-							<div class="row">
-								<div class="container" style="text-align:center">
-									<span>
-										<b>
-											DOCUMENTO TRIBUTARIO ELECTRONICO
-										</b>
-									</span>
-									<br/>
-									<b>
-										<span t-field="o.tipo_documento_id.fe_tipo_doc_id.name"/>
-									</b>
-								</div>
-							</div>
-							<!--
-							div class="row">
-							<img t-att-src="'http://vidaysalud.etgcorporate.com/report/barcode/QR/'+o.dte_qr" style="height:120px; width:120px;" alt="QR Code"/>
-							</div
-							-->
-							<div class="row">
-								<strong>
-									Cód. Gen.:
-								</strong>
-								<br/>
-								<span t-field="o.uuid"/>
-								<br/>
-								<strong>
-									Núm Cont.:
-								</strong><br/>
-								<span t-field="o.control"/>
-								<br/>
-								<strong>
-									Sello:
-								</strong>
-								<br/>
-								<span t-field="o.sello"/>
-								<br/>
-								<strong>
-									Modelo de facturacion:
-								</strong>
-								<br/>
-								<span t-field="o.company_id.fe_modelo_facturacion_id.name"/>
-								<br/>
-								<strong>
-									Fecha y hora de generacion:
-								</strong>
-								<br/>
-								<span t-esc="json['identificacion']['fecEmi']"/>
-								<span t-esc="'  '"/>
-								<span t-esc="json['identificacion']['horEmi']"/>
-							</div>
-							
-							<div class="row" style="text-align:center">
-							  <h3>EMISOR</h3>
-							</div>
-							
-							
-							<div class="row" style="border:thin solid black;border-radius:15px;padding:5px;">
-								<br/>
-								<strong>
-								<span t-esc="json['emisor']['nombre']"/>
-								</strong>
-								<br/>
-								<strong>NIT:</strong>
-								<span t-esc="json['emisor']['nit']"/>
-								<br/>
-								<strong>NRC:</strong>
-								<span t-esc="json['emisor']['nrc']"/>
-								<br/>
-								<strong>Actividad Economica:</strong>
-								<br/>
-								<span t-esc="json['emisor']['descActividad']"/>
-								<br/>
-								<strong>Direccion:</strong>
-								<span t-esc="json['emisor']['direccion']['complemento']"/>
-								,
-								<span t-field="o.company_id.partner_id.fe_municipio_id.name"/>
-								,
-								<span t-field="o.company_id.partner_id.state_id.name"/>
-								<br/>
-								<strong>Telefono:</strong>
-								<span t-esc="json['emisor']['telefono']"/>
-								<br/>
-								<strong>Correo:</strong>
-								<br/>
-								<span t-esc="json['emisor']['correo']"/>
-							</div>
-							
-							
-							
-							<div class="row" style="text-align:center">
-							  <h3>RECEPTOR</h3>
-							</div>
-							
-							<div class="row"  style="border:thin solid black;border-radius:15px;padding:5px;">
-						
-								<t t-if="'receptor' in json">
-									<t t-if="o.tipo_documento_id.fe_tipo_doc_id.codigo!='11'">
-											<strong>
-												Nombre o razón social:
-											</strong><br/>
-											<span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['nombre']"/>
-											<br/>
-											<strong>
-												NIT:
-											</strong>
-											<span t-esc="o.partner_id.nit"/>
-											<br/>
-											<strong>
-												NRC:
-											</strong>
-											<span t-esc="o.partner_id.nrc"/>
-											<br/>
-											<strong>
-												Actividad Económica:
-											</strong><br/>
-											<span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['descActividad']"/>
-											<br/>
-											<strong>
-												Dirección:
-											</strong><br/>
-											<span t-if="'direccion' in json['receptor'] and json['receptor']['direccion'] and 'complemento' in json['receptor']['direccion']" t-esc="json['receptor']['direccion']['complemento']"/>
-											,
-											<span t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>
-											,
-											<span t-field="o.partner_id.state_id.name"/>
-											<br/>
-											<strong>
-												Número Teléfono:
-											</strong>
-											<span t-if="'telefono' in json['receptor']" t-esc="json['receptor']['telefono']"/>
-											<br/>
-											<strong><br/>
-												Correo Electrónico:
-											</strong>
-											<span t-if="'correo' in json['receptor']" t-esc="json['receptor']['correo']"/>
-									</t>
-									<t t-if="o.tipo_documento_id.fe_tipo_doc_id.codigo=='11'">
-											<strong>
-												Nombre o razón social:
-											</strong><br/>
-											<span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['nombre']"/>
-											<br/>
-											<strong>
-												<span t-if="o.partner_id.documento_pais_id" t-esc="o.partner_id.documento_pais_id.name"/>
-												<span t-if="o.partner_id.documento_pais_id==false" t-esc="'DOC ID'"/>
-												:
-											</strong>
-											<span t-esc="o.partner_id.vat"/>
-											<br/>
-											<strong>
-												Dirección:
-											</strong><br/>
-											<span t-esc="json['receptor']['complemento']"/>
-											,
-											<span t-field="o.partner_id.country_id.name"/>
-											<br/>
-											<strong>
-												Número Teléfono:
-											</strong>
-											<span t-if="'telefono' in json['receptor']" t-esc="json['receptor']['telefono']"/>
-											<br/>
-											<strong>
-												Correo Electrónico:
-											</strong><br/>
-											<span t-if="'correo' in json['receptor']" t-esc="json['receptor']['correo']"/>
-											<br/>
-											<strong>
-												Incoterm:
-											</strong>
-											<span t-if="o.invoice_incoterm_id.fe_incoterm_id" t-esc="o.invoice_incoterm_id.fe_incoterm_id.name"/>
-									</t>
-								</t>
-								<t t-if="'sujetoExcluido' in json">
-										<strong>
-											Nombre o razón social:
-										</strong><br/>
-										<span t-if="'nombre' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['nombre']"/>
-										<br/>
-										<strong>
-											NIT:
-										</strong>
-										<span t-if="'numDocumento' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['numDocumento']"/>
-										<br/>
-										<strong>
-											Actividad Económica:
-										</strong>
-										<span t-if="'nombre' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['descActividad']"/>
-										<br/>
-										<strong>
-											Dirección:
-										</strong><br/>
-										<span t-if="'direccion' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['direccion']['complemento']"/>
-										,
-										<span t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>
-										,
-										<span t-field="o.partner_id.state_id.name"/>
-										<br/>
-										<strong>
-											Número Teléfono:
-										</strong>
-										<span t-if="'telefono' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['telefono']"/>
-										<br/>
-										<strong>
-											Correo Electrónico:
-										</strong><br/>
-										<span t-if="'correo' in json['sujetoExcluido']" t-esc="json['sujetoExcluido']['correo']"/>
-								</t>
-								<t t-if="'donante' in json">
-										<strong>
-											Nombre o razón social:
-										</strong><br/>
-										<span t-if="'nombre' in json['donante']" t-esc="json['donante']['nombre']"/>
-										<br/>
-										<strong>
-											NIT:
-										</strong>
-										<span t-if="'numDocumento' in json['donante']" t-esc="json['donante']['numDocumento']"/>
-										<br/>
-										<strong>
-											Actividad Económica:
-										</strong><br/>
-										<span t-if="'nombre' in json['donante']" t-esc="json['sujetoExcluido']['descActividad']"/>
-										<br/>
-										<strong>
-											Dirección:
-										</strong><br/>
-										<span t-if="'direccion' in json['donante']" t-esc="json['donante']['direccion']['complemento']"/>
-										,
-										<span t-if="o.partner_id.fe_municipio_id" t-esc="o.partner_id.fe_municipio_id.name.title()"/>
-										,
-										<span t-field="o.partner_id.state_id.name"/>
-										<br/>
-										<strong>
-											Número Teléfono:
-										</strong>
-										<span t-if="'telefono' in json['donante']" t-esc="json['donante']['telefono']"/>
-										<br/>
-										<strong>
-											Correo Electrónico:
-										</strong><br/>
-										<span t-if="'correo' in json['donante']" t-esc="json['donante']['correo']"/>
-								</t>
-							</div>
-							<!-- Variables para totalizar -->
-							<t t-set="sumas" t-value="0"/>
-							<t t-set="ns" t-value="0"/>
-							<t t-set="exento" t-value="0"/>
-							<t t-set="retenido" t-value="0"/>
-							<t t-set="percibido" t-value="0"/>
-							<t t-set="iva" t-value="0"/>
-							<t t-set="subtotal" t-value="0"/>
-							<t t-set="total_op" t-value="0"/>
-							<t t-set="val" t-value="0"/>
-							<t t-set="isr" t-value="0"/>
-							<!-- Lineas de factura -->
-							<div class="row" style="text-align:center;font-size:9px">
-								<div class="col-12">
-									<br/>
-									<table class="table tableborder" style="font-size:9px;border:; border-collapse: collapse;">
-										<t t-set="i" t-value="1"/>
-										
-										<tr>
-										  <td style="width:10%;">Cant.</td>
-										  <td style="width:45%;">Descripcion</td>
-										  <td style="width:15%;">Prec. U.</td>
-										  <td style="width:15%;">Exento</td>
-										  <td style="width:15%;">Gravado</td>
-										</tr>
-										
-										<tr t-foreach="json['cuerpoDocumento']" t-as="l" style="border:solid 1px; border-collapse: collapse;">
-											<td style="text-align: center;">
-												<span t-esc="l['cantidad']"/>
-											</td>
-											<td style="text-align: left;">
-												<span t-esc="l['descripcion']"/>
-											</td>
-											<td style="text-align: right;">
-												<span t-esc="l['precioUni']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-											</td>
-											<td style="text-align: right;">
-												<span t-if="'ventaExenta' in l" t-esc="l['ventaExenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-											</td>
-											<td style="text-align: right;">
-												<span t-esc="l['ventaGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-											</td>
-										</tr>
-									</table>
-								</div>
-							</div>
-							<!-- Totales -->
-							<br/>
-							<table class="table tableborder" style="font-size:9px;width:100%;border-radius: 5px;padding:5px;border:thin solid black;border:solid 1px; border-collapse: collapse;">
-								<tr style="border:solid 1px; border-collapse: collapse;">
-									<td style="text-align: center;" colspan="2">
-										Resumen
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: left;">
-										Suma Total de Operaciones
-									</td>
-									<td style="text-align: right;">
-										<span t-esc="json['resumen']['totalNoSuj']+json['resumen']['totalExenta']+json['resumen']['totalGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-									</td>
-								</tr>
-								<tr t-if="'descuNoSuj' in json['resumen']">
-									<td style="text-align: left;">
-										Monto Global Desc., Rebajas y Otros a Ventas No Sujetas
-									</td>
-									<td style="text-align: right;">
-										<span t-if="'descuNoSuj' in json['resumen']" t-esc="json['resumen']['descuNoSuj']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-										<span t-if="'descuNoSuj' not in json['resumen']" t-esc="'$0.00'"/>
-									</td>
-								</tr>
-								<tr t-if="'descuExenta' in json['resumen']">
-									<td style="text-align: left;">
-										Monto Global Desc., Rebajas y Otros a Ventas Exentas
-									</td>
-									<td style="text-align: right;">
-										<span t-if="'descuExenta' in json['resumen']" t-esc="json['resumen']['descuExenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-										<span t-if="'descuExenta' not in json['resumen']" t-esc="'$0.00'"/>
-									</td>
-								</tr>
-								<tr t-if="'descuGravada' in json['resumen']">
-									<td style="text-align: left;">
-										Monto Global Desc., Rebajas y Otros a Ventas Gravadas
-									</td>
-									<td style="text-align: right;">
-										<span t-if="'descuGravada' in json['resumen']" t-esc="json['resumen']['descuGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-										<span t-if="'descuGravada' not in json['resumen']" t-esc="'$0.00'"/>
-									</td>
-								</tr>
-								<t t-if="'tributos' in json['resumen']">
-									<t t-foreach="json['resumen']['tributos']" t-as="t">
-										<tr>
-											<td>
-												<span t-esc="t['descripcion']"/>
-											</td>
-											<td style="text-align: right;">
-												<span t-esc="t['valor']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-											</td>
-										</tr>
-									</t>
-								</t>
-								<tr t-if="'subTotalVentas' in json['resumen']">
-									<td style="text-align: left;">
-										Sub-Total:
-									</td>
-									<td style="text-align: right;">
-										<span t-esc="json['resumen']['subTotalVentas']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-									</td>
-								</tr>
-								<tr t-if="'ivaPerci1' in json['resumen']">
-									<td style="text-align: left;">
-										IVA Percibido:
-									</td>
-									<td style="text-align: right;">
-										<span t-if="'ivaPerci1' in json['resumen']" t-esc="json['resumen']['ivaPerci1']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-										<span t-if="'ivaPerci1' not in json['resumen']" t-esc="'$0.00'"/>
-									</td>
-								</tr>
-								<tr t-if="'montoTotalOperacion' in json['resumen']">
-									<td style="text-align: left;">
-										IVA Retenido:
-									</td>
-									<td style="text-align: right;">
-										<span t-if="'ivaRete1' in json['resumen']" t-esc="json['resumen']['ivaRete1']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-										<span t-if="'ivaRete1' not in json['resumen']" t-esc="'$0.00'"/>
-									</td>
-								</tr>
-								<tr t-if="'reteRenta' in json['resumen']">
-									<td style="text-align: left;">
-										Retención Renta:
-									</td>
-									<td style="text-align: right;">
-										<span t-if="'reteRenta' in json['resumen']" t-esc="json['resumen']['reteRenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-										<span t-if="'reteRenta' not in json['resumen']" t-esc="'$0.00'"/>
-									</td>
-								</tr>
-								<tr t-if="'montoTotalOperacion' in json['resumen']">
-									<td style="text-align: left;">
-										Monto total de la operacion
-									</td>
-									<td style="text-align: right;">
-										<span t-esc="json['resumen']['montoTotalOperacion']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-									</td>
-								</tr>
-								<tr t-if="'totalPagar' in json['resumen']">
-									<td style="text-align: left;">
-										Total a pagar
-									</td>
-									<td style="text-align: right;">
-										<span t-esc="json['resumen']['totalPagar']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-									</td>
-								</tr>
-							</table>
-							
-							
-							<table class="table" style="font-size:10px;width:100%;border:thin solid white;">
-								<tr>
-									<td style="width:60%;vertical-align: top;">
-										<strong>
-											Valor en letras:
-										</strong>
-										<br/>
-										<span t-esc="json['resumen']['totalLetras']"/>
-										<br/>
-										<t t-if="o.tipo_documento_id.fe_tipo_doc_id.codigo!='04'">
-											<strong>
-												Condición de la operación:
-											</strong>
-											<span t-if="o.invoice_payment_term_id.id==1" t-esc="'Contado'"/>
-											<span t-if="o.invoice_payment_term_id.id!=1" t-esc="'Crédito'"/>
-											<br/>
-										</t>
-										<strong>
-											Observaciones:
-										</strong>
-										<t t-if="'extension' in json and json['extension']">
-											<span t-if="'extension' in json and 'observaciones' in json['extension']" t-esc="json['extension']['observaciones']"/>
-											<br/>
-										</t>
-									</td>
-								</tr>
-							</table>
-							
-							
-							
-							<table style="width:100%;font-size:10px;">
-								<tr>
-									<td style="width:70%">
-										<strong>
-											Responsable por parte del emisor:
-										</strong>
-										<br/>
-										<span t-if="'motivo' in json" t-esc="json['motivo']['nombreResponsable']"/>
-										<br/>
-										<strong>
-											No. Documento:
-										</strong>
-										<br/>
-										<span t-if="'motivo' in json" t-esc="json['motivo']['numDocResponsable']"/>
-										<br/>
-										<strong>
-											Responsable por parte del receptor:
-										</strong>
-										<br/>
-										<span t-if="'motivo' in json" t-esc="json['motivo']['nombreSolicita']"/>
-										<strong>
-											No. Documento:
-										</strong>
-										<br/>
-										<span t-if="'motivo' in json" t-esc="json['motivo']['numDocSolicita']"/>
-									</td>
-								</tr>
-							</table>
-							<br/>
-							<div class="row" style="text-align:center;">
-							  <img t-att-src="'http://5.161.112.151:8089/report/barcode/QR/'+o.dte_qr" style="height:80px; width:80px;" alt="QR Code"/>
-							</div>
-							
-							<div class="row" style="text-align:center;">
-							  <br/>
-							  <br/>
-							  <br/>
-							  <br/>
-							  F.____________________________________________
-							</div>
-							
-							
-						</div>
-					</t>
-   
-				</t>
+
+
+
+    <t t-call="web.internal_layout">
+    <t t-foreach="docs" t-as="o">
+       <t t-set="lang" t-value="o.invoice_user_id.sudo().lang if o.move_type in ('in_invoice', 'in_refund') else o.partner_id.lang"/>
+         <t t-set="o" t-value="o.with_context(lang=lang)"/>
+          <div class="page" style="font-family: monospace;width:210px;max-width:210px;min-width:210px;font-size:9px;text-align:left;">
+            
+            <style type="text/css">
+             .tableborder td{
+                border-collapse: collapse;
+                border:thin solid white;
+                padding:0px;
+                margin:0px;
+              }
+              .tableborder tr{
+                padding:0px;
+                margin:0px;
+              }
+
+            </style>
+          <t t-set="json" t-value="o.get_json()"/>
+          
+          <div class="row">
+            <div class="container" style="text-align:center">
+              <span><b>DOCUMENTO TRIBUTARIO ELECTRONICO</b></span>
+              <br/>
+              <b><span t-field="o.tipo_documento_id.fe_tipo_doc_id.name"/></b>
+            </div>
+          </div>
+          
+          <!--div class="row">
+            <img t-att-src="'http://vidaysalud.etgcorporate.com/report/barcode/QR/'+o.dte_qr" style="height:120px; width:120px;" alt="QR Code"/>
+          </div-->
+          <div class="row">
+            <strong>Cód. Gen.:  </strong><span t-field="o.uuid"/><br/>
+            <strong>Núm Cont.:  </strong><span t-field="o.control"/><br/>
+            <strong>Sello:  </strong><span t-field="o.sello"/>
+          </div>
+          <div class="row">
+            <strong/><span t-field="o.company_id.fe_modelo_facturacion_id.name"/><br/>
+            <strong/><span t-esc="json['identificacion']['fecEmi']"/><span t-esc="'  '"/><span t-esc="json['identificacion']['horEmi']"/>
+          </div>
+          <div class="row">
+            <strong>Emisor</strong><br/>
+            <strong/><span t-esc="json['emisor']['nombre']"/><br/>
+            <strong/><span t-esc="json['emisor']['nit']"/><br/>
+            <strong/><span t-esc="json['emisor']['nrc']"/><br/>
+            <strong/><span t-esc="json['emisor']['descActividad']"/><br/>
+            <strong/><span t-esc="json['emisor']['direccion']['complemento']"/>,<span t-field="o.company_id.partner_id.fe_municipio_id.name"/>,<span t-field="o.company_id.partner_id.state_id.name"/><br/>
+            <strong/><span t-esc="json['emisor']['telefono']"/><br/>
+            <strong/><span t-esc="json['emisor']['correo']"/>
+          </div>
+          <div class="row" t-if="o.partner_id.nit!='NA'">
+            <strong>Receptor</strong><br/>
+            <strong/><span t-if="'nombre' in json['receptor']" t-esc="json['receptor']['nombre']"/><br/>
+            <img t-att-src="'http://vidaysalud.etgcorporate.com/report/barcode/QR/'+o.dte_qr" style="height:120px; width:120px;" alt="QR Code"/>
+          </div>
+          
+           <!--Variables para totalizar-->
+           <t t-set="sumas" t-value="0"/>
+           <t t-set="ns" t-value="0"/>
+           <t t-set="exento" t-value="0"/>
+           <t t-set="retenido" t-value="0"/>
+           <t t-set="percibido" t-value="0"/>
+           <t t-set="iva" t-value="0"/>
+           <t t-set="subtotal" t-value="0"/>
+           <t t-set="total_op" t-value="0"/>
+           <t t-set="val" t-value="0"/>
+           <t t-set="isr" t-value="0"/>
+           <!--Lineas de factura-->
+           <div class="row" style="text-align:center;font-size:11px">
+             <div class="col-12">
+               <br/>
+               <table class="table tableborder" style="font-size:10px;border:solid 1px; border-collapse: collapse;">
+                 
+                 <t t-set="i" t-value="1"/>
+                 <tr t-foreach="json['cuerpoDocumento']" t-as="l" style="border:solid 1px; border-collapse: collapse;">
+                   <td style="text-align: center;"><span t-esc="l['cantidad']"/></td>
+                   <td style="text-align: left;"><span t-esc="l['descripcion']"/></td>
+                   <td style="text-align: right;"><span t-esc="l['precioUni']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                   <td style="text-align: right;"><span t-if="'ventaExenta' in l" t-esc="l['ventaExenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                   <td style="text-align: right;"><span t-esc="l['ventaGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+
+                 </tr>
+                 
+               </table>
+             </div>
+           </div>
+           
+           <!--Totales-->
+           <br/>
+           
+
+           
+           <table class="table tableborder" style="font-size:9px;width:100%;border-radius: 5px;padding:0px;border:thin solid black;border:solid 1px; border-collapse: collapse;">
+                  <tr style="border:solid 1px; border-collapse: collapse;">
+                    <td style="text-align: center;background-color:ccc;" colspan="2">Resumen</td>
+                  </tr>
+
+                  <tr>
+                    <td style="text-align: left;">Suma Total de Operaciones</td>
+                    <td style="text-align: right;">
+                      <span t-esc="json['resumen']['totalNoSuj']+json['resumen']['totalExenta']+json['resumen']['totalGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                    </td>
+                  </tr>
+
+
+                  <tr>
+                    <td style="text-align: left;"> Monto Global Desc., Rebajas y Otros a Ventas No Sujetas</td>
+                    <td style="text-align: right;">
+                      <span t-if="'descuNoSuj' in json['resumen']" t-esc="json['resumen']['descuNoSuj']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      <span t-if="'descuNoSuj' not in json['resumen']" t-esc="'$0.00'"/>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="text-align: left;"> Monto Global Desc., Rebajas y Otros a Ventas Exentas</td>
+                    <td style="text-align: right;">
+                      <span t-if="'descuExenta' in json['resumen']" t-esc="json['resumen']['descuExenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      <span t-if="'descuExenta' not in json['resumen']" t-esc="'$0.00'"/>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="text-align: left;"> Monto Global Desc., Rebajas y Otros a Ventas Gravadas</td>
+                    <td style="text-align: right;">
+                      <span t-if="'descuGravada' in json['resumen']" t-esc="json['resumen']['descuGravada']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      <span t-if="'descuGravada' not in json['resumen']" t-esc="'$0.00'"/>
+                    </td>
+                  </tr>
+                  
+                 
+                  
+                  
+              
+                    <t t-if="'totalIva' in json['resumen']">
+                    <!--tr>
+                      <td>Impuesto al Valor Agregado 13%</td>
+                      <td style="text-align: right;"><span t-if="'totalIva' in json['resumen']" t-esc="json['resumen']['totalIva']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                    </tr-->
+                    </t>
+                    <t t-if="'tributos' in json['resumen']">
+                      <t t-foreach="json['resumen']['tributos']" t-as="t">
+                      <tr>
+                        <td><span t-esc="t['descripcion']"/></td>
+                        <td style="text-align: right;"><span t-esc="t['valor']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                      </tr>
+                      </t>
+                    </t>
+
+                   <tr t-if="'subTotalVentas' in json['resumen']">
+                    <td style="text-align: left;">Sub-Total:</td>
+                    <td style="text-align: right;">
+                      <span t-esc="json['resumen']['subTotalVentas']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                    </td>
+                  </tr>
+
+                   <tr>
+                    <td style="text-align: left;"> IVA Percibido:</td>
+                    <td style="text-align: right;">
+                      <span t-if="'ivaPerci1' in json['resumen']" t-esc="json['resumen']['ivaPerci1']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      <span t-if="'ivaPerci1' not in json['resumen']" t-esc="'$0.00'"/>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="text-align: left;"> IVA Retenido:</td>
+                    <td style="text-align: right;">
+                      <span t-if="'ivaRete1' in json['resumen']" t-esc="json['resumen']['ivaRete1']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      <span t-if="'ivaRete1' not in json['resumen']" t-esc="'$0.00'"/>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="text-align: left;"> Retención Renta:</td>
+                    <td style="text-align: right;">
+                      <span t-if="'reteRenta' in json['resumen']" t-esc="json['resumen']['reteRenta']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      <span t-if="'reteRenta' not in json['resumen']" t-esc="'$0.00'"/>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="text-align: left;">Monto total de la operacion</td>
+                    <td style="text-align: right;">
+                      <span t-esc="json['resumen']['montoTotalOperacion']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left;">Total a pagar</td>
+                    <td style="text-align: right;">
+                      <span t-esc="json['resumen']['totalPagar']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                      </td>
+                    </tr>
+                </table>
+                
+                
+            
+         </div>
+         </t>
+       </t>
+
+
+
+  </t>
 </template>
 
 

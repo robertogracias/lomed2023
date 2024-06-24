@@ -214,8 +214,8 @@ class sv_fe_contingencia(models.Model):
             f.dte_estado=respuesta['estado']
             if respuesta['estado']=='RECIBIDO':
                 f.sello=respuesta['selloRecibido']
-            else:
-                f.dte_error=respuesta['observaciones']
+            #else:
+            #    f.dte_error=respuesta['observaciones']
             #raise UserError(result.text)
         #raise UserError(result.text)
 
@@ -926,7 +926,8 @@ class sv_fe_move(models.Model):
                     receptor['nrc']=None
                 elif f.partner_id.dui:
                     receptor['tipoDocumento']='13'
-                    receptor['numDocumento']=f.partner_id.dui.replace('-','')
+                    receptor['numDocumento']=f.partner_id.dui
+                    receptor['nrc']=None
                     if f.partner_id.nrc:
                         receptor['nrc']=f.partner_id.nrc
                 else:
@@ -945,6 +946,8 @@ class sv_fe_move(models.Model):
             receptor['direccion']=f.get_direccion_fact(f.partner_id)
             if f.partner_id.phone:
                 receptor['telefono']=f.partner_id.phone
+            else:
+                receptor['telefono']=None
             if f.partner_id.email:
                 receptor['correo']=f.partner_id.email
             else:
