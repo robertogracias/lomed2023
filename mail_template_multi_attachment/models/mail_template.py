@@ -66,7 +66,7 @@ class MailTemplate(models.Model):
                 result = base64.b64encode(result)
                 if not report_name:
                     report_name = "report." + report_service
-                ext = "." + report_format
+                ext = "." + ('json' if report_format=='text' else report_format)
                 if not report_name.endswith(ext):
                     report_name += ext
                 attachments.append((report_name, result))
