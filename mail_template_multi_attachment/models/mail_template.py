@@ -46,9 +46,9 @@ class MailTemplate(models.Model):
                 report_service = report.report_name
 
                 if report.report_type in ["qweb-html", "qweb-pdf"]:
-                    result, report_format = report._render_qweb_pdf(report.id,[res_id])
+                    result, report_format = report._render_qweb_pdf([res_id])
                 else:
-                    res = report._render(report.id,[res_id])
+                    res = report._render([res_id])
                     if not res:
                         raise exceptions.UserError(
                             _("Unsupported report type %s found.") % report.report_type
