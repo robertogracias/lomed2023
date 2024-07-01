@@ -3,6 +3,7 @@
 import base64
 
 from odoo import _, exceptions, fields, models
+from odoo.tools.safe_eval import safe_eval, time
 
 
 class MailTemplate(models.Model):
@@ -14,7 +15,7 @@ class MailTemplate(models.Model):
     )
 
     # pylint: disable=redefined-outer-name
-    def generate_email(self, res_ids, fields):
+    def generate_email(self, res_ids, fields=None):
         """
         Inherit to generate attachments.
         Inspired from original mail.template,generate_email(...) from Odoo.
@@ -39,16 +40,24 @@ class MailTemplate(models.Model):
         for res_id, values in results.items():
             attachments = values.setdefault("attachments", [])
             for template_report in self.template_report_ids:
-                report_name = self._render_template(
-                    template_report.report_name, template_report.model, [res_id]
-                )[res_id]
                 report = template_report.report_template_id
+                print_report_name = (
+                    template_report.report_name or report.print_report_name
+                )
+                report_name = False
+                if print_report_name:
+                    report_name = safe_eval(
+                        print_report_name,
+                        {"object": self.env[self.model].browse(res_id), "time": time},
+                    )
                 report_service = report.report_name
 
                 if report.report_type in ["qweb-html", "qweb-pdf"]:
-                    result, report_format = report._render_qweb_pdf([res_id])
+                    result, report_format = report._render_qweb_pdf(
+                        report, res_ids=[res_id]
+                    )
                 else:
-                    res = report._render([res_id])
+                    res = report._render(report, res_ids=[res_id])
                     if not res:
                         raise exceptions.UserError(
                             _("Unsupported report type %s found.") % report.report_type
@@ -57,7 +66,7 @@ class MailTemplate(models.Model):
                 result = base64.b64encode(result)
                 if not report_name:
                     report_name = "report." + report_service
-                ext = "." + ('json' if report_format=='text' else report_format)
+                ext = "." + report_format
                 if not report_name.endswith(ext):
                     report_name += ext
                 attachments.append((report_name, result))
