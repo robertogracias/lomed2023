@@ -996,7 +996,7 @@ class sv_fe_move(models.Model):
         incluido=False
         descuento_global=0.0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
+            if l.price_total>=0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -1256,7 +1256,7 @@ class sv_fe_move(models.Model):
         i=1
         descuento_global=0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
+            if l.price_total>=0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -1402,7 +1402,7 @@ class sv_fe_move(models.Model):
         resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
-            if l.price_total>0:
+            if l.price_total>=0:
                 for t in l.tax_ids:
                     if t.fe_tributo_id:
                         if  t.fe_tributo_id.codigo!='0':
@@ -1777,7 +1777,7 @@ class sv_fe_move(models.Model):
         i=1
         descuento_global=0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
+            if l.price_total>=0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -2482,7 +2482,7 @@ class sv_fe_move(models.Model):
         lista=[]
         i=1
         for l in f.invoice_line_ids:
-            if l.price_total>0:
+            if l.price_total>=0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -2915,7 +2915,7 @@ class sv_fe_move(models.Model):
         incluido=False
         descuento_global=0.0
         for l in f.invoice_line_ids:
-            if l.price_total>0:
+            if l.price_total>=0:
                 dic={}
                 dic['numItem']=i
                 #if l.product_id and l.product_id.fe_tipo_item_id:
