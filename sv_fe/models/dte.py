@@ -1946,7 +1946,7 @@ class sv_fe_move(models.Model):
         resumen['ivaPerci1']=round(f.percepcion*-1,2)
         resumen['ivaRete1']=round(f.retencion*-1,2)
         resumen['reteRenta']=round(f.isr,2)
-        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
+        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva+f.retencion,2)
         #resumen['totalNoGravado']=0
         #resumen['totalPagar']=round(resumen['montoTotalOperacion'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['montoTotalOperacion'],2))
