@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acces_planilla_lomed_report,acces.planilla.lomed.report,model_planilla_lomed_report,base.group_user,1,1,1,1
+

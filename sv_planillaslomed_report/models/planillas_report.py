@@ -12,7 +12,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class PlanillaReport(models.TransientModel):
-	_inherit = 'hr.payslip.run'
+	_name = 'planilla.lomed.report'
 		
 	# BRANCH
 	def print_planillas_report(self):

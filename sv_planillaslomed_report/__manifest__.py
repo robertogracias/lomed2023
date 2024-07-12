@@ -16,7 +16,8 @@
 	'depends': ['hr_payroll', 'hr', 'hr_attendance', 'hr_contract', 'hr_expense', 'sv_rrhh'],
 	'external_dependencies': {},
 	'data': [
-		'views/planillas_report_view.xml'
+		'views/planillas_report_view.xml',
+		'security/ir.model.access.csv'
 
 	],
 	
