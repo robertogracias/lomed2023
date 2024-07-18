@@ -772,8 +772,8 @@ class sv_fe_move(models.Model):
                 dic['tipoDocumento']='13'
                 dic['numDocumento']=f.partner_id.dui.replace('-','')
             else:
-                dic['tipoDocumento']=''
-                dic['numDocumento']=''
+                dic['tipoDocumento']=None
+                dic['numDocumento']=None
         dic['nombre']=f.partner_id.name
         dic['telefono']=f.partner_id.phone
         dic['correo']=f.partner_id.email
