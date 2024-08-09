@@ -758,7 +758,7 @@ class sv_fe_move(models.Model):
         dic['selloRecibido']=f.sello
         dic['numeroControl']=f.control
         dic['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        dic['montoIva']=round(f.iva,2)
+        dic['montoIva']=round(abs(f.iva),2)
         dic['codigoGeneracionR']=None
         if f.partner_id.nrc and f.partner_id.nrc=='NA' or f.tipo_documento_id.fe_tipo_doc_id.codigo == '11':
                 if  f.tipo_documento_id.fe_tipo_doc_id.codigo == '11':
