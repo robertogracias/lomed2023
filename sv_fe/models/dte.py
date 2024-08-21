@@ -1154,11 +1154,11 @@ class sv_fe_move(models.Model):
                     price_unit_notax=round((l.price_subtotal/valor_con_descuento)/l.quantity,8) 
                     f.retencion+=round(((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)),8) if t.tax_group_id.code=='retencion' else 0
                 if iva or retencion or persepcion:
-                    f.gravadas_des+=(l.price_total*-1)
+                    f.gravadas_des+=((l.price_unit*l.quantity)*-1)
                 elif exento:
-                    f.exentas_des+=(l.price_total*-1)
+                    f.exentas_des+=((l.price_unit*l.quantity)*-1)
                 elif nosujeto:
-                    f.nosujetas_des+=(l.price_total*-1)
+                    f.nosujetas_des+=((l.price_unit*l.quantity)*-1)
                 iva=False
                 ivap=0
                 exento=True
