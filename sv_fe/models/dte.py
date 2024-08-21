@@ -1149,6 +1149,9 @@ class sv_fe_move(models.Model):
                     retencion=True if t.tax_group_id.code=='retencion' else retencion
                     if iva:
                         incluido=t.price_include
+                    descuento=l.discount/100
+                    valor_con_descuento=1-descuento
+                    price_unit_notax=round((l.price_subtotal/valor_con_descuento)/l.quantity,8) 
                     f.retencion+=round(((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)),8) if t.tax_group_id.code=='retencion' else 0
                 if iva or retencion or persepcion:
                     f.gravadas_des+=(l.price_total*-1)
