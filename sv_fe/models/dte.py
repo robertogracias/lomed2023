@@ -93,7 +93,7 @@ def convierte_cifra(numero,sw):
             texto_decena = texto_decena[0]
     #Validar las unidades
     #print "texto_unidad: ",texto_unidad
-    if decena != 1:
+    if decena != 1 and decena != 2:
         texto_unidad = lista_unidad[unidad]
         if unidad == 1:
             texto_unidad = texto_unidad[sw]
@@ -312,6 +312,10 @@ class sv_fe_donacion_doc(models.Model):
     fe_doc_asociado_id=fields.Many2one(comodel_name='sv_fe.docasociado',string="Documento Asociado")
     move_id=fields.Many2one(comodel_name='account.move',string='Factura')
        
+class sv_fe_moveline(models.Model):
+    _inherit='account.move.line'
+    depreciacion=fields.Float("Depreciacion")
+    tipo_donacion=fields.Many2one(comodel_name='sv_fe.donacion',string='Tipo de Donacion')
 
 
 class sv_fe_move(models.Model):
@@ -366,6 +370,9 @@ class sv_fe_move(models.Model):
     reversion_responsable_doc=fields.Char("Doc del Responsable",copy=False)
     reversion_solicita=fields.Char("Nombre solicitante",copy=False)
     reversion_solicita_tipo=fields.Char("Tipo Doc solicitante",copy=False)
+    reversion_razon_id=fields.Many2one(comodel_name='sv_fe.validacion',string='Razon de invalidacion')
+    reversion_doc_relacionado=fields.Many2one(comodel_name='account.move',string='Documento relacionado',copy=False)
+
     
     reversion_solicita_doc=fields.Char("Doc solicitante",copy=False)
     sv_fe_tipo_itemexpor_id=fields.Many2one(comodel_name='sv_fe.tipo_item', string='Tipo item Exportacion')
@@ -514,13 +521,19 @@ class sv_fe_move(models.Model):
         f.proforma=False
         #raise UserError(str(contingencia))
         if f.sello:
-            raise UserError('EL DTE YA FUE TRANSMITIDO')
+            print('El documento ya tiene sello')
+            if f.reversion_sello:
+                f.dte_estado='INVALIDADO'
+            else:
+                f.dte_estado='PROCESADO'
+            return
         if not contingencia:
             f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_1').id
             f.fe_ambiente_id=f.company_id.fe_ambiente_id.id
         else:
             f.fe_transmision_id=self.env.ref('sv_fe.svfe_transmision_2').id
             f.contingencia=contingencia.id
+            #raise UserError("entro")
 
         #generando el dte
         #dte=str(f.get_factura())
@@ -572,14 +585,25 @@ class sv_fe_move(models.Model):
         f.doc_json=json_datos_cliente
         #raise UserError(json_datos)
         self.env.cr.savepoint()
-        result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
-        respuesta=json.loads(result.text)
+        respuesta={'status':False}
+        try:
+            result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
+            respuesta=json.loads(result.text)
+        except:
+            f.dte_error='EL FIRMADOR NO ESTA EN LINEA'
+            f.dte_estado='POR TRANSMITIR'
         #raise UserError(result.text)
         if respuesta['status']=="OK":
             body=respuesta["body"]
             f.doc_firmado=body
             encabezado={}
-            encabezado['Authorization']=f.company_id.fe_ambiente_id.get_token()
+            token=f.company_id.fe_ambiente_id.get_token()
+            if token=='NOMH':
+                f.dte_error='EL MH NO ESTA EN LINEA'
+                f.dte_estado='POR TRANSMITIR'
+                return
+            encabezado['Authorization']=token
+            #encabezado['Authorization']=f.company_id.fe_ambiente_id.get_token()
             encabezado['User-Agent']="Odoo/16"
             encabezado['content-type']="application/JSON"
             dic={}
@@ -602,7 +626,8 @@ class sv_fe_move(models.Model):
             try:
                 result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/recepciondte',data=json_datos, headers=encabezado)
             except:
-                raise UserError('EL SITIO DEL MH NO ESTA EN LINEA')
+                f.dte_error='EL SITIO DEL MH NO ESTA EN LINEA'
+                f.dte_estado='POR TRANSMITIR'
             print(str(result))
             f.doc_respuesta=result.text
             try:
@@ -612,6 +637,7 @@ class sv_fe_move(models.Model):
                     f.sello=respuesta['selloRecibido']
                 else:
                     f.dte_error=(str(respuesta['observaciones'])+'-'+str(respuesta['descripcionMsg']))
+                f.get_motivo_reve()
             except:
                 print('Error')
             #raise UserError(result.text)
@@ -625,13 +651,15 @@ class sv_fe_move(models.Model):
         firma['nit']=f.company_id.partner_id.nit.replace('-','')
         firma['passwordPri']=f.company_id.fe_ambiente_id.llave_privada
         firma['dteJson']=f.get_reversion()       
-        f.reversion_json=firma['dteJson']
+        
         encabezado = {"content-type": "application/JSON","User-Agent":"Odoo/16"}
         json_datos = json.dumps(firma)
         json_datos=json_datos.replace('None','null')
         json_datos=json_datos.replace('False','null')
+        json_datos=json_datos.replace('false','null')
         #raise UserError(json_datos)
         result = requests.post(f.company_id.fe_ambiente_id.firmador,data=json_datos, headers=encabezado)
+        f.reversion_json=json_datos
         respuesta=json.loads(result.text)
         #raise UserError(result.text)
         if respuesta['status']=="OK":
@@ -650,6 +678,7 @@ class sv_fe_move(models.Model):
             json_datos = json.dumps(dic)
             json_datos=json_datos.replace('None','null')
             json_datos=json_datos.replace('False','null')
+            json_datos=json_datos.replace('false','null')
             print('---------------------------------------------------------------------------------------------------------')
             print(str(encabezado))
             print('------------------------------')
@@ -659,7 +688,8 @@ class sv_fe_move(models.Model):
             try:
                 result=requests.post(f.company_id.fe_ambiente_id.url+'/fesv/anulardte',data=json_datos, headers=encabezado)
             except:
-                raise UserError('EL SITIO DEL MH NO ESTA EN LINEA')
+                f.dte_error='EL SITIO DEL MH NO ESTA EN LINEA'
+                f.dte_estado='POR TRANSMITIR'
             print(str(result))
             f.reversion_respuesta=result.text
             try:
@@ -667,6 +697,8 @@ class sv_fe_move(models.Model):
                 if respuesta['estado']=='PROCESADO':
                     f.dte_estado='INVALIDADO'
                     f.reversion_sello=respuesta['selloRecibido']
+                    f.state='draft'
+                    f.button_cancel()
             except:
                 print('Error')
         else:
@@ -701,10 +733,10 @@ class sv_fe_move(models.Model):
         emisor['nomEstablecimiento']=f.company_id.name
         emisor['telefono']=f.company_id.partner_id.phone
         emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
+        emisor['codEstableMH']=f.tipo_documento_id.cod_estable_mh if f.tipo_documento_id.cod_estable_mh else None
+        emisor['codEstable']=f.tipo_documento_id.cod_stable if f.tipo_documento_id.cod_stable else None
+        emisor['codPuntoVentaMH']=f.tipo_documento_id.cod_punto_venta_mh if f.tipo_documento_id.cod_punto_venta_mh else None
+        emisor['codPuntoVenta']=f.tipo_documento_id.cod_punto_venta if f.tipo_documento_id.cod_punto_venta else None
         return emisor
 
     def get_identificacion_reve(self):        
@@ -724,7 +756,7 @@ class sv_fe_move(models.Model):
     def get_receptor_reve(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             if f.partner_id.nrc and f.partner_id.nrc=='NA':
                 receptor['tipoDocumento']='37'
@@ -758,8 +790,12 @@ class sv_fe_move(models.Model):
         dic['selloRecibido']=f.sello
         dic['numeroControl']=f.control
         dic['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
-        dic['montoIva']=round(abs(f.iva),2)
-        dic['codigoGeneracionR']=None
+        dic['montoIva']=round(f.iva,2)
+        if f.reversion_doc_relacionado:
+            dic['codigoGeneracionR']=f.reversion_doc_relacionado.uuid
+        else:
+            dic['codigoGeneracionR']=None
+            
         if f.partner_id.nrc and f.partner_id.nrc=='NA' or f.tipo_documento_id.fe_tipo_doc_id.codigo == '11':
                 if  f.tipo_documento_id.fe_tipo_doc_id.codigo == '11':
                     dic['tipoDocumento']='37'
@@ -775,7 +811,9 @@ class sv_fe_move(models.Model):
                 dic['tipoDocumento']=None
                 dic['numDocumento']=None
         dic['nombre']=f.partner_id.name
+        #if f.partner_id.phone:
         dic['telefono']=f.partner_id.phone
+        #if f.partner_id.email:
         dic['correo']=f.partner_id.email
         
         return dic
@@ -804,16 +842,20 @@ class sv_fe_move(models.Model):
                 elif f.partner_id.nit:
                     f.reversion_solicita_tipo_id=self.env.ref('sv_fe.svfe_doc_identificacion_1').id
                     f.reversion_solicita_doc=f.partner_id.nit
+                else:
+                    f.reversion_solicita_tipo_id=self.env.ref('sv_fe.svfe_doc_identificacion_1').id
+                    f.reversion_solicita_doc='0000-000000-000-0'
 
-
-        dic['tipoAnulacion']=2
+        if not f.reversion_razon_id:
+            raise UserError("Falta especificar el tipo de reversion")
+        dic['tipoAnulacion']=int(f.reversion_razon_id)
         dic['motivoAnulacion']=f.reversion_motivo
         dic['nombreResponsable']=f.reversion_responsable 
         dic['tipDocResponsable']=f.reversion_responsable_tipo_id.codigo 
         dic['numDocResponsable']=f.reversion_responsable_doc.replace('-','') if f.reversion_responsable_doc != False else None 
         dic['nombreSolicita']=f.reversion_solicita
-        dic['tipDocSolicita']=f.reversion_solicita_tipo_id.codigo
-        dic['numDocSolicita']=f.reversion_solicita_doc.replace('-','') if f.reversion_solicita_doc != False else None
+        dic['tipDocSolicita']=f.reversion_solicita_tipo_id.codigo if f.reversion_solicita_tipo_id.codigo else None
+        dic['numDocSolicita']=f.reversion_solicita_doc.replace('-','') if f.reversion_solicita_doc else None
         return dic
 
     def get_resumen_reve(self):
@@ -897,11 +939,12 @@ class sv_fe_move(models.Model):
         identificacion['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
         identificacion['numeroControl']=f.control
         identificacion['codigoGeneracion']=f.uuid
-        identificacion['tipoModelo']=1
-        identificacion['tipoOperacion']=1
+        identificacion['tipoModelo']=1 if not f.contingencia else 2
+        identificacion['tipoOperacion']=1 if not f.contingencia else 2
         identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
-        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        identificacion['motivoContin']=None if not f.contingencia else f.contingencia.motivo
         if not f.proforma:
+            #if not f.contingencia:
             identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
             identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
         else:
@@ -913,7 +956,7 @@ class sv_fe_move(models.Model):
     def get_receptor_fact(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             if f.partner_id.nrc and f.partner_id.nrc=='NA':
                 receptor['tipoDocumento']='37'
@@ -996,7 +1039,7 @@ class sv_fe_move(models.Model):
         incluido=False
         descuento_global=0.0
         for l in f.invoice_line_ids:
-            if l.price_total>=0:
+            if l.price_total>0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -1012,7 +1055,7 @@ class sv_fe_move(models.Model):
                 else:
                     dic['uniMedida']=59
                 dic['descripcion']=l.name
-                dic['precioUni']=round(l.price_unit,2)
+                dic['precioUni']=round(l.price_unit,6)
                 
                 descuento=l.discount/100
                 valor_con_descuento=1-descuento
@@ -1030,33 +1073,33 @@ class sv_fe_move(models.Model):
                 tributos=[]
                 price_unit=l.price_unit
                 for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-((l.price_unit*valor_con_descuento)/(1+ivap))
-                        #raise UserError(str(ivaitem)+" price_unit:"+str(l.price_unit)+" valor descuento:"+str(valor_con_descuento)+"  ivap:"+str(ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
-
-                    f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
-                    f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
-                    f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
+                    if t.price_include:
+                        if t.tax_group_id.code=='iva':
+                            ivap+=t.amount/100
+                price_unit=round(l.price_unit,8)
+                price_unit_notax=round((l.price_subtotal/valor_con_descuento)/l.quantity,8)           
+                ivaitem=round(price_unit_notax*valor_con_descuento*ivap,8)
+                #raise UserError(str(price_unit_notax))
+                otros_impuestos=False
+                for t in l.tax_ids:
+                    iva=True if t.tax_group_id.code=='iva' else iva                  
+                    exento=True if t.tax_group_id.code=='exento' else exento
+                    nosujeto=True if t.tax_group_id.code=='nosujeto' else nosujeto
+                    retencion=True if t.tax_group_id.code=='retencion' else retencion
+                    persepcion=True if t.tax_group_id.code=='persepcion' else persepcion
+                    isr=True if t.tax_group_id.code=='isr' else isr
+                    f.retencion+=round(((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)),8) if t.tax_group_id.code=='retencion' else 0
+                    f.percepcion+=round(((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)),8) if t.tax_group_id.code=='persepcion' else 0
+                    f.isr+=round(((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)),8) if t.tax_group_id.code=='isr' else 0
                     if t.fe_tributo_id:
                         if  t.fe_tributo_id.codigo!='20':
                             tributos.append(t.fe_tributo_id.codigo)
-                dic['precioUni']=round(price_unit,6)
+                            otros_impuestos=True
+                if otros_impuestos:
+                    price_unit=(price_unit_notax)+ivaitem
+                else:
+                    price_unit=round(l.price_unit,8)
+                dic['precioUni']=round(price_unit,8)
                 if iva or retencion or persepcion:
                     dic['ventaNoSuj']=0
                     dic['ventaExenta']=0
@@ -1141,20 +1184,35 @@ class sv_fe_move(models.Model):
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
         resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
-        resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
+        resumen['porcentajeDescuento']=round((resumen['totalDescu']/(resumen['subTotalVentas']+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des))*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
             for t in l.tax_ids:
                 if t.fe_tributo_id:
                     if  t.fe_tributo_id.codigo!='20':
-                        if not t.fe_tributo_id.codigo in tributos:
-                            tributos.append(t.fe_tributo_id.codigo)
-
-        resumen['tributos']=tributos
+                        if not t.id in tributos:
+                            tributos.append(t.id)
+        if len(tributos)>0:
+            tributosmh=[]
+            for t in tributos:
+                tmh={}
+                tax=self.env['account.tax'].browse(t)
+                tmh['codigo']=tax.fe_tributo_id.codigo
+                tmh['descripcion']=tax.fe_tributo_id.name
+                valor=0
+                for l in f.line_ids:
+                   if l.tax_line_id and l.tax_line_id.id==t:
+                      valor=l.credit-l.debit if l.credit>l.debit else l.debit-l.credit
+                tmh['valor']=round(valor,2)
+                impuestos+=round(valor,2)
+                tributosmh.append(tmh)
+            resumen['tributos']=tributosmh
+        else:
+            resumen['tributos']=None
         resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
         #resumen['subTotal']=round(resumen['subTotalVentas'],2)
-        resumen['ivaRete1']=round(f.retencion*-1,2)
-        resumen['reteRenta']=round(f.isr*-1,2)
+        resumen['ivaRete1']=round(abs(f.retencion),2)
+        resumen['reteRenta']=round(abs(f.isr),2)
         resumen['montoTotalOperacion']=round(resumen['subTotal'],2)
         resumen['totalNoGravado']=0
         resumen['totalPagar']=round(resumen['montoTotalOperacion']-resumen['ivaRete1']-resumen['reteRenta'],2)
@@ -1203,10 +1261,10 @@ class sv_fe_move(models.Model):
         identificacion['tipoDte']=f.tipo_documento_id.fe_tipo_doc_id.codigo
         identificacion['numeroControl']=f.control
         identificacion['codigoGeneracion']=f.uuid
-        identificacion['tipoModelo']=1
-        identificacion['tipoOperacion']=1
+        identificacion['tipoModelo']=1 if not f.contingencia else 2
+        identificacion['tipoOperacion']=1  if not f.contingencia else 2
         identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
-        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        identificacion['motivoContin']=None if not f.contingencia else f.contingencia.motivo
         if not f.proforma:
             identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
             identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
@@ -1219,7 +1277,7 @@ class sv_fe_move(models.Model):
     def get_receptor_ccf(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             receptor['nit']=f.partner_id.nit.replace('-','')
             receptor['nrc']=f.partner_id.nrc.replace('-','')
@@ -1256,7 +1314,7 @@ class sv_fe_move(models.Model):
         i=1
         descuento_global=0
         for l in f.invoice_line_ids:
-            if l.price_total>=0:
+            if l.price_total>0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -1285,26 +1343,23 @@ class sv_fe_move(models.Model):
                 retencion=False
                 persepcion=False
                 isr=False
+                incluido=False
+                for t in l.tax_ids:
+                    if t.price_include:
+                        if t.tax_group_id.code=='iva':
+                            ivap+=t.amount/100
+                price_unit=l.price_unit
+                price_unit_notax=round((l.price_subtotal/valor_con_descuento)/l.quantity,8)
                 tributos=[]
                 for t in l.tax_ids:
                     iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=l.price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
+                    if t.tax_group_id.code=='iva':
+                        iva=True 
+                    exento=True if t.tax_group_id.code=='exento' else exento
+                    nosujeto=True if t.tax_group_id.code=='nosujeto' else nosujeto
+                    retencion=True if t.tax_group_id.code=='retencion' else retencion
+                    persepcion=True if t.tax_group_id.code=='persepcion' else persepcion
+                    isr=True if t.tax_group_id.code=='isr' else isr
 
                     f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
                     f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
@@ -1399,10 +1454,10 @@ class sv_fe_move(models.Model):
         resumen['descuExenta']=round(f.exentas_des,2)
         resumen['descuGravada']=round(f.gravadas_des,2)
         resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des,2)
-        resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['subTotalVentas'])*100,2)
+        resumen['porcentajeDescuento']=round((resumen['totalDescu']/(resumen['subTotalVentas']+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des))*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
-            if l.price_total>=0:
+            if l.price_total>0:
                 for t in l.tax_ids:
                     if t.fe_tributo_id:
                         if  t.fe_tributo_id.codigo!='0':
@@ -1425,13 +1480,22 @@ class sv_fe_move(models.Model):
         else:
             resumen['tributos']=None
         resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
-        resumen['ivaPerci1']=round(f.percepcion*-1,2)
-        resumen['ivaRete1']=round(f.retencion*-1,2)
-        resumen['reteRenta']=round(f.isr,2)
-        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
-        resumen['totalNoGravado']=0
-        resumen['totalPagar']=round(resumen['montoTotalOperacion']-resumen['ivaRete1']-resumen['reteRenta'],2)
-        resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
+        if f.move_type=='out_invoice' or f.move_type=='out_refund':
+            resumen['ivaPerci1']=round(abs(f.percepcion),2)
+            resumen['ivaRete1']=round(abs(f.retencion),2)
+            resumen['reteRenta']=round(f.isr,2)
+            resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
+            resumen['totalNoGravado']=0
+            resumen['totalPagar']=round(resumen['montoTotalOperacion']+resumen['ivaPerci1']-resumen['ivaRete1'],2)
+            resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
+        if f.move_type=='in_invoice' or f.move_type=='in_refund':
+            resumen['ivaPerci1']=round(abs(f.percepcion),2)
+            resumen['ivaRete1']=round(abs(f.retencion),2)
+            resumen['reteRenta']=round(f.isr,2)
+            resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva,2)
+            resumen['totalNoGravado']=0
+            resumen['totalPagar']=round(resumen['montoTotalOperacion']+resumen['ivaPerci1']-resumen['ivaRete1']-resumen['reteRenta'],2)
+            resumen['totalLetras']=numero_to_letras(round(resumen['totalPagar'],2))
         resumen['saldoFavor']=0
         if f.invoice_payment_term_id.fe_condicion_id:
             resumen['condicionOperacion']=int(f.invoice_payment_term_id.fe_condicion_id.codigo)
@@ -1475,10 +1539,10 @@ class sv_fe_move(models.Model):
         emisor['direccion']=f.get_direccion(f.company_id.partner_id)
         emisor['telefono']=f.company_id.partner_id.phone
         emisor['correo']=f.company_id.partner_id.email
-        emisor['codigo']=None
-        emisor['codigoMH']=None
-        emisor['puntoVentaMH']=None
-        emisor['puntoVenta']=None
+        emisor['codigoMH']=f.tipo_documento_id.cod_estable_mh if f.tipo_documento_id.cod_estable_mh else None
+        emisor['codigo']=f.tipo_documento_id.cod_stable if f.tipo_documento_id.cod_stable else None
+        emisor['puntoVentaMH']=f.tipo_documento_id.cod_punto_venta_mh if f.tipo_documento_id.cod_punto_venta_mh else None
+        emisor['puntoVenta']=f.tipo_documento_id.cod_punto_venta if f.tipo_documento_id.cod_punto_venta else None
         return emisor
     
     def get_relacionado_cr(self):
@@ -1490,7 +1554,7 @@ class sv_fe_move(models.Model):
             doc['tipoDocumento']=f.doc_relacionado.tipo_documento_id.fe_tipo_doc_id.codigo
             doc['tipoGeneracion']=2 if f.doc_relacionado.uuid else 1
             doc['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-            doc['fechaEmision']=f.doc_relacionado.invoice_date.strftime('%Y-%m-%d')
+            doc['fechaEmision']=(f.doc_relacionado.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
             docs.append(doc)
             return docs
         else:
@@ -1513,10 +1577,10 @@ class sv_fe_move(models.Model):
         identificacion['numeroControl']=f.control
         #f.control=identificacion['numeroControl']
         identificacion['codigoGeneracion']=f.uuid
-        identificacion['tipoModelo']=1
-        identificacion['tipoOperacion']=1
+        identificacion['tipoModelo']=1 if not f.contingencia else 2
+        identificacion['tipoOperacion']=1  if not f.contingencia else 2
         identificacion['tipoContingencia']=None if not f.contingencia else int(f.contingencia.fe_contingencia_id.codigo)
-        identificacion['motivoContin']=None if not f.contingencia else int(f.contingencia.motivo)
+        identificacion['motivoContin']=None if not f.contingencia else f.contingencia.motivo
         if not f.proforma:
             identificacion['fecEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
             identificacion['horEmi']=(f.date_confirm+timedelta(hours=-6)).strftime('%H:%M:%S')
@@ -1529,7 +1593,7 @@ class sv_fe_move(models.Model):
     def get_receptor_cr(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             if f.partner_id.nit:
                 receptor['tipoDocumento']='36'
@@ -1697,7 +1761,7 @@ class sv_fe_move(models.Model):
             doc['tipoDocumento']=f.doc_relacionado.tipo_documento_id.fe_tipo_doc_id.codigo
             doc['tipoGeneracion']=2 if f.doc_relacionado.uuid else 1
             doc['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-            doc['fechaEmision']=f.doc_relacionado.invoice_date.strftime('%Y-%m-%d')
+            doc['fechaEmision']=(f.doc_relacionado.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
             docs.append(doc)
             return docs
         else:
@@ -1736,7 +1800,7 @@ class sv_fe_move(models.Model):
     def get_receptor_nc(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             receptor['nit']=f.partner_id.nit.replace('-','') if f.partner_id.nit else None
             receptor['nrc']=f.partner_id.nrc.replace('-','') if f.partner_id.nrc else None
@@ -1777,7 +1841,7 @@ class sv_fe_move(models.Model):
         i=1
         descuento_global=0
         for l in f.invoice_line_ids:
-            if l.price_total>=0:
+            if l.price_total>0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -1793,7 +1857,7 @@ class sv_fe_move(models.Model):
                 else:
                     dic['uniMedida']=59
                 dic['descripcion']=l.name
-                dic['precioUni']=l.price_unit
+                dic['precioUni']=round(l.price_unit,6)
 
                 descuento=l.discount/100
                 valor_con_descuento=1-descuento
@@ -1807,32 +1871,28 @@ class sv_fe_move(models.Model):
                 persepcion=False
                 isr=False
                 tributos=[]
+                incluido=False
                 for t in l.tax_ids:
-                    iva=True if t.tax_group_id.code=='iva' else False
-                    ivap=t.amount/100 if t.tax_group_id.code=='iva' else ivap
-                    if iva==True:
-                        incluido=t.price_include
-                        price_unit=l.price_unit/(1+ivap)
-                    if incluido:
-                        price_unit=l.price_unit
-                        price_unit_notax=l.price_unit/(1+ivap)
-                        ivaitem=(l.price_unit*valor_con_descuento)-(l.price_unit/(1+ivap))
-                    else:
-                        price_unit=l.price_unit*(1+ivap)
-                        price_unit_notax=l.price_unit
-                        ivaitem=(l.price_unit*valor_con_descuento)*ivap
-                    exento=True if t.tax_group_id.code=='exento' else False
-                    nosujeto=True if t.tax_group_id.code=='nosujeto' else False
-                    retencion=True if t.tax_group_id.code=='retencion' else False
-                    persepcion=True if t.tax_group_id.code=='persepcion' else False
-                    isr=True if t.tax_group_id.code=='isr' else False
+                    if t.price_include:
+                        if t.tax_group_id.code=='iva':
+                            ivap+=t.amount/100
+                price_unit=l.price_unit
+                price_unit_notax=round((l.price_subtotal/valor_con_descuento)/l.quantity,8)
+                for t in l.tax_ids:
+                    if t.tax_group_id.code=='iva':
+                        iva=True 
+                    exento=True if t.tax_group_id.code=='exento' else exento
+                    nosujeto=True if t.tax_group_id.code=='nosujeto' else nosujeto
+                    retencion=True if t.tax_group_id.code=='retencion' else retencion
+                    persepcion=True if t.tax_group_id.code=='persepcion' else persepcion
+                    isr=True if t.tax_group_id.code=='isr' else isr
 
                     f.retencion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='retencion' else 0
                     f.percepcion+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='persepcion' else 0
                     f.isr+=((price_unit_notax*l.quantity*valor_con_descuento)*(t.amount/100)) if t.tax_group_id.code=='isr' else 0
                     if t.fe_tributo_id:
                         tributos.append(t.fe_tributo_id.codigo)
-                dic['precioUni']=round(price_unit_notax,6)
+                dic['precioUni']=round(price_unit_notax,8)
                 if iva or retencion or persepcion:
                     dic['ventaNoSuj']=0
                     dic['ventaExenta']=0
@@ -1943,10 +2003,10 @@ class sv_fe_move(models.Model):
         else:
             resumen['tributos']=None
         resumen['subTotal']=round(resumen['subTotalVentas']-resumen['descuNoSuj']-resumen['descuExenta']-resumen['descuGravada'],2)
-        resumen['ivaPerci1']=round(f.percepcion*-1,2)
-        resumen['ivaRete1']=round(f.retencion*-1,2)
+        resumen['ivaPerci1']=round(abs(f.percepcion),2)
+        resumen['ivaRete1']=round(abs(f.retencion),2)
         resumen['reteRenta']=round(f.isr,2)
-        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva+f.retencion,2)
+        resumen['montoTotalOperacion']=round(resumen['subTotal']+f.iva-resumen['ivaRete1'],2)
         #resumen['totalNoGravado']=0
         #resumen['totalPagar']=round(resumen['montoTotalOperacion'],2)
         resumen['totalLetras']=numero_to_letras(round(resumen['montoTotalOperacion'],2))
@@ -1992,10 +2052,10 @@ class sv_fe_move(models.Model):
         emisor['direccion']=f.get_direccion(f.company_id.partner_id)
         emisor['telefono']=f.company_id.partner_id.phone
         emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
+        emisor['codEstableMH']=f.tipo_documento_id.cod_estable_mh if f.tipo_documento_id.cod_estable_mh else None
+        emisor['codEstable']=f.tipo_documento_id.cod_stable if f.tipo_documento_id.cod_stable else None
+        emisor['codPuntoVentaMH']=f.tipo_documento_id.cod_punto_venta_mh if f.tipo_documento_id.cod_punto_venta_mh else None
+        emisor['codPuntoVenta']=f.tipo_documento_id.cod_punto_venta if f.tipo_documento_id.cod_punto_venta else None
         return emisor
     
     def get_relacionado_se(self):
@@ -2007,7 +2067,7 @@ class sv_fe_move(models.Model):
             doc['tipoDocumento']=f.doc_relacionado.tipo_documento_id.fe_tipo_doc_id.codigo
             doc['tipoGeneracion']=2 if f.doc_relacionado.uuid else 1
             doc['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-            doc['fechaEmision']=f.doc_relacionado.invoice_date.strftime('%Y-%m-%d')
+            doc['fechaEmision']=(f.doc_relacionado.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
             docs.append(doc)
             return docs
         else:
@@ -2047,7 +2107,7 @@ class sv_fe_move(models.Model):
     def get_receptor_se(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             if f.partner_id.dui:
                 receptor['tipoDocumento']='13'
@@ -2206,10 +2266,10 @@ class sv_fe_move(models.Model):
         emisor['direccion']=f.get_direccion(f.company_id.partner_id)
         emisor['telefono']=f.company_id.partner_id.phone
         emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
+        emisor['codEstableMH']=f.tipo_documento_id.cod_estable_mh if f.tipo_documento_id.cod_estable_mh else None
+        emisor['codEstable']=f.tipo_documento_id.cod_stable if f.tipo_documento_id.cod_stable else None
+        emisor['codPuntoVentaMH']=f.tipo_documento_id.cod_punto_venta_mh if f.tipo_documento_id.cod_punto_venta_mh else None
+        emisor['codPuntoVenta']=f.tipo_documento_id.cod_punto_venta if f.tipo_documento_id.cod_punto_venta else None
         emisor['tipoDocumento']='36'
         emisor['numDocumento']=f.company_id.partner_id.nit.replace('-','')
         return emisor
@@ -2238,11 +2298,11 @@ class sv_fe_move(models.Model):
     def get_receptor_donacion(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             if f.partner_id.x_dui:
                 receptor['tipoDocumento']='13'
-                receptor['numDocumento']=f.partner_id.x_dui.replace('-','')
+                receptor['numDocumento']=f.partner_id.dui.replace('-','')
             else:
                 receptor['tipoDocumento']='36'
                 receptor['numDocumento']=f.partner_id.nit.replace('-','')
@@ -2253,7 +2313,7 @@ class sv_fe_move(models.Model):
             receptor['telefono']=f.partner_id.phone
             receptor['codPais'] = f.partner_id.country_id.fe_codigo
             receptor['correo']=f.partner_id.email
-            receptor['nrc']=f.partner_id.nrc.replace('-','')
+            receptor['nrc']=f.partner_id.nrc.replace('-','') if f.partner_id.nrc else None
             receptor['codDomiciliado']=int(f.partner_id.fe_domicilio_id.codigo)
             #receptor['nombreComercial']=None
             #receptor['tipoEstablecimiento']=f.partner_id.fe_establecimiento_id.codigo
@@ -2303,9 +2363,11 @@ class sv_fe_move(models.Model):
                 dic['uniMedida']=int(l.uom_id.fe_unidad_id.codigo)
             else:
                 dic['uniMedida']=59
+            if l.tipo_donacion.codigo=='1':
+                dic['uniMedida']=99
             dic['descripcion']=l.name
             dic['valorUni']=l.price_unit
-            dic['depreciacion']=l.depreciacion
+            dic['depreciacion']=int(l.depreciacion)
             dic['tipoDonacion']=int(l.tipo_donacion.codigo)
 
             descuento=l.discount/100
@@ -2411,7 +2473,7 @@ class sv_fe_move(models.Model):
             doc['tipoDocumento']=f.doc_relacionado.tipo_documento_id.fe_tipo_doc_id.codigo
             doc['tipoGeneracion']=2 if f.doc_relacionado.uuid else 1
             doc['numeroDocumento']=f.doc_relacionado.uuid if f.doc_relacionado.uuid else f.doc_relacionado.doc_numero
-            doc['fechaEmision']=f.doc_relacionado.invoice_date.strftime('%Y-%m-%d')
+            doc['fechaEmision']=(f.doc_relacionado.date_confirm+timedelta(hours=-6)).strftime('%Y-%m-%d')
             docs.append(doc)
             return docs
         else:
@@ -2450,7 +2512,7 @@ class sv_fe_move(models.Model):
     def get_receptor_nd(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
            
             receptor['nit']=f.partner_id.nit.replace('-','') if f.partner_id.nit else None
@@ -2482,7 +2544,7 @@ class sv_fe_move(models.Model):
         lista=[]
         i=1
         for l in f.invoice_line_ids:
-            if l.price_total>=0:
+            if l.price_total>0:
                 dic={}
                 dic['numItem']=i
                 if l.product_id and l.product_id.fe_tipo_item_id:
@@ -2694,10 +2756,10 @@ class sv_fe_move(models.Model):
         emisor['direccion']=f.get_direccion(f.company_id.partner_id)
         emisor['telefono']=f.company_id.partner_id.phone
         emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
+        emisor['codEstableMH']=f.tipo_documento_id.cod_estable_mh if f.tipo_documento_id.cod_estable_mh else None
+        emisor['codEstable']=f.tipo_documento_id.cod_stable if f.tipo_documento_id.cod_stable else None
+        emisor['codPuntoVentaMH']=f.tipo_documento_id.cod_punto_venta_mh if f.tipo_documento_id.cod_punto_venta_mh else None
+        emisor['codPuntoVenta']=f.tipo_documento_id.cod_punto_venta if f.tipo_documento_id.cod_punto_venta else None
         
         return emisor
     
@@ -2749,7 +2811,30 @@ class sv_fe_move(models.Model):
     
 
     def get_pagos(self):
-        return None
+        self.ensure_one()
+        f=self
+        if f.payment_state=='paid':
+            lista=[]
+            pagos=f.sudo().invoice_payments_widget and f.sudo().invoice_payments_widget['content'] or []
+            for p in pagos:
+                payment=self.env['account.payment'].browse(p['account_payment_id'])
+                if payment:
+                    l={}
+                    l['codigo']=payment.journal_id.fe_formapago_ids.codigo
+                    l['montoPago']=round(p['amount'],2)
+                    l['referencia']=p['ref'][:40]
+                    if l['codigo']!='01':
+                        l['periodo']=1
+                        l['plazo']='01'
+                    else:
+                        if f.move_type=='out_invoice':
+                            l['periodo']=1
+                            l['plazo']='01'
+                    lista.append(l)
+            #raise UserError(str(pagos))
+            return lista
+        else:
+            return None
 
     def get_extension(self):
         self.ensure_one()
@@ -2807,10 +2892,10 @@ class sv_fe_move(models.Model):
         emisor['direccion']=f.get_direccion(f.company_id.partner_id)
         emisor['telefono']=f.company_id.partner_id.phone
         emisor['correo']=f.company_id.partner_id.email
-        emisor['codEstableMH']=None
-        emisor['codEstable']=None
-        emisor['codPuntoVentaMH']=None
-        emisor['codPuntoVenta']=None
+        emisor['codEstableMH']=f.tipo_documento_id.cod_estable_mh if f.tipo_documento_id.cod_estable_mh else None
+        emisor['codEstable']=f.tipo_documento_id.cod_stable if f.tipo_documento_id.cod_stable else None
+        emisor['codPuntoVentaMH']=f.tipo_documento_id.cod_punto_venta_mh if f.tipo_documento_id.cod_punto_venta_mh else None
+        emisor['codPuntoVenta']=f.tipo_documento_id.cod_punto_venta if f.tipo_documento_id.cod_punto_venta else None
         if f.tipo_documento_id.fe_tipo_doc_id.codigo=='11':
             if f.sv_fe_tipo_itemexpor_id:
                 emisor['tipoItemExpor']= int(f.sv_fe_tipo_itemexpor_id.codigo)
@@ -2860,7 +2945,7 @@ class sv_fe_move(models.Model):
     def get_receptor_export(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             receptor['tipoDocumento']='37'
             receptor['numDocumento']=f.partner_id.vat
@@ -2915,7 +3000,7 @@ class sv_fe_move(models.Model):
         incluido=False
         descuento_global=0.0
         for l in f.invoice_line_ids:
-            if l.price_total>=0:
+            if l.price_total>0:
                 dic={}
                 dic['numItem']=i
                 #if l.product_id and l.product_id.fe_tipo_item_id:
@@ -2931,7 +3016,7 @@ class sv_fe_move(models.Model):
                 else:
                     dic['uniMedida']=59
                 dic['descripcion']=l.name
-                dic['precioUni']=l.price_unit
+                dic['precioUni']=round(l.price_unit,6)
 
                 descuento=l.discount/100
                 valor_con_descuento=1-descuento
@@ -2978,8 +3063,8 @@ class sv_fe_move(models.Model):
         
                     #dic['ventaNoSuj']=0
                     #dic['ventaExenta']=0
-                    dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento)*(1),2)
-                    dic['precioUni']=round(price_unit,2)
+                    dic['ventaGravada']=round((price_unit*l.quantity*valor_con_descuento)*(1),6)
+                    dic['precioUni']=round(price_unit,6)
                     f.gravadas_linea_des+=dic['montoDescu']
                     f.gravadas+=dic['ventaGravada']
                 
@@ -3049,7 +3134,7 @@ class sv_fe_move(models.Model):
         resumen['porcentajeDescuento'] = 0
         resumen['totalDescu']=round(f.gravadas_des+f.gravadas_linea_des,2)
         #resumen['totalDescu']=round(f.nosujetas_des+f.exentas_des+f.gravadas_des,2)
-        resumen['porcentajeDescuento']=round((resumen['totalDescu']/resumen['totalGravada'])*100,2)
+        resumen['porcentajeDescuento']=round((resumen['totalDescu']/(resumen['subTotalVentas']+f.exentas_linea_des+f.nosujetas_linea_des+f.gravadas_linea_des))*100,2)
         tributos=[]
         for l in f.invoice_line_ids:
             for t in l.tax_ids:
@@ -3367,7 +3452,7 @@ class sv_fe_move_picking(models.Model):
     def get_receptor_reve(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             if f.partner_id.nrc and f.partner_id.nrc=='NA':
                 receptor['tipoDocumento']='37'
@@ -3415,8 +3500,8 @@ class sv_fe_move_picking(models.Model):
                 dic['tipoDocumento']='13'
                 dic['numDocumento']=f.partner_id.dui.replace('-','')
             else:
-                dic['tipoDocumento']=''
-                dic['numDocumento']=''
+                dic['tipoDocumento']=None
+                dic['numDocumento']=None
         dic['nombre']=f.partner_id.name
         dic['telefono']=f.partner_id.phone
         dic['correo']=f.partner_id.email
@@ -3540,7 +3625,7 @@ class sv_fe_move_picking(models.Model):
     def get_receptor_nr(self):
         self.ensure_one()
         f=self
-        if f.partner_id.nit!="NA":
+        if f.partner_id.nit!="NA" or  f.tipo_documento_id.obligar_receptor:
             receptor={}
             if f.partner_id.nit:
                 receptor['tipoDocumento']='36'

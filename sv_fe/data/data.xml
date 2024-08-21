@@ -662,14 +662,14 @@
 <record id="svfe_condicion_2" model="sv_fe.condicion"><field name="name">A crédito</field><field name="codigo">2</field></record>
 <record id="svfe_condicion_3" model="sv_fe.condicion"><field name="name">Otro</field><field name="codigo">4</field></record>
 
-<record id="svfe_formapago_1" model="sv_fe.formapago"><field name="name">Billetes y monedas</field><field name="codigo">1</field></record>
-<record id="svfe_formapago_2" model="sv_fe.formapago"><field name="name">Tarjeta Débito</field><field name="codigo">2</field></record>
-<record id="svfe_formapago_3" model="sv_fe.formapago"><field name="name">Tarjeta Crédito</field><field name="codigo">3</field></record>
-<record id="svfe_formapago_4" model="sv_fe.formapago"><field name="name">Cheque</field><field name="codigo">4</field></record>
-<record id="svfe_formapago_5" model="sv_fe.formapago"><field name="name">Transferencia_ Depósito Bancario</field><field name="codigo">5</field></record>
-<record id="svfe_formapago_6" model="sv_fe.formapago"><field name="name">Vales o Cupones</field><field name="codigo">6</field></record>
-<record id="svfe_formapago_8" model="sv_fe.formapago"><field name="name">Dinero electrónico</field><field name="codigo">8</field></record>
-<record id="svfe_formapago_9" model="sv_fe.formapago"><field name="name">Monedero electrónico</field><field name="codigo">9</field></record>
+<record id="svfe_formapago_1" model="sv_fe.formapago"><field name="name">Billetes y monedas</field><field name="codigo">01</field></record>
+<record id="svfe_formapago_2" model="sv_fe.formapago"><field name="name">Tarjeta Débito</field><field name="codigo">02</field></record>
+<record id="svfe_formapago_3" model="sv_fe.formapago"><field name="name">Tarjeta Crédito</field><field name="codigo">03</field></record>
+<record id="svfe_formapago_4" model="sv_fe.formapago"><field name="name">Cheque</field><field name="codigo">04</field></record>
+<record id="svfe_formapago_5" model="sv_fe.formapago"><field name="name">Transferencia_ Depósito Bancario</field><field name="codigo">05</field></record>
+<record id="svfe_formapago_6" model="sv_fe.formapago"><field name="name">Vales o Cupones</field><field name="codigo">06</field></record>
+<record id="svfe_formapago_8" model="sv_fe.formapago"><field name="name">Dinero electrónico</field><field name="codigo">08</field></record>
+<record id="svfe_formapago_9" model="sv_fe.formapago"><field name="name">Monedero electrónico</field><field name="codigo">09</field></record>
 <record id="svfe_formapago_10" model="sv_fe.formapago"><field name="name">Certificado o tarjeta de regalo</field><field name="codigo">10</field></record>
 <record id="svfe_formapago_11" model="sv_fe.formapago"><field name="name">Bitcoin</field><field name="codigo">11</field></record>
 <record id="svfe_formapago_12" model="sv_fe.formapago"><field name="name">Otras Criptomonedas</field><field name="codigo">12</field></record>

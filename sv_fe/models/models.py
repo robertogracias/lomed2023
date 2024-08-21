@@ -48,6 +48,11 @@ class sv_fe_documento(models.Model):
     validacion_previa=fields.Text("Validaciones previa transmision")
     horas_reversion=fields.Integer("Horas para permitir la reversion")
     permite_factura_rectificativa=fields.Boolean("Permite factura rectivficativa")
+    obligar_receptor=fields.Boolean("Obligar Receptor")
+    cod_estable_mh=fields.Char("codEstableMH")
+    cod_stable=fields.Char("codEstable")
+    cod_punto_venta_mh=fields.Char("codPuntoVentaMH")
+    cod_punto_venta=fields.Char("codPuntoVenta")  
 
 
 class sv_fe_tax(models.Model):

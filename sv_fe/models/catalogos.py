@@ -9,7 +9,7 @@ import json
 import requests
 import logging
 import time
-from datetime import datetime
+from datetime import datetime,timedelta
 from collections import OrderedDict
 from odoo import api, fields, models,_
 from odoo.exceptions import ValidationError
@@ -49,8 +49,9 @@ class sv_fe_ambiente(models.Model):
             try:
                 result = requests.post(self.url+'/seguridad/auth',params=dic, headers=encabezado)
             except:
-                raise UserError('EL SITIO DEL MH NO ESTA EN LINEA')
+                return 'NOMH'
             respuesta=json.loads(result.text)
+            self.token_vencimiento=fecha+timedelta(hours=4)
             token=respuesta['body']['token']
             ##raise UserError(str(respuesta))
             self.token=token
