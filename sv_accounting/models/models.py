@@ -29,7 +29,7 @@ class odoofiscalsv_prodcut(models.Model):
 class odoofiscalsv_taxgroup(models.Model):
     _inherit='account.tax.group'
     code=fields.Char("Codigo")
-    company_id=fields.Many2one('res.company',string="Company")
+    #company_id=fields.Many2one('res.company',string="Company")
 
 class odoosv_user(models.Model):
     _inherit='res.company'
@@ -171,22 +171,22 @@ class odoosv_user(models.Model):
     def create_tax_groups(self):
         for r in self:
             if not r.tax_group_iva_id:
-                g=self.env['account.tax.group'].create({'name':'IVA'+'-'+r.name,'code':'iva','company_id':r.id})
+                g=self.env['account.tax.group'].create({'name':'IVA'+'-'+r.name,'code':'iva'})
                 r.tax_group_iva_id=g.id
             if not r.tax_group_retencion_id:
-                g=self.env['account.tax.group'].create({'name':'Retencion'+'-'+r.name,'code':'retencion','company_id':r.id})
+                g=self.env['account.tax.group'].create({'name':'Retencion'+'-'+r.name,'code':'retencion'})
                 r.tax_group_retencion_id=g.id
             if not r.tax_group_persecion_id:
-                g=self.env['account.tax.group'].create({'name':'Percepcion'+'-'+r.name,'code':'Percepcion','company_id':r.id})
+                g=self.env['account.tax.group'].create({'name':'Percepcion'+'-'+r.name,'code':'Percepcion'})
                 r.tax_group_persecion_id=g.id
             if not r.tax_group_isr_id:
-                g=self.env['account.tax.group'].create({'name':'ISR'+'-'+r.name,'code':'ISR','company_id':r.id})
+                g=self.env['account.tax.group'].create({'name':'ISR'+'-'+r.name,'code':'ISR'})
                 r.tax_group_isr_id=g.id
             if not r.tax_group_exento_id:
-                g=self.env['account.tax.group'].create({'name':'Exento'+'-'+r.name,'code':'Exento','company_id':r.id})
+                g=self.env['account.tax.group'].create({'name':'Exento'+'-'+r.name,'code':'Exento'})
                 r.tax_group_exento_id=g.id
             if not r.tax_group_nosujeto_id:
-                g=self.env['account.tax.group'].create({'name':'No Sujeto'+'-'+r.name,'code':'No Sujeto','company_id':r.id})
+                g=self.env['account.tax.group'].create({'name':'No Sujeto'+'-'+r.name,'code':'No Sujeto'})
                 r.tax_group_nosujeto_id=g.id
 
     def create_tax(self):
