@@ -1350,9 +1350,9 @@ class sv_fe_move(models.Model):
                 isr=False
                 incluido=False
                 for t in l.tax_ids:
-                    if t.price_include:
-                        if t.tax_group_id.code=='iva':
-                            ivap+=t.amount/100
+                    #if t.price_include:
+                    if t.tax_group_id.code=='iva':
+                        ivap+=t.amount/100
                 price_unit=l.price_unit
                 price_unit_notax=round((l.price_subtotal/valor_con_descuento)/l.quantity,8)
                 tributos=[]
