@@ -1065,7 +1065,7 @@ class sv_fe_move(models.Model):
                 ivap=0
                 ivaitem=0
                 price_unit_notax=0
-                exento=True
+                exento=False
                 nosujeto=False
                 retencion=False
                 persepcion=False
@@ -1139,7 +1139,7 @@ class sv_fe_move(models.Model):
             else:
                 descuento_global+=(l.price_total*-1)
                 iva=False
-                exento=True
+                exento=False
                 nosujeto=False
                 incluido=False
                 for t in l.tax_ids:
