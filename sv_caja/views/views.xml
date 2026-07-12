@@ -80,14 +80,7 @@
             </p>
         </field>
     </record>
-    <menuitem 
-    id="odoosv_cierre" 
-    parent="account.menu_finance_receivables"
-    name="Cierre de caja"
-    action="cierre_action"
-    sequence="1"
-    />
-  
+
   
   
   
